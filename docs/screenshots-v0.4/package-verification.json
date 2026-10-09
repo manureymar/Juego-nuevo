@@ -1,0 +1,10 @@
+{
+  "bytes": 69724631,
+  "sha256": "533b659cb3fac05b358933f19840ec77304805ef16a0d2642a76226d92556916",
+  "gitBlob": "be0567c55caf11595d67443efa0fe5522bd72e71",
+  "assetsCompared": 67,
+  "zipIntegrity": true,
+  "launcherImage": "res/drawable-nodpi-v4/robot_pulse_launcher.png",
+  "launcherTransparent": true,
+  "source": "f27be3485ab1f4a9d8153a339848592195ba427d"
+}
