@@ -12,7 +12,7 @@ export const SKINS = [
 ];
 
 export function defaultProfile(now = Date.now()) {
-  return { version: 1, coins: 200, energy: 5, energyAt: now, bestScore: 0, bestStars: 0, wins: 0, language: 'en', sound: true, skin: 'cyan', ownedSkins: ['cyan'], dailyClaim: '', rewardedRuns: [], lostRuns: [], session: null, tutorialSeen: false };
+  return { version: 1, coins: 200, energy: 5, energyAt: now, bestScore: 0, bestStars: 0, wins: 0, language: 'en', sound: true, music: true, skin: 'cyan', ownedSkins: ['cyan'], dailyClaim: '', rewardedRuns: [], lostRuns: [], session: null, tutorialSeen: false };
 }
 
 const bounded = (v, max, fallback = 0) => Number.isFinite(v) ? Math.max(0, Math.min(max, Math.floor(v))) : fallback;
@@ -27,6 +27,7 @@ export function sanitizeProfile(raw, now = Date.now()) {
   p.wins = bounded(raw.wins, 1000000);
   p.language = raw.language === 'es' ? 'es' : 'en';
   p.sound = raw.sound !== false;
+  p.music = raw.music !== false;
   p.ownedSkins = Array.isArray(raw.ownedSkins) ? [...new Set(['cyan', ...raw.ownedSkins.filter(id => SKINS.some(s => s.id === id))])] : ['cyan'];
   p.skin = p.ownedSkins.includes(raw.skin) ? raw.skin : 'cyan';
   p.dailyClaim = typeof raw.dailyClaim === 'string' ? raw.dailyClaim.slice(0, 10) : '';

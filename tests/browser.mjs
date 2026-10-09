@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import {settleArt,assertControlsVisible} from './layout.mjs';
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { spawn } from 'node:child_process';
 const { chromium } = await import(process.env.CODEX_PRIMARY_RUNTIME_NODE_MODULES ? `${process.env.CODEX_PRIMARY_RUNTIME_NODE_MODULES}/playwright/index.mjs` : 'playwright');
@@ -14,19 +15,27 @@ try{
   page.on('response',r=>{if(r.status()>=400)errors.push(`HTTP ${r.status()}: ${r.url()}`);});
   await page.goto('http://127.0.0.1:4173/?test=1');
   await page.locator('.start-button').waitFor();
+  await settleArt(page);
+  await assertControlsVisible(page);
+  assert.equal((await page.locator('#app').innerText()).trim(),'PLAY');
   await page.screenshot({path:'test-results/01-splash.png'});
   await page.locator('[data-action="enter"]').click();
   await page.locator('.home-screen').waitFor();
   assert.equal(await page.locator('.hero-image').evaluate(img=>img.complete&&img.naturalWidth>0),true);
+  await settleArt(page);await assertControlsVisible(page);
+  await page.waitForFunction(()=>!document.querySelector('#menu-music').paused&&document.querySelector('#menu-music').currentTime>0);
   await page.screenshot({path:'test-results/02-home.png'});
   await page.locator('.bottom-nav [data-action="shop"]').click();
   await page.locator('[data-action="pack"]').first().click();
   assert.match(await page.locator('.modal-body').innerText(),/No money will be charged/);
   await page.locator('[data-action="modal-action"]').first().click();
   assert.equal(await page.evaluate(()=>window.__rpTest.profile.coins),1200);
+  await page.locator('[data-action="rewards"]').click();
   await page.locator('[data-action="daily"]').click();
   assert.equal(await page.evaluate(()=>window.__rpTest.profile.coins),1300);
   assert.equal(await page.locator('[data-action="daily"]').isDisabled(),true);
+  await page.locator('[data-action="close-modal"]').click();
+  await settleArt(page);await assertControlsVisible(page);
   await page.screenshot({path:'test-results/03-shop.png'});
   await page.locator('.bottom-nav [data-action="leaderboard"]').click();
   await page.locator('[data-tab="master"]').click();
@@ -36,6 +45,7 @@ try{
   await page.locator('.bottom-nav [data-action="home"]').click();
   await page.locator('.play-button').click();
   await page.locator('[data-action="modal-action"]').first().click();
+  assert.equal(await page.locator('#menu-music').evaluate(a=>a.paused),true);
   await page.locator('[data-action="launch-queue"][data-column="0"]').click();
   await page.evaluate(()=>window.__rpTest.advance(3));
   await page.screenshot({path:'test-results/05-gameplay.png'});
@@ -80,6 +90,7 @@ try{
   await page.locator('[data-action="modal-action"]').nth(1).click();
   assert.equal(await page.evaluate(()=>window.__rpTest.profile.energy),4);
   await page.locator('.bottom-nav [data-action="shop"]').click();
+  await page.locator('[data-action="energy"]').click();
   await page.locator('[data-action="refill"]').click();
   assert.equal(await page.evaluate(()=>window.__rpTest.profile.energy),5);
   assert.equal(await page.evaluate(()=>window.__rpTest.profile.coins),1220);
@@ -90,10 +101,31 @@ try{
   await page.locator('.bottom-nav [data-action="home"]').click();
   await page.setViewportSize({width:360,height:740});
   await page.screenshot({path:'test-results/07-spanish-small-phone.png'});
-  assert.ok(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
+  await settleArt(page);await assertControlsVisible(page);
+  await page.locator('.bottom-nav [data-action="shop"]').click();
+  for(const size of [{width:360,height:640},{width:360,height:740},{width:390,height:844},{width:412,height:915}]){
+    await page.setViewportSize(size);await settleArt(page);await assertControlsVisible(page);
+    await page.screenshot({path:`test-results/shop-es-${size.width}x${size.height}.png`});
+  }
+  await page.locator('[data-action="settings"]').click();
+  await page.locator('[data-action="toggle-music"]').click();
+  assert.equal(await page.locator('#menu-music').evaluate(a=>a.paused),true);
+  await page.locator('[data-action="toggle-music"]').click();
+  await page.waitForFunction(()=>!document.querySelector('#menu-music').paused);
+  await page.locator('[data-language="en"]').click();
+  await page.locator('[data-action="close-modal"]').click();
+  for(const size of [{width:360,height:640},{width:390,height:844}]){
+    await page.setViewportSize(size);await settleArt(page);await assertControlsVisible(page);
+    await page.screenshot({path:`test-results/shop-en-${size.width}x${size.height}.png`});
+  }
+  await page.evaluate(()=>document.dispatchEvent(new Event('robotpulse:pause')));
+  assert.equal(await page.locator('#menu-music').evaluate(a=>a.paused),true);
+  await page.evaluate(()=>document.dispatchEvent(new Event('robotpulse:resume')));
+  await page.waitForFunction(()=>!document.querySelector('#menu-music').paused);
+  checks.push('Music plays across menus, pauses during gameplay/background, independent mute; Shop fits 4 phone sizes in both languages');
   checks.push('Quit costs one charge, coin recharge works, Spanish UI and 360px layout');
   assert.deepEqual(errors,[]);
   writeFileSync('test-results/browser-results.json',JSON.stringify({passed:true,checks,errors},null,2));
-  console.log(`Browser checks passed: ${checks.length} groups; 7 screenshots.`);
+  console.log(`Browser checks passed: ${checks.length} groups; phone screenshots captured.`);
 }catch(error){writeFileSync('test-results/browser-results.json',JSON.stringify({passed:false,checks,errors,error:String(error)},null,2));throw error;}
 finally{await browser?.close();server.kill();}

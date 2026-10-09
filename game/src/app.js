@@ -4,6 +4,8 @@ import { SaveStore, SKINS, PACKS, MAX_ENERGY, RECHARGE_MS, refreshEnergy, winRun
 import { icon, robotIcon, coinStack } from './icons.js';
 import { translator } from './i18n.js';
 import { BoardRenderer } from './renderer.js';
+import { art } from './art.js';
+import { GameAudio } from './audio.js';
 
 const root = document.querySelector('#app');
 const modalRoot = document.querySelector('#modal-root');
@@ -11,6 +13,7 @@ let storage;
 try { storage = localStorage; } catch { storage = { getItem(){throw new Error('Unavailable');}, setItem(){throw new Error('Unavailable');} }; }
 const store = new SaveStore(storage);
 const profile = store.load();
+const gameAudio = new GameAudio(profile);
 let t = translator(profile.language);
 let screen = 'splash', engine = null, renderer = null, runId = '', modal = null;
 let rankingTab = 'monthly', rankingRegion = 'global', lastSaved = 0, toastTimer = 0, audio = null, lastShot = 0;
@@ -36,6 +39,7 @@ function toast(message) {
 }
 
 function sound(kind='tap') {
+  if(kind==='tap'){gameAudio.tap();return;}
   if(!profile.sound)return;
   try{
     if(!audio)audio=new (window.AudioContext||window.webkitAudioContext)();
@@ -53,17 +57,28 @@ function sound(kind='tap') {
 
 function hud() {
   refreshEnergy(profile);
-  return `<header class="hud">
-    ${button('profile',robotIcon(skinColor()),'avatar-button',`aria-label="${t('profile')}"`)}
-    ${button('energy',`<span class="battery-cell" style="--charge:${profile.energy/MAX_ENERGY}">${icon('battery')}<b>${profile.energy}</b></span><span class="energy-label">${profile.energy===MAX_ENERGY?t('max'):t('energy')}</span>`,'resource energy-resource',`aria-label="${t('energy')} ${profile.energy} / 5"`)}
-    ${button('coins',`${icon('coin')}<b>${fmt(profile.coins)}</b><span class="mini-plus">+</span>`,'resource coin-resource',`aria-label="${t('coins')}: ${profile.coins}"`)}
-    ${button('settings',icon('gear'),'icon-button',`aria-label="${t('settings')}"`)}
+  return `<header class="hud art-hud">
+    ${button('profile',art('avatar'),'art-avatar',`aria-label="${t('profile')}"`)}
+    ${button('energy',`${art('hud-meter')}<span class="art-battery">${art('battery')}<b>${profile.energy}</b></span><span class="art-energy-label">${profile.energy===MAX_ENERGY?t('max'):t('energy')}</span>`,'art-energy',`aria-label="${t('energy')} ${profile.energy} / 5"`)}
+    ${button('coins',`${art('hud-meter')}<span class="art-coin">${art('coin')}</span><b>${fmt(profile.coins)}</b><span class="art-add">${art('add')}</span>`,'art-currency',`aria-label="${t('coins')}: ${profile.coins}"`)}
+    ${button('settings',art('settings'),'art-settings',`aria-label="${t('settings')}"`)}
   </header>`;
 }
 
 function nav() {
-  return `<nav class="bottom-nav" aria-label="${t('home')}">${['shop','home','leaderboard'].map(page=>button(page,`${page==='home'?robotIcon(skinColor()):icon(page==='shop'?'shop':'trophy')}<span>${t(page)}</span>`,`nav-item ${screen===page?'active':''}`,screen===page?'aria-current="page"':'')).join('')}</nav>`;
+  return `<nav class="bottom-nav art-nav" aria-label="${t('home')}">${['shop','home','leaderboard'].map(page=>button(page,`${art(screen===page?'nav-active':'nav-idle')}<span class="nav-art-icon">${art(page==='home'?'home-icon':page==='shop'?'shop-icon':'trophy')}</span><span class="nav-label">${t(page)}</span>`,`nav-item ${screen===page?'active':''}`,screen===page?'aria-current="page"':'')).join('')}</nav>`;
 }
+
+function fitScenes() {
+  root.querySelectorAll('[data-scene-width]').forEach(el=>{
+    const w=Number(el.dataset.sceneWidth), h=Number(el.dataset.sceneHeight);
+    const scale=Math.min(root.clientWidth/w,root.clientHeight/h);
+    el.style.transform=`translate(-50%,-50%) scale(${scale})`;
+  });
+}
+new ResizeObserver(fitScenes).observe(root);
+window.addEventListener('resize',fitScenes);
+window.visualViewport?.addEventListener('resize',fitScenes);
 
 function pageHeading(title,sub='') { return `<div class="page-heading"><p class="eyebrow">ROBOT PULSE</p><h1>${title}</h1>${sub?`<p>${sub}</p>`:''}</div>`; }
 
@@ -71,11 +86,16 @@ function render() {
   renderer?.stop();renderer=null;
   t=translator(profile.language);document.documentElement.lang=profile.language;
   root.dataset.screen=screen;
+  gameAudio.setScreen(screen);
   if(screen==='splash'){
-    root.innerHTML=`<section class="splash"><div class="splash-art" aria-hidden="true"></div><div class="splash-top"><span class="edition"><span></span> ${t('offline')}</span>${brand()}<p>${t('introLine')}</p></div><div class="splash-bottom"><p class="launch-tag">${t('introSub')}</p>${button('enter',`${t('play')}${icon('play')}`,'primary start-button')}<span class="save-caption">${t('progressSaved')}</span><div class="splash-utilities">${button('language','EN / ES','text-button',`aria-label="${t('language')}"`)}<span>v0.1.0</span>${button('toggle-sound',icon(profile.sound?'sound':'mute'),'icon-button quiet',`aria-label="${t('sound')}"`)}</div></div></section>`;
-    return;
+    root.innerHTML=`<section class="splash"><div class="splash-art" aria-hidden="true"></div><div class="splash-scene" data-scene-width="941" data-scene-height="1672"><div class="splash-logo" role="img" aria-label="Robot Pulse">${art('logo')}</div>${button('enter',`${art('play-blank')}<span>${t('play')}</span>`,'start-button art-play',`aria-label="${t('play')}"`)}</div></section>`;
+    fitScenes();return;
   }
-  root.innerHTML=hud()+(screen==='home'?homeView():screen==='shop'?shopView():screen==='leaderboard'?leaderboardView():gameView())+(screen==='game'?'':nav());
+  if(screen==='shop'){
+    root.innerHTML=`<section class="shop-backdrop"><div class="shop-scene" data-scene-width="768" data-scene-height="1536">${hud()}${shopView()}${nav()}</div></section>`;
+    fitScenes();return;
+  }
+  root.innerHTML=hud()+(screen==='home'?homeView():screen==='leaderboard'?leaderboardView():gameView())+(screen==='game'?'':nav());
   if(screen==='game'){
     renderer=new BoardRenderer(document.querySelector('#board'),engine,processEvents);
     renderGameControls();updateGameStats();renderer.start();
@@ -95,13 +115,22 @@ function homeView() {
 }
 
 function shopView() {
-  const daily=profile.dailyClaim===localDate();
-  return `<section class="screen shop-screen">${pageHeading(t('shop'))}
-    <div class="shop-quick-grid"><article class="offer-card energy-offer">${icon('battery')}<h2>${t('recharge')}</h2><p>${t('rechargeBody')}</p>${button('refill',profile.energy===5?t('full'):`${icon('coin')} 120`,'small-primary',profile.energy===5?'disabled':'')}</article><article class="offer-card daily-offer">${icon('gift')}<h2>${t('daily')}</h2><p>${t('dailyBody')}</p>${button('daily',daily?t('claimed'):`+100 ${icon('coin')}`,'small-primary',daily?'disabled':'')}</article></div>
-    <div class="section-line"><h2>${t('packs')}</h2><span>${t('demo')}</span></div><p class="store-notice">${t('testStore')}</p>
-    <div class="coin-grid">${PACKS.map((p,i)=>`<article class="coin-card">${coinStack(i)}<strong>${fmt(p.coins)}</strong>${button('pack',p.price,'pack-button',`data-pack="${i}" aria-label="${t('testPurchase')}: ${fmt(p.coins)} ${t('coins')}, ${p.price}"`)}</article>`).join('')}</div>
-    <div class="section-line"><h2>${t('skins')}</h2>${icon('bolt')}</div><div class="skin-grid">${SKINS.map(s=>`<article class="skin-card ${profile.skin===s.id?'selected':''}">${robotIcon(s.color)}<h3>${t(s.id)}</h3>${button('skin',profile.skin===s.id?t('equipped'):profile.ownedSkins.includes(s.id)?t('owned'):`${icon('coin')} ${s.cost}`,'skin-button',`data-skin="${s.id}" ${profile.skin===s.id?'disabled':''}`)}</article>`).join('')}</div>
+  return `<section class="shop-screen" aria-label="${t('shop')}">
+    <div class="shop-logo" role="img" aria-label="Robot Pulse">${art('logo')}</div>
+    <div class="shop-title">${art('shop-header')}<h1 class="metal-text">${t('shop')}</h1></div>
+    <div class="shop-section-title">${art('section-bar')}<h2>${t('packs')}</h2></div>
+    <div class="shop-products">${PACKS.map((p,i)=>button('pack',`${art('product-card')}<span class="product-image">${art('pack-'+p.coins)}</span><strong class="product-amount">${fmt(p.coins)}</strong><span class="product-price">${art('buy-button')}<span>${p.price}</span></span>`,'shop-product',`data-pack="${i}" aria-label="${t('testPurchase')}: ${fmt(p.coins)} ${t('coins')}, ${p.price}"`)).join('')}</div>
+    <div class="shop-reward">${art('reward-panel')}<div class="reward-illustration">${art('reward-chest')}</div><div class="reward-copy"><h2>${t('freeCoins')}</h2><p>${t('rewardBody')}</p></div>${button('rewards',`${art('buy-button')}<span>${t('explore')}</span>`,'reward-explore')}</div>
   </section>`;
+}
+
+function showRewards() {
+  const daily=profile.dailyClaim===localDate();
+  openModal(t('freeCoins'),`<div class="reward-modal-art">${art('reward-chest')}</div><h3>${t('daily')}</h3><p>${t('dailyBody')}</p>${button('daily',daily?t('claimed'):'+100 '+t('coins'),'primary',daily?'disabled':'')}`,[{label:t('close')}]);
+}
+
+function showProfile() {
+  openModal(t('skins'),`<div class="skin-grid">${SKINS.map(s=>`<article class="skin-card ${profile.skin===s.id?'selected':''}">${robotIcon(s.color)}<h3>${t(s.id)}</h3>${button('skin',profile.skin===s.id?t('equipped'):profile.ownedSkins.includes(s.id)?t('owned'):`${icon('coin')} ${s.cost}`,'skin-button',`data-skin="${s.id}" ${profile.skin===s.id?'disabled':''}`)}</article>`).join('')}</div>`,[{label:t('close')}]);
 }
 
 function rankingRows() {
@@ -215,14 +244,14 @@ function showTutorial() {
 
 function showSettings() {
   const wasRunning=engine?.isRunning&&screen==='game';if(wasRunning)engine.pause();
-  openModal(t('settings'),`<div class="settings-row"><span>${icon('globe')}${t('language')}</span><div>${button('set-language','EN',profile.language==='en'?'selected':'',`data-language="en"`)}${button('set-language','ES',profile.language==='es'?'selected':'',`data-language="es"`)}</div></div><div class="settings-row"><span>${icon('sound')}${t('sound')}</span>${button('toggle-sound',t(profile.sound?'on':'off'),'toggle-button',`aria-pressed="${profile.sound}"`)}</div><p class="settings-note">${t('energyInfo')}</p><p class="build-note">${t('about')}</p>`,[{label:t('close'),primary:true}],{onClose:()=>{if(wasRunning)engine?.resume();}});
+  openModal(t('settings'),`<div class="settings-row"><span>${icon('globe')}${t('language')}</span><div>${button('set-language','EN',profile.language==='en'?'selected':'',`data-language="en"`)}${button('set-language','ES',profile.language==='es'?'selected':'',`data-language="es"`)}</div></div><div class="settings-row"><span>${icon('sound')}${t('sound')}</span>${button('toggle-sound',t(profile.sound?'on':'off'),'toggle-button',`aria-pressed="${profile.sound}"`)}</div><div class="settings-row"><span>${icon('sound')}${t('music')}</span>${button('toggle-music',t(profile.music?'on':'off'),'toggle-button',`aria-pressed="${profile.music}"`)}</div><p class="settings-note">${t('energyInfo')}</p><p class="build-note">${t('about')}</p>`,[{label:t('close'),primary:true}],{onClose:()=>{if(wasRunning)engine?.resume();}});
 }
 
 function showEnergy() {
   refreshEnergy(profile);
   const ms=Math.max(0,RECHARGE_MS-(Date.now()-profile.energyAt)),minutes=Math.ceil(ms/60000);
   const wasRunning=engine?.isRunning&&screen==='game';if(wasRunning)engine.pause();
-  openModal(t('energy'),`<div class="energy-display">${icon('battery')}<b>${profile.energy} / 5</b></div><p>${t('energyInfo')}</p>${profile.energy<5?`<p>${t('nextCharge')}: ${minutes} min</p>`:`<p>${t('full')}</p>`}`,[{label:t('gotIt'),primary:true}],{onClose:()=>{if(wasRunning)engine?.resume();}});
+  openModal(t('energy'),`<div class="energy-display">${icon('battery')}<b>${profile.energy} / 5</b></div><p>${t('energyInfo')}</p>${profile.energy<5?`<p>${t('nextCharge')}: ${minutes} min</p>`:`<p>${t('full')}</p>`}${profile.energy<5?button('refill',`${t('recharge')} · 120 ${t('coins')}`,'primary'):''}`,[{label:t('gotIt'),primary:true}],{onClose:()=>{if(wasRunning)engine?.resume();}});
 }
 
 function openModal(title,body,actions,options={}) {
@@ -246,7 +275,8 @@ function handleAction(target) {
     case 'enter':navigate('home');break;
     case 'home':case 'shop':case 'leaderboard':navigate(action);break;
     case 'coins':if(screen==='game'){const wasRunning=engine?.isRunning;if(wasRunning)engine.pause();openModal(t('coins'),`<div class="modal-symbol">${icon('coin')}</div><p>${fmt(profile.coins)} ${t('coins')}</p><p>${t('insufficient')}</p>`,[{label:t('gotIt'),primary:true}],{onClose:()=>{if(wasRunning)engine?.resume();}});}else navigate('shop');break;
-    case 'profile':if(screen==='game')showSettings();else{navigate('shop');document.querySelector('.skin-grid')?.scrollIntoView({block:'nearest',behavior:'smooth'});}break;
+    case 'profile':if(screen==='game')showSettings();else showProfile();break;
+    case 'rewards':showRewards();break;
     case 'start':startLevel();break;
     case 'locked':openModal(t('locked'),`<div class="modal-symbol">${icon('lock')}</div><p>${t('lockedBody')}</p>`,[{label:t('gotIt'),primary:true}]);break;
     case 'settings':showSettings();break;
@@ -260,6 +290,7 @@ function handleAction(target) {
     case 'modal-action':{const a=modal?.actions[Number(target.dataset.index)];closeModal();a?.run?.();break;}
     case 'language':profile.language=profile.language==='en'?'es':'en';save();render();break;
     case 'set-language':closeModal();profile.language=target.dataset.language;save();render();showSettings();break;
+    case 'toggle-music':profile.music=!profile.music;gameAudio.sync();save();target.textContent=t(profile.music?'on':'off');target.setAttribute('aria-pressed',String(profile.music));break;
     case 'toggle-sound':profile.sound=!profile.sound;save();if(modal){target.textContent=t(profile.sound?'on':'off');target.setAttribute('aria-pressed',String(profile.sound));}else render();break;
     case 'launch-queue':case 'launch-waiting':{
       if(!engine?.isRunning)return;
@@ -271,12 +302,12 @@ function handleAction(target) {
       const pack=PACKS[Number(target.dataset.pack)];if(!pack)return;
       openModal(t('testPurchase'),`<div class="modal-coins">${coinStack(3)}<strong>+${fmt(pack.coins)}</strong></div><p>${t('testBody')}</p>`,[{label:t('addCoins'),primary:true,run:()=>{profile.coins=Math.min(9999999,profile.coins+pack.coins);save();render();sound('claim');toast(t('added'));}},{label:t('cancel')}]);break;
     }
-    case 'daily':if(claimDaily(profile)){save();render();sound('claim');toast(t('claimSuccess'));}break;
+    case 'daily':if(claimDaily(profile)){closeModal();save();render();showRewards();sound('claim');toast(t('claimSuccess'));}break;
     case 'refill':{
-      const result=refillEnergy(profile);if(result==='ok'){save();render();sound('claim');toast(t('refilled'));}else toast(t(result));break;
+      const result=refillEnergy(profile);if(result==='ok'){closeModal();save();render();sound('claim');toast(t('refilled'));}else toast(t(result));break;
     }
     case 'skin':{
-      const result=buySkin(profile,target.dataset.skin);if(result==='ok'){save();render();toast(t('skinAdded'));}else toast(t(result));break;
+      const result=buySkin(profile,target.dataset.skin);if(result==='ok'){closeModal();save();render();showProfile();toast(t('skinAdded'));}else toast(t(result));break;
     }
   }
 }

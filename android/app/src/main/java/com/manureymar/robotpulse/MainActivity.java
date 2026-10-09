@@ -22,6 +22,7 @@ import java.util.Map;
 public final class MainActivity extends Activity {
     private static final String HOST = "appassets.androidplatform.net";
     private WebView webView;
+    private boolean resumed;
 
     @Override public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,7 +35,7 @@ public final class MainActivity extends Activity {
         if (Build.VERSION.SDK_INT >= 30) {
             getWindow().setDecorFitsSystemWindows(false);
             frame.setOnApplyWindowInsetsListener((view, insets) -> {
-                android.graphics.Insets bars = insets.getInsets(WindowInsets.Type.systemBars() | WindowInsets.Type.displayCutout());
+                android.graphics.Insets bars = insets.getInsets(WindowInsets.Type.displayCutout());
                 view.setPadding(bars.left, bars.top, bars.right, bars.bottom);
                 return insets;
             });
@@ -44,7 +45,12 @@ public final class MainActivity extends Activity {
         settings.setDomStorageEnabled(true);
         settings.setAllowFileAccess(false);
         settings.setAllowContentAccess(false);
-        settings.setMediaPlaybackRequiresUserGesture(true);
+        settings.setMediaPlaybackRequiresUserGesture(false);
+        settings.setUseWideViewPort(true);
+        settings.setLoadWithOverviewMode(true);
+        settings.setTextZoom(100);
+        WebView.setWebContentsDebuggingEnabled((getApplicationInfo().flags & android.content.pm.ApplicationInfo.FLAG_DEBUGGABLE) != 0);
+        immersive();
         settings.setMixedContentMode(WebSettings.MIXED_CONTENT_NEVER_ALLOW);
         settings.setSupportZoom(false);
         webView.setWebViewClient(new WebViewClient() {
@@ -61,7 +67,7 @@ public final class MainActivity extends Activity {
                     Map<String, String> headers = new HashMap<>();
                     headers.put("Cache-Control", "no-cache");
                     headers.put("X-Content-Type-Options", "nosniff");
-                    return new WebResourceResponse(mime, mime.startsWith("image/") ? null : "UTF-8", 200, "OK", headers, stream);
+                    return new WebResourceResponse(mime, (mime.startsWith("text/") || mime.equals("application/json")) ? "UTF-8" : null, 200, "OK", headers, stream);
                 } catch (IOException error) { return missing(); }
             }
             @Override public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
@@ -77,6 +83,9 @@ public final class MainActivity extends Activity {
         if (name.endsWith(".css")) return "text/css";
         if (name.endsWith(".svg")) return "image/svg+xml";
         if (name.endsWith(".png")) return "image/png";
+        if (name.endsWith(".mp3")) return "audio/mpeg";
+        if (name.endsWith(".wav")) return "audio/wav";
+        if (name.endsWith(".ttf")) return "font/ttf";
         if (name.endsWith(".json")) return "application/json";
         return "application/octet-stream";
     }
@@ -90,11 +99,42 @@ public final class MainActivity extends Activity {
             if ("false".equals(result) || "null".equals(result)) finish();
         });
     }
+    private void immersive() {
+        if (Build.VERSION.SDK_INT >= 30) {
+            android.view.WindowInsetsController controller = getWindow().getInsetsController();
+            if (controller != null) {
+                controller.setSystemBarsBehavior(android.view.WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE);
+                controller.hide(WindowInsets.Type.systemBars());
+            }
+        } else {
+            getWindow().getDecorView().setSystemUiVisibility(
+                android.view.View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY |
+                android.view.View.SYSTEM_UI_FLAG_FULLSCREEN |
+                android.view.View.SYSTEM_UI_FLAG_HIDE_NAVIGATION |
+                android.view.View.SYSTEM_UI_FLAG_LAYOUT_STABLE |
+                android.view.View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN |
+                android.view.View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
+        }
+    }
+    @Override public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        if (hasFocus) immersive();
+    }
     @Override protected void onPause() {
-        webView.evaluateJavascript("document.dispatchEvent(new Event('robotpulse:pause'))", null);
-        webView.onPause();
+        resumed = false;
+        webView.evaluateJavascript("document.dispatchEvent(new Event('robotpulse:pause'))", result -> {
+            if (!resumed && webView != null) webView.onPause();
+        });
         super.onPause();
     }
-    @Override protected void onResume() { super.onResume(); if (webView != null) webView.onResume(); }
-    @Override protected void onDestroy() { if (webView != null) { webView.stopLoading(); webView.destroy(); } super.onDestroy(); }
+    @Override protected void onResume() {
+        super.onResume();
+        resumed = true;
+        if (webView != null) {
+            webView.onResume();
+            webView.evaluateJavascript("document.dispatchEvent(new Event('robotpulse:resume'))", null);
+        }
+        immersive();
+    }
+    @Override protected void onDestroy() { if (webView != null) { webView.stopLoading(); webView.destroy(); webView = null; } super.onDestroy(); }
 }

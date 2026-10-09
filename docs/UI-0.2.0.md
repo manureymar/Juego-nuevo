@@ -1,0 +1,11 @@
+# Robot Pulse 0.2.0 — opening, Shop and menu audio
+
+This revision integrates the approved raster artwork into actual controls. The opening has only the battle background, the fixed English Robot Pulse logo and a Play/Jugar button. Shop uses a 768 × 1536 design canvas scaled as one unit to fit the available viewport without scrolling. The six full cards are touch targets; the reward panel and Shop/Home/Leaderboard navigation are visible together. Labels and balances remain live text, with the bundled Tektur display font. Generated logo artwork is not a font and remains unchanged in both languages.
+
+Artwork is in `game/assets/ui/`. Original generated PNG pixels are preserved; `manifest.json` records the visible alpha bounds used by `src/art.js` for placement. Transparent padding is accounted for with CSS instead of destructive cropping. The existing titleless battle background is `game/assets/splash.png`. Tektur is bundled with its SIL Open Font License under `game/assets/fonts/`.
+
+The user-supplied `Defensa del Jardón.mp3` is packaged unchanged as `game/assets/audio/menu-theme.mp3`. One persistent audio element loops it across the opening and menus. Music pauses during gameplay, when the app is hidden, or when Music is disabled in Settings. Button taps use the original 115 ms `button-tap.wav`; its deterministic synthesis source is `scripts/make-button-sound.py`. Music and effects have separate saved switches.
+
+Shop prices and quantities: 1,000 / $1.99; 3,000 / $4.99; 7,500 / $9.99; 16,000 / $19.99; 40,000 / $39.99; 90,000 / $79.99. Purchases remain explicit **test transactions** with confirmation and no real payment processing. Explore opens the daily reward. Recharge is available from the battery; skins from the avatar. Home, Leaderboard and the playable first level remain available; their full art redesign is a later task.
+
+Android enables the correct viewport, a fixed WebView text scale, menu autoplay, local font/audio MIME types and immersive portrait display with cutout safety. WebView debugging is enabled only for debuggable preview builds. Browser tests check real gameplay plus clipping, hit targets and audio state. The native emulator test installs the built APK and captures actual Android screens with the system font scale enlarged to 1.4.
