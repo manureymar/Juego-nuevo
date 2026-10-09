@@ -17,19 +17,30 @@ async function until(fn,seconds=30){
 }
 function nativeWindow() {
   adb('shell','uiautomator','dump','/sdcard/robot-pulse-window.xml');
-  return adb('shell','cat','/sdcard/robot-pulse-window.xml');
+  const xml=adb('shell','cat','/sdcard/robot-pulse-window.xml');
+  writeFileSync('test-results/android/native-window.xml',xml);
+  return xml;
 }
 function bounds(node) {
   const m=node?.match(/bounds="\[(\d+),(\d+)\]\[(\d+),(\d+)\]"/);
   return m?m.slice(1).map(Number):null;
 }
 async function dismissFullscreenTip() {
-  // Android's first-run fullscreen education is outside the WebView.
-  const xml=nativeWindow();
-  const node=xml.match(/<node\b[^>]*text="Got it"[^>]*>/)?.[0];
-  const b=bounds(node);
-  if(b){adb('shell','input','tap',String(Math.round((b[0]+b[2])/2)),String(Math.round((b[1]+b[3])/2)));await delay(300);}
+  // Handle Android's education dialog and an observed cold-boot Pixel Launcher ANR.
+  // A Robot Pulse ANR is never dismissed or treated as a passing test.
+  for(let attempt=0;attempt<3;attempt++){
+    const xml=nativeWindow();
+    if(/Robot Pulse[^<]*responding/.test(xml))throw new Error('Robot Pulse is not responding');
+    const launcher=xml.includes('Pixel Launcher')&&xml.includes('responding');
+    const text=launcher?'Close app':'Got it';
+    const node=[...xml.matchAll(/<node\b[^>]*>/g)].map(m=>m[0]).find(n=>n.includes(`text="${text}"`));
+    const b=bounds(node);if(!b)return;
+    console.log(launcher?'Closing emulator launcher ANR':'Dismissing Android fullscreen education');
+    adb('shell','input','tap',String(Math.round((b[0]+b[2])/2)),String(Math.round((b[1]+b[3])/2)));
+    await delay(500);
+  }
 }
+
 async function nativeTap(page,selector) {
   await dismissFullscreenTip();
   const node=nativeWindow().match(/<node\b[^>]*class="android.webkit.WebView"[^>]*>/)?.[0];
@@ -39,6 +50,10 @@ async function nativeTap(page,selector) {
 }
 let device;
 try{
+  // The entire installed-app test runs offline, including audio and artwork.
+  adb('shell','svc','wifi','disable');
+  adb('shell','svc','data','disable');
+  await delay(15000);
   adb('shell','settings','put','system','font_scale','1.4');
   adb('install','-r','android/app/build/outputs/apk/debug/app-debug.apk');
   adb('shell','am','force-stop',pkg);
