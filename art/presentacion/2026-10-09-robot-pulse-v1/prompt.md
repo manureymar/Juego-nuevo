@@ -1,0 +1,21 @@
+# Prompt del arte de apertura
+
+Modo: herramienta integrada de imágenes; composición nueva con referencias.
+
+- Referencia 1: art/personajes/2026-10-09-robot-canon-v2/01-robot-canon-v2.png — identidad del robot.
+- Referencia 2: art/figuras/2026-10-08-cinco-conceptos/03-mariposa.png — motivo pixelado y concepto del juego.
+
+```text
+Use case: ads-marketing / mobile game opening splash art.
+Create the EPIC OPENING TITLE SCREEN ART for the original Android puzzle game named exactly "ROBOT PULSE". Portrait 9:16, full bleed, premium polished commercial mobile-game key art, one illustration not a presentation slide.
+REFERENCE ROLES:
+Image 1 is the APPROVED ROBOT CHARACTER IDENTITY reference. Match its compact cyan chamfered armored body, graphite chassis, pale titanium trims, dark digital visor with two warm-white pixel eyes, short stepped rear-left antenna with amber light, small sturdy feet/skids, and especially the prominent right-side sci-fi energy cannon with a rectangular barrel and glowing square muzzle. Preserve its recognizable personality and silhouette. Use the three-quarter hero version for this cinematic opening artwork; this is title art, not the overhead gameplay view.
+Image 2 is a reference for the GAME'S CONCEPT: recognizable artistic figures made entirely of small colored square blocks, inside a futuristic orbital station. Borrow the square-pixel butterfly motif and colors, but do NOT copy any gameplay HUD, counters, buttons, layout or text from it.
+COMPOSITION:
+Top 18–22 percent: a large beautifully designed ORIGINAL wordmark reading exactly "ROBOT" on the first line and "PULSE" on the second, correctly spelled WITH THE T in ROBOT. Typography is bold custom futuristic geometric lettering with crisp cut corners, ivory/light titanium faces, cyan luminous edge accents and a restrained amber pulse detail. Extremely legible at phone size. No additional slogans. Safe clear space around the logo.
+Middle and lower-middle: the approved cyan robot dominates the foreground in an epic three-quarter hero pose on a small angular futuristic rail platform, body turned slightly toward the viewer, eyes determined but friendly and curious, cannon projecting diagonally toward the upper-right with its square mouth clearly visible. A short brilliant cyan energy PULSE of square light particles emerges from the cannon, interacting with a small cluster of matching cyan pixel blocks. Attractive confident hero silhouette, feet grounded, cannon does not obscure its face. Not an aggressive war scene.
+Behind the hero, inside a vast but clean dark-blue orbital chamber opening to distant stars: one large elegant BUTTERFLY FIGURE made of distinct square cyan, violet, coral and golden pixel blocks, partially emerging from a luminous square portal/frame; farther back on the opposite side a smaller ringed PLANET made of square pixel blocks. These represent the colorful puzzle targets, not realistic animals or hologram paintings. Keep both motifs secondary to the hero and title, with coherent depth and clear spacing. A curved segment of the magnetic perimeter rail and a few quiet angular panels connect the scene to the puzzle's looping gameplay. A tasteful handful of floating square fragments suggests blocks being cleared.
+Lighting/mood: epic and welcoming, rich midnight navy, cinematic cyan rim light, warm amber highlights, jewel-colored pixel motifs, controlled atmosphere, balanced vibrant color, clean silhouettes. Premium stylized game illustration, simple readable forms, beautiful surface shading, no visual clutter, no realistic weapons or military violence.
+Bottom 12 percent: quiet dark breathing room; one small elegant centered Spanish line exactly "Toca para comenzar". No actual large play button, no fake progress percentage, no currency, no advertising badges.
+CRITICAL: this is an ORIGINAL branded game opening screen. Robot identity must stay faithful to reference 1 and include its obvious square-barrel cannon. All butterfly/planet pieces are square pixel blocks. Title must spell ROBOT PULSE, never ROBO PULSE or ROBOPULSE. No other game names, no logos from existing games, no watermarks, no text from the character sheet, no phone device frame. High quality polished launch-ready visual concept.
+```

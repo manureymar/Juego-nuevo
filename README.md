@@ -1,6 +1,6 @@
-# Juego nuevo
+# Robot Pulse
 
-Proyecto de un videojuego Android original de puzles. Actualmente está en fase de definición; todavía no se han elegido la mecánica definitiva ni el motor de desarrollo.
+Proyecto de un videojuego Android original de puzles con robots lanzadores, figuras de bloques pixelados y ambientación futurista. El propietario eligió el nombre Robot Pulse el 9 de octubre de 2026. Actualmente se trabaja en el diseño visual; el motor, las reglas diferenciadoras definitivas y la implementación siguen pendientes.
 
 ## Destino de los archivos
 
@@ -15,4 +15,13 @@ Todos los avances deben subirse a este repositorio con su historial de cambios. 
 
 ## Alcance actual
 
-El documento inicial describe una posible investigación y desarrollo completos, pero el propietario ha indicado que no se ejecuten todavía en su totalidad. Por ahora se ha aclarado el objetivo y se ha establecido dónde conservar el trabajo. Este registro no inicia la implementación del juego.
+El documento inicial describe una posible investigación y desarrollo completos, pero el propietario ha indicado que no se ejecuten todavía en su totalidad. El trabajo autorizado hasta ahora se centra en definir el concepto, el personaje y la dirección visual. Se han creado propuestas artísticas; el juego todavía no está implementado.
+
+## Referencias visuales actuales
+
+- [Arte de apertura de Robot Pulse](art/presentacion/2026-10-09-robot-pulse-v1/README.md).
+- [Robot con cañón: concepto y vista cenital](art/personajes/2026-10-09-robot-canon-v2/README.md).
+- [Cinco figuras pixeladas](art/figuras/2026-10-08-cinco-conceptos/README.md).
+- [Interfaz futurista: referencia de escenario](art/concepts/2026-10-08-v3-futurista/README.md).
+
+Las imágenes son conceptos, no capturas de una aplicación funcionando. Las iteraciones anteriores se conservan como historial del diseño.
