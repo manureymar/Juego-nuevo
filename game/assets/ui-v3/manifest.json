@@ -1,0 +1,308 @@
+{
+  "avatar": {
+    "file": "home-layer",
+    "x": 34,
+    "y": 15,
+    "w": 126,
+    "h": 120,
+    "width": 887,
+    "height": 1774
+  },
+  "energy": {
+    "file": "home-layer",
+    "x": 192,
+    "y": 38,
+    "w": 263,
+    "h": 76,
+    "width": 887,
+    "height": 1774
+  },
+  "currency": {
+    "file": "home-layer",
+    "x": 464,
+    "y": 35,
+    "w": 266,
+    "h": 82,
+    "width": 887,
+    "height": 1774
+  },
+  "settings": {
+    "file": "home-layer",
+    "x": 752,
+    "y": 24,
+    "w": 108,
+    "h": 104,
+    "width": 887,
+    "height": 1774
+  },
+  "battery": {
+    "file": "home-layer",
+    "x": 196,
+    "y": 39,
+    "w": 102,
+    "h": 71,
+    "width": 887,
+    "height": 1774
+  },
+  "shop-idle": {
+    "file": "home-layer",
+    "x": 0,
+    "y": 1573,
+    "w": 302,
+    "h": 201,
+    "width": 887,
+    "height": 1774
+  },
+  "shop-active": {
+    "file": "nav-layer",
+    "x": 0,
+    "y": 1573,
+    "w": 302,
+    "h": 201,
+    "width": 887,
+    "height": 1774
+  },
+  "home-idle": {
+    "file": "leaderboard-layer",
+    "x": 302,
+    "y": 1573,
+    "w": 287,
+    "h": 201,
+    "width": 887,
+    "height": 1774
+  },
+  "home-active": {
+    "file": "home-layer",
+    "x": 302,
+    "y": 1573,
+    "w": 287,
+    "h": 201,
+    "width": 887,
+    "height": 1774
+  },
+  "leaderboard-idle": {
+    "file": "home-layer",
+    "x": 589,
+    "y": 1573,
+    "w": 298,
+    "h": 201,
+    "width": 887,
+    "height": 1774
+  },
+  "leaderboard-active": {
+    "file": "leaderboard-layer",
+    "x": 589,
+    "y": 1573,
+    "w": 298,
+    "h": 201,
+    "width": 887,
+    "height": 1774
+  },
+  "tab-active": {
+    "file": "leaderboard-layer",
+    "x": 76,
+    "y": 382,
+    "w": 375,
+    "h": 89,
+    "width": 887,
+    "height": 1774
+  },
+  "tab-idle": {
+    "file": "leaderboard-layer",
+    "x": 451,
+    "y": 382,
+    "w": 363,
+    "h": 89,
+    "width": 887,
+    "height": 1774
+  },
+  "region-active": {
+    "file": "leaderboard-layer",
+    "x": 76,
+    "y": 482,
+    "w": 216,
+    "h": 62,
+    "width": 887,
+    "height": 1774
+  },
+  "region-idle": {
+    "file": "leaderboard-layer",
+    "x": 292,
+    "y": 482,
+    "w": 201,
+    "h": 62,
+    "width": 887,
+    "height": 1774
+  },
+  "level-locked": {
+    "file": "home-layer",
+    "x": 363,
+    "y": 393,
+    "w": 166,
+    "h": 163,
+    "width": 887,
+    "height": 1774
+  },
+  "level-active": {
+    "file": "home-layer",
+    "x": 347,
+    "y": 801,
+    "w": 193,
+    "h": 187,
+    "width": 887,
+    "height": 1774
+  },
+  "upgrade-cube": {
+    "file": "home-layer",
+    "x": 73,
+    "y": 408,
+    "w": 191,
+    "h": 205,
+    "width": 887,
+    "height": 1774
+  },
+  "upgrade-cannon": {
+    "file": "home-layer",
+    "x": 624,
+    "y": 407,
+    "w": 194,
+    "h": 207,
+    "width": 887,
+    "height": 1774
+  },
+  "upgrade-shield": {
+    "file": "home-layer",
+    "x": 73,
+    "y": 658,
+    "w": 191,
+    "h": 207,
+    "width": 887,
+    "height": 1774
+  },
+  "upgrade-coins": {
+    "file": "home-layer",
+    "x": 624,
+    "y": 658,
+    "w": 194,
+    "h": 207,
+    "width": 887,
+    "height": 1774
+  },
+  "play": {
+    "file": "home-layer",
+    "x": 163,
+    "y": 1360,
+    "w": 568,
+    "h": 194,
+    "width": 887,
+    "height": 1774
+  },
+  "rank-row": {
+    "file": "leaderboard-layer",
+    "x": 46,
+    "y": 1080,
+    "w": 794,
+    "h": 106,
+    "width": 887,
+    "height": 1774
+  },
+  "player-row": {
+    "file": "leaderboard-layer",
+    "x": 41,
+    "y": 1398,
+    "w": 804,
+    "h": 125,
+    "width": 887,
+    "height": 1774
+  },
+  "podium-gold": {
+    "file": "leaderboard-layer",
+    "x": 299,
+    "y": 776,
+    "w": 287,
+    "h": 280,
+    "width": 887,
+    "height": 1774
+  },
+  "podium-silver": {
+    "file": "leaderboard-layer",
+    "x": 39,
+    "y": 834,
+    "w": 272,
+    "h": 225,
+    "width": 887,
+    "height": 1774
+  },
+  "podium-bronze": {
+    "file": "leaderboard-layer",
+    "x": 580,
+    "y": 845,
+    "w": 271,
+    "h": 217,
+    "width": 887,
+    "height": 1774
+  },
+  "crown": {
+    "file": "leaderboard-layer",
+    "x": 402,
+    "y": 543,
+    "w": 81,
+    "h": 64,
+    "width": 887,
+    "height": 1774
+  },
+  "robot-cyan": {
+    "file": "robots",
+    "x": 29,
+    "y": 37,
+    "w": 475,
+    "h": 421,
+    "width": 1536,
+    "height": 1024
+  },
+  "robot-violet": {
+    "file": "robots",
+    "x": 528,
+    "y": 41,
+    "w": 472,
+    "h": 417,
+    "width": 1536,
+    "height": 1024
+  },
+  "robot-amber": {
+    "file": "robots",
+    "x": 1027,
+    "y": 39,
+    "w": 472,
+    "h": 419,
+    "width": 1536,
+    "height": 1024
+  },
+  "robot-red": {
+    "file": "robots",
+    "x": 29,
+    "y": 545,
+    "w": 475,
+    "h": 418,
+    "width": 1536,
+    "height": 1024
+  },
+  "robot-green": {
+    "file": "robots",
+    "x": 526,
+    "y": 547,
+    "w": 475,
+    "h": 416,
+    "width": 1536,
+    "height": 1024
+  },
+  "robot-silver": {
+    "file": "robots",
+    "x": 1027,
+    "y": 546,
+    "w": 476,
+    "h": 418,
+    "width": 1536,
+    "height": 1024
+  }
+}

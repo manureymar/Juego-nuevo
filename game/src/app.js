@@ -6,6 +6,8 @@ import { translator } from './i18n.js';
 import { BoardRenderer } from './renderer.js';
 import { art } from './art.js';
 import { GameAudio } from './audio.js';
+import { menuArt, pilotArt } from './menu-art.js';
+import { leaderboardRows, monthRemaining } from './ranking.js';
 
 const root = document.querySelector('#app');
 const modalRoot = document.querySelector('#modal-root');
@@ -57,16 +59,18 @@ function sound(kind='tap') {
 
 function hud() {
   refreshEnergy(profile);
-  return `<header class="hud art-hud">
-    ${button('profile',art('avatar'),'art-avatar',`aria-label="${t('profile')}"`)}
-    ${button('energy',`${art('hud-meter')}<span class="art-battery">${art('battery')}<b>${profile.energy}</b></span><span class="art-energy-label">${profile.energy===MAX_ENERGY?t('max'):t('energy')}</span>`,'art-energy',`aria-label="${t('energy')} ${profile.energy} / 5"`)}
-    ${button('coins',`${art('hud-meter')}<span class="art-coin">${art('coin')}</span><b>${fmt(profile.coins)}</b><span class="art-add">${art('add')}</span>`,'art-currency',`aria-label="${t('coins')}: ${profile.coins}"`)}
-    ${button('settings',art('settings'),'art-settings',`aria-label="${t('settings')}"`)}
+  const coins=profile.coins<100000?fmt(profile.coins):new Intl.NumberFormat(profile.language,{notation:'compact',maximumFractionDigits:1}).format(profile.coins);
+  const recharge=profile.energy===MAX_ENERGY?t('max'):Math.ceil(Math.max(0,RECHARGE_MS-(Date.now()-profile.energyAt))/60000)+'m';
+  return `<header class="hud ui-hud">
+    ${button('profile',menuArt('avatar'),'ui-avatar',`aria-label="${t('profile')}"`)}
+    ${button('energy',`${menuArt('energy')}<b class="ui-energy-number">${profile.energy}</b><span class="ui-energy-label">${recharge}</span>`,'ui-energy',`aria-label="${t('energy')} ${profile.energy} / 5"`)}
+    ${button('coins',`${menuArt('currency')}<b class="ui-coin-number">${coins}</b>`,'ui-currency',`aria-label="${t('coins')}: ${profile.coins}"`)}
+    ${button('settings',menuArt('settings'),'ui-settings',`aria-label="${t('settings')}"`)}
   </header>`;
 }
 
 function nav() {
-  return `<nav class="bottom-nav art-nav" aria-label="${t('home')}">${['shop','home','leaderboard'].map(page=>button(page,`${art(screen===page?'nav-active':'nav-idle')}<span class="nav-art-icon">${art(page==='home'?'home-icon':page==='shop'?'shop-icon':'trophy')}</span><span class="nav-label">${t(page)}</span>`,`nav-item ${screen===page?'active':''}`,screen===page?'aria-current="page"':'')).join('')}</nav>`;
+  return `<nav class="bottom-nav ui-nav" aria-label="${t('home')}">${['shop','home','leaderboard'].map(page=>button(page,`${menuArt(page+(screen===page?'-active':'-idle'))}<span class="ui-nav-label">${t(page)}</span>`,`nav-item ${screen===page?'active':''}`,screen===page?'aria-current="page"':'')).join('')}</nav>`;
 }
 
 function fitScenes() {
@@ -95,7 +99,11 @@ function render() {
     root.innerHTML=`<section class="shop-backdrop"><div class="shop-scene" data-scene-width="768" data-scene-height="1536">${hud()}${shopView()}${nav()}</div></section>`;
     fitScenes();return;
   }
-  root.innerHTML=hud()+(screen==='home'?homeView():screen==='leaderboard'?leaderboardView():gameView())+(screen==='game'?'':nav());
+  if(screen==='home'||screen==='leaderboard'){
+    root.innerHTML=`<div class="menu-backdrop">${screen==='home'?homeView():leaderboardView()}</div>`;
+    fitScenes();return;
+  }
+  root.innerHTML=hud()+gameView();
   if(screen==='game'){
     renderer=new BoardRenderer(document.querySelector('#board'),engine,processEvents);
     renderGameControls();updateGameStats();renderer.start();
@@ -103,14 +111,17 @@ function render() {
 }
 
 function homeView() {
-  return `<section class="screen home-screen">${pageHeading(t('campaign'),t('sector'))}
-    <div class="campaign-map">
-      <div class="unlock-card unlock-left">${icon('cube')}<span>${t('nextUnlock')}</span><b>${icon('lock')} ${t('level')} 2</b></div>
-      <div class="route"><div class="route-line"></div>${[3,2,1].map(n=>button(n===1?'start':'locked',`<span>${n===1&&profile.wins?icon('check'):n}</span>${n>1?icon('lock'):''}`,`level-node ${n===1?'current':'locked'}`,`aria-label="${t('level')} ${n}${n>1?' '+t('locked'):''}"`)).join('')}</div>
-      <div class="unlock-card unlock-right">${icon('shield')}<span>${t('nextUnlock')}</span><b>${icon('lock')} ${t('level')} 3</b></div>
-    </div>
-    <div class="hero-stage"><div class="stage-halo"></div><img src="assets/hero.png" alt="Robot Pulse" class="hero-image skin-${profile.skin}"><div class="stage-platform"></div><span class="level-tag">${t('level')} 01 <i>·</i> ${t('firstContact')}</span></div>
-    <div class="home-action">${profile.wins?`<div class="star-row">${[1,2,3].map(n=>icon('star',n<=profile.bestStars?'earned':'')).join('')}<span>${t('best')} ${fmt(profile.bestScore)}</span></div>`:`<p class="home-hint">${profile.session?t('savedRun'):t('ready')}</p>`}${button('start',`${profile.session?t('continue'):profile.wins?t('replay'):t('play')}${icon('play')}`,'primary play-button')}${button('help',`${icon('help')} ${t('how')}`,'text-button help-link')}</div>
+  const unlocks=[['cube',15],['cannon',20],['shield',25],['coins',30]];
+  return `<section class="menu-scene home-screen" data-scene-width="887" data-scene-height="1774" aria-label="${t('home')}">
+    <img class="scene-layer" src="assets/ui-v3/home-layer.png" alt="" aria-hidden="true">
+    ${hud()}<div class="scene-brand" role="img" aria-label="Robot Pulse"></div>
+    <h1 class="home-title scene-title metal-text">${t('campaign')}</h1><p class="home-sector">${t('sector')}</p>
+    <div class="campaign-controls">${[3,2,1].map(n=>button(n===1?'start':'locked',`<span>${n}</span>`,'campaign-node node-'+n,`aria-label="${t('level')} ${n}${n>1?' '+t('locked'):''}"`)).join('')}
+    ${unlocks.map(([name,n])=>button('locked',`<span>${t('levelAbbr')} ${n}</span>`,'campaign-unlock unlock-'+name,`aria-label="${t('nextUnlock')}: ${t('level')} ${n}"`)).join('')}</div>
+    <div class="campaign-hero" role="img" aria-label="${t(profile.skin)} Robot Pulse">${pilotArt(profile.skin,'hero-image')}</div>
+    <p class="campaign-level">${t('level')} 1</p>
+    ${button('start',`<span>${profile.session?t('continue'):profile.wins?t('replayShort'):t('play')}</span>`,'play-button campaign-play',`aria-label="${profile.session?t('fullRun'):t('play')+' '+t('level')+' 1'}"`)}
+    ${nav()}
   </section>`;
 }
 
@@ -130,26 +141,29 @@ function showRewards() {
 }
 
 function showProfile() {
-  openModal(t('skins'),`<div class="skin-grid">${SKINS.map(s=>`<article class="skin-card ${profile.skin===s.id?'selected':''}">${robotIcon(s.color)}<h3>${t(s.id)}</h3>${button('skin',profile.skin===s.id?t('equipped'):profile.ownedSkins.includes(s.id)?t('owned'):`${icon('coin')} ${s.cost}`,'skin-button',`data-skin="${s.id}" ${profile.skin===s.id?'disabled':''}`)}</article>`).join('')}</div>`,[{label:t('close')}]);
+  openModal(t('skins'),`<div class="skin-grid">${SKINS.map(s=>`<article class="skin-card ${profile.skin===s.id?'selected':''}"><div class="profile-pilot-art">${pilotArt(s.id)}</div><h3>${t(s.id)}</h3>${button('skin',profile.skin===s.id?t('equipped'):profile.ownedSkins.includes(s.id)?t('owned'):`${icon('coin')} ${s.cost}`,'skin-button',`data-skin="${s.id}" ${profile.skin===s.id?'disabled':''}`)}</article>`).join('')}</div>`,[{label:t('close')}]);
 }
 
 function rankingRows() {
-  const sample=rankingRegion==='global'?[['NOVA',1280,'#2edbff'],['VOLT',1150,'#b890ff'],['ECHO',1080,'#ffc443'],['PIXEL',1040,'#ff696e'],['ORBIT',980,'#72dfaa'],['AXIS',940,'#c68aff']]:[['NOVA',1100,'#2edbff'],['PIXEL',900,'#ff696e'],['ORBIT',820,'#72dfaa'],['VECTOR',680,'#ffc443'],['ION',610,'#b890ff'],['AXIS',540,'#c68aff']];
-  const offset=rankingTab==='master'?240:0;
-  return [...sample.map(([name,score,color])=>({name,score:score+offset,color,player:false})),{name:t('you'),score:profile.bestScore,color:skinColor(),player:true}].sort((a,b)=>b.score-a.score).map((r,i)=>({...r,rank:i+1}));
+  return leaderboardRows(profile,rankingTab,rankingRegion,t('you'));
 }
 
 function leaderboardView() {
-  const rows=rankingRows(), podium=[rows[1],rows[0],rows[2]], player=rows.find(r=>r.player);
-  return `<section class="screen leaderboard-screen">${pageHeading(t('leaderboard'))}
-    <div class="segmented" role="group" aria-label="${t('leaderboard')}">${['monthly','master'].map(k=>button('rank-tab',t(k),rankingTab===k?'selected':'',`data-tab="${k}" aria-pressed="${rankingTab===k}"`)).join('')}</div>
-    <div class="region-filter">${['global','country'].map(k=>button('rank-region',`${k==='global'?icon('globe'):''}${t(k)}`,rankingRegion===k?'selected':'',`data-region="${k}" aria-pressed="${rankingRegion===k}"`)).join('')}</div>
-    <p class="ranking-note">${t('rankingNote')}</p>
-    <div class="podium">${podium.map(r=>`<div class="podium-pilot place-${r.rank}">${r.rank===1?`<span class="winner-crown">♛</span>`:''}<div class="portrait">${robotIcon(r.color)}</div><div class="podium-column"><span class="medal">${r.rank}</span><b>${r.name}</b><span class="podium-score">${icon('trophy')}${fmt(r.score)}</span></div></div>`).join('')}</div>
-    <div class="ranking-list">${rows.slice(3).map(r=>`<div class="ranking-row ${r.player?'player-row':''}"><b class="rank-number">${r.rank}</b>${robotIcon(r.color)}<strong>${r.name}</strong><span>${icon('trophy')}${fmt(r.score)}</span></div>`).join('')}</div>
-    ${!profile.bestScore?`<p class="ranking-empty">${t('noScore')}</p>`:''}
-    <div class="your-rank"><span class="rank-number">${player.rank}</span>${robotIcon(skinColor())}<div><small>${t('best')}</small><strong>${t('you')}</strong></div><b>${icon('trophy')}${fmt(profile.bestScore)}</b></div>
-    ${button('ranking-info',`${icon('help')} ${t('local')}`,'text-button ranking-info')}
+  const rows=rankingRows(), player=rows.find(r=>r.player);
+  const selected=(value,current)=>value===current?'active':'idle';
+  const row=(r,personal=false)=>button('rank-pilot',`<b class="leader-rank">${r.rank}</b><span class="leader-avatar">${pilotArt(r.skin)}</span><strong class="leader-name">${escapeHTML(r.name)}</strong><span class="leader-score ${String(r.score).length>5?'long-score':''}">${fmt(r.score)}</span>`,personal?'leader-row personal-row':'leader-row',`data-rank="${r.rank}" aria-label="${r.rank}. ${escapeHTML(r.name)}, ${fmt(r.score)} ${t('score')}"`);
+  return `<section class="menu-scene leaderboard-screen" data-scene-width="887" data-scene-height="1774" aria-label="${t('leaderboard')}">
+    <img class="scene-layer" src="assets/ui-v3/leaderboard-layer.png" alt="" aria-hidden="true">
+    ${hud()}<div class="scene-brand" role="img" aria-label="Robot Pulse"></div>
+    <h1 class="leader-title scene-title metal-text">${t('leaderboard')}</h1>
+    <div class="leader-tabs" role="group" aria-label="${t('rankingPeriod')}">${['monthly','master'].map((k,i)=>button('rank-tab',`${menuArt('tab-'+selected(k,rankingTab),((i===0&&rankingTab!==k)||(i===1&&rankingTab===k))?'mirror':'')}<span>${t(k)}</span>`,'leader-tab',`data-tab="${k}" aria-pressed="${rankingTab===k}"`)).join('')}</div>
+    <div class="leader-regions" role="group" aria-label="${t('rankingRegion')}">${['global','country'].map((k,i)=>button('rank-region',`${menuArt('region-'+selected(k,rankingRegion),((i===0&&rankingRegion!==k)||(i===1&&rankingRegion===k))?'mirror':'')}<span>${t(k)}</span>`,'leader-region',`data-region="${k}" aria-pressed="${rankingRegion===k}"`)).join('')}</div>
+    ${button('ranking-info',`<span>${rankingTab==='monthly'?monthRemaining():t('allTime')}</span>`,'leader-period',`aria-label="${t('rankingPeriod')}: ${rankingTab==='monthly'?monthRemaining():t('allTime')}"`)}
+    <div class="leader-podium">${rows.slice(0,3).map(r=>`<article class="leader-pilot place-${r.rank}" aria-label="${r.rank}. ${escapeHTML(r.name)}, ${fmt(r.score)} ${t('score')}"><div class="leader-character">${pilotArt(r.skin)}</div><b class="leader-medal">${r.rank}</b><strong class="leader-pilot-name">${escapeHTML(r.name)}</strong><span class="leader-pilot-score ${String(r.score).length>5?'long-score':''}">${fmt(r.score)}</span></article>`).join('')}</div>
+    <div class="leader-list">${rows.filter(r=>r.rank>3&&!r.player).slice(0,3).map(r=>row(r)).join('')}</div>
+    ${row(player,true)}
+    ${button('ranking-info',t('rankingNote'),'leader-info')}
+    ${nav()}
   </section>`;
 }
 
@@ -251,7 +265,7 @@ function showEnergy() {
   refreshEnergy(profile);
   const ms=Math.max(0,RECHARGE_MS-(Date.now()-profile.energyAt)),minutes=Math.ceil(ms/60000);
   const wasRunning=engine?.isRunning&&screen==='game';if(wasRunning)engine.pause();
-  openModal(t('energy'),`<div class="energy-display">${icon('battery')}<b>${profile.energy} / 5</b></div><p>${t('energyInfo')}</p>${profile.energy<5?`<p>${t('nextCharge')}: ${minutes} min</p>`:`<p>${t('full')}</p>`}${profile.energy<5?button('refill',`${t('recharge')} · 120 ${t('coins')}`,'primary'):''}`,[{label:t('gotIt'),primary:true}],{onClose:()=>{if(wasRunning)engine?.resume();}});
+  openModal(t('energy'),`<div class="energy-display"><span class="modal-battery">${menuArt('battery')}<b>${profile.energy}</b></span><strong>/ 5</strong></div><p>${t('energyInfo')}</p>${profile.energy<5?`<p>${t('nextCharge')}: ${minutes} min</p>`:`<p>${t('full')}</p>`}${profile.energy<5?button('refill',`${t('recharge')} · 120 ${t('coins')}`,'primary'):''}`,[{label:t('gotIt'),primary:true}],{onClose:()=>{if(wasRunning)engine?.resume();}});
 }
 
 function openModal(title,body,actions,options={}) {
@@ -285,6 +299,7 @@ function handleAction(target) {
     case 'pause':showPause();break;
     case 'rank-tab':rankingTab=target.dataset.tab;render();break;
     case 'rank-region':rankingRegion=target.dataset.region;render();break;
+    case 'rank-pilot':{const pilot=rankingRows().find(r=>r.rank===Number(target.dataset.rank));if(pilot)openModal(pilot.name,`<div class="profile-pilot-art">${pilotArt(pilot.skin)}</div><p>${t('score')}: <strong>${fmt(pilot.score)}</strong></p><p>${t('rankingBody')}</p>`,[{label:t('gotIt'),primary:true}]);break;}
     case 'ranking-info':openModal(t('leaderboard'),`<p>${t('rankingBody')}</p>`,[{label:t('gotIt'),primary:true}]);break;
     case 'close-modal':closeModal();break;
     case 'modal-action':{const a=modal?.actions[Number(target.dataset.index)];closeModal();a?.run?.();break;}
@@ -327,6 +342,11 @@ document.addEventListener('robotpulse:pause',()=>{if(screen==='game'&&engine?.is
 setInterval(()=>{
   const previous=profile.energy;refreshEnergy(profile);
   if(previous!==profile.energy){save();if(screen!=='game'&&!modal)render();}
+  document.querySelectorAll('.ui-energy-number,.modal-battery>b').forEach(el=>el.textContent=profile.energy);
+  const chargeLabel=document.querySelector('.ui-energy-label');
+  if(chargeLabel)chargeLabel.textContent=profile.energy===MAX_ENERGY?t('max'):Math.ceil(Math.max(0,RECHARGE_MS-(Date.now()-profile.energyAt))/60000)+'m';
+  const period=document.querySelector('.leader-period span');
+  if(period&&rankingTab==='monthly')period.textContent=monthRemaining();
   persistSession();
 },1000);
 

@@ -1,3 +1,4 @@
+import { monthKey } from './ranking.js';
 export const SAVE_KEY = 'robot-pulse-v1';
 export const MAX_ENERGY = 5;
 export const RECHARGE_MS = 30 * 60 * 1000;
@@ -12,7 +13,7 @@ export const SKINS = [
 ];
 
 export function defaultProfile(now = Date.now()) {
-  return { version: 1, coins: 200, energy: 5, energyAt: now, bestScore: 0, bestStars: 0, wins: 0, language: 'en', sound: true, music: true, skin: 'cyan', ownedSkins: ['cyan'], dailyClaim: '', rewardedRuns: [], lostRuns: [], session: null, tutorialSeen: false };
+  return { version: 1, coins: 200, energy: 5, energyAt: now, bestScore: 0, monthlyKey: monthKey(now), monthlyScore: 0, bestStars: 0, wins: 0, language: 'en', sound: true, music: true, skin: 'cyan', ownedSkins: ['cyan'], dailyClaim: '', rewardedRuns: [], lostRuns: [], session: null, tutorialSeen: false };
 }
 
 const bounded = (v, max, fallback = 0) => Number.isFinite(v) ? Math.max(0, Math.min(max, Math.floor(v))) : fallback;
@@ -23,6 +24,8 @@ export function sanitizeProfile(raw, now = Date.now()) {
   p.energy = bounded(raw.energy, MAX_ENERGY, 5);
   p.energyAt = Number.isFinite(raw.energyAt) ? Math.min(now, Math.max(0, raw.energyAt)) : now;
   p.bestScore = bounded(raw.bestScore, 1000000);
+  p.monthlyKey = monthKey(now);
+  p.monthlyScore = raw.monthlyKey === p.monthlyKey ? bounded(raw.monthlyScore, 1000000) : 0;
   p.bestStars = bounded(raw.bestStars, 3);
   p.wins = bounded(raw.wins, 1000000);
   p.language = raw.language === 'es' ? 'es' : 'en';
@@ -55,12 +58,14 @@ export function loseRun(p, id, now = Date.now()) {
   return true;
 }
 
-export function winRun(p, id, result) {
+export function winRun(p, id, result, now = Date.now()) {
   if (p.rewardedRuns.includes(id) || p.lostRuns.includes(id)) return 0;
   const reward = p.wins ? 10 : 40;
   p.coins += reward;
   p.wins++;
   p.bestScore = Math.max(p.bestScore, result.score);
+  if (p.monthlyKey !== monthKey(now)) { p.monthlyKey = monthKey(now); p.monthlyScore = 0; }
+  p.monthlyScore = Math.max(p.monthlyScore || 0, result.score);
   p.bestStars = Math.max(p.bestStars, result.stars);
   p.rewardedRuns = [...p.rewardedRuns.slice(-49), id];
   p.session = null;
