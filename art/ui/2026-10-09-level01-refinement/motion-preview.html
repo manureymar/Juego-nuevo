@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="es">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Robot Pulse · Muestra de movimiento</title>
+<style>
+  *{box-sizing:border-box}body{margin:0;background:#020917;color:#e7f8ff;font:16px system-ui;display:grid;place-items:center;min-height:100svh}
+  main{width:min(100%,720px);text-align:center}canvas{display:block;width:100%;height:auto;touch-action:manipulation}
+  p{margin:0;padding:12px 20px 24px;color:#a8c8db}button{font:inherit;border:1px solid #54defb;border-radius:8px;background:#123249;color:white;padding:10px 24px;margin:0 0 20px;cursor:pointer}
+  .capture p,.capture button{display:none}
+</style>
+<main><canvas aria-label="Seis robots en tres columnas de lanzamiento. Toca uno de los tres robots delanteros para lanzarlo."></canvas><p>Toca un robot de delante. El siguiente avanza a su plataforma.</p><button>Reiniciar muestra</button></main>
+<script>
+// Isolated art/motion review. This file does not modify the game's engine or APK.
+const params=new URLSearchParams(location.search),eyeMode=params.get('mode')==='eyes';
+if(params.has('capture'))document.body.classList.add('capture');
+const canvas=document.querySelector('canvas'),ctx=canvas.getContext('2d');
+canvas.width=eyeMode?512:720;canvas.height=eyeMode?650:800;
+const atlas=new Image();atlas.src='robots-blank-faces.png';
+const regions=[
+ {x:0,y:210,w:526,h:620,eyes:[[252,408],[302,408]],color:'#33dfff'},
+ {x:526,y:210,w:493,h:620,eyes:[[748,408],[799,408]],color:'#ffc431'},
+ {x:1019,y:210,w:517,h:620,eyes:[[1253,408],[1304,408]],color:'#b976ff'}
+];
+let serial=0,queues=[],launched=[],now=0;
+const clamp=n=>Math.min(1,Math.max(0,n)),ease=n=>1-Math.pow(1-clamp(n),3);
+function reset(){serial=0;queues=[[0,2,1,0],[1,0,2,1],[2,1,0,2]].map((colors,col)=>colors.map((color,i)=>({id:serial++,color,ammo:color===0?14:color===1?7:4,happyUntil:-1})));launched=[];}
+reset();
+function launch(col,t=now){const q=queues[col];if(!q?.length||launched.some(a=>a.col===col&&t-a.start<.64))return false;
+ const robot=q.shift();launched.push({col,start:t,robot});
+ if(q[0])q[0].happyUntil=t+1.2;
+ if(q.length<3){const color=(q.at(-1).color+1+col%2)%3;q.push({id:serial++,color,ammo:color===0?14:color===1?7:4,happyUntil:-1});}
+ return true;
+}
+function background(){const w=canvas.width,h=canvas.height;ctx.clearRect(0,0,w,h);const g=ctx.createRadialGradient(w*.5,h*.48,10,w*.5,h*.48,h*.7);g.addColorStop(0,'#103044');g.addColorStop(.65,'#061528');g.addColorStop(1,'#020814');ctx.fillStyle=g;ctx.fillRect(0,0,w,h);
+ ctx.strokeStyle='#1e516455';ctx.lineWidth=1;
+ for(let y=h*.68;y<h;y+=30){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(w,y);ctx.stroke();}
+ for(let x=-w;x<w*2;x+=w/8){ctx.beginPath();ctx.moveTo(w/2+(x-w/2)*.3,h*.65);ctx.lineTo(x,h);ctx.stroke();}
+}
+function drawEyes(r,t,joy,seed){const cycle=(t+seed*.63)%4.4;let openness=1;
+ if(cycle>1.1&&cycle<1.32)openness=Math.max(.09,Math.abs(cycle-1.21)/.11);
+ ctx.save();ctx.fillStyle='#fff2af';ctx.strokeStyle='#fff2af';ctx.shadowColor='#ffb93a';ctx.shadowBlur=14;
+ for(const [ex,ey]of r.eyes){const x=ex-r.x,y=ey-r.y;
+  if(joy&&openness>.3){ctx.lineWidth=8;ctx.lineCap='round';ctx.beginPath();ctx.moveTo(x-10,y+4);ctx.quadraticCurveTo(x,y-13,x+10,y+4);ctx.stroke();}
+  else{const h=29*openness;ctx.beginPath();ctx.roundRect(x-9,y-h/2,18,h,Math.min(4,h/2));ctx.fill();}
+ }ctx.restore();
+}
+function robot(body,x,y,w,t,{joy=false,alpha=1,ammo=false}={}){const r=regions[body.color],scale=w/r.w;
+ ctx.save();ctx.globalAlpha=alpha;ctx.translate(x,y);ctx.scale(scale,scale);
+ ctx.drawImage(atlas,r.x,r.y,r.w,r.h,0,0,r.w,r.h);drawEyes(r,t,joy,body.id);
+ if(ammo){ctx.shadowBlur=0;ctx.fillStyle='#07192d';ctx.strokeStyle='#61d6ff';ctx.lineWidth=3;ctx.beginPath();ctx.roundRect(r.w*.38,550,r.w*.25,53,7);ctx.fill();ctx.stroke();ctx.fillStyle='#f4fbff';ctx.font='bold 41px system-ui';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(body.ammo,r.w*.505,577);}
+ ctx.restore();
+}
+function draw(t){now=t;background();if(eyeMode){robot({id:0,color:0},16,30,480,t,{joy:t%6>2&&t%6<4.25});return;}
+ const xs=[8,248,488];
+ // Draw rear row first. At most two queue entries per lane are ever visible.
+ for(let col=0;col<3;col++){const active=launched.findLast(a=>a.col===col&&t-a.start<.68),dt=active?t-active.start:2;
+   const arrival=ease((dt-.12)/.5),rear=queues[col][1];
+   if(rear)robot(rear,xs[col]+24,210+(1-arrival)*-28,192,t,{alpha:arrival,ammo:true,joy:t<rear.happyUntil});
+ }
+ for(let col=0;col<3;col++){const active=launched.findLast(a=>a.col===col&&t-a.start<.68),dt=active?t-active.start:2;
+   const arrival=ease((dt-.09)/.48),front=queues[col][0];
+   if(front)robot(front,xs[col]+24*(1-arrival),210+265*arrival,192+42*arrival,t,{ammo:true,joy:t<front.happyUntil});
+ }
+ for(const a of launched){const p=clamp((t-a.start)/.46);if(p>=1)continue;
+  robot(a.robot,xs[a.col],475-400*ease(p),234*(1-.2*p),t,{alpha:1-p,joy:true,ammo:true});
+ }
+}
+canvas.addEventListener('pointerdown',e=>{if(eyeMode)return;const b=canvas.getBoundingClientRect(),x=(e.clientX-b.left)*720/b.width,y=(e.clientY-b.top)*800/b.height;if(y>=440)launch(Math.min(2,Math.floor(x/240)));});
+document.querySelector('button').onclick=()=>reset();
+let origin=performance.now();function frame(ms){draw((ms-origin)/1000);if(!window.manualFrames)requestAnimationFrame(frame);}
+window.renderAt=(t)=>{window.manualFrames=true;draw(t);};
+window.renderDemo=(t)=>{window.manualFrames=true;reset();for(const [time,col]of [[1.2,0],[3.1,1],[5,2]])if(t>=time)launch(col,time);draw(t);};
+window.motionReady=atlas.decode().then(()=>{window.ready=true;requestAnimationFrame(frame);});
+</script>
+</html>

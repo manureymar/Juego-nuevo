@@ -1,0 +1,65 @@
+{
+  "image": "robots-blank-faces.png",
+  "width": 1536,
+  "height": 1024,
+  "regions": [
+    {
+      "name": "cyan",
+      "rect": [
+        0,
+        210,
+        526,
+        620
+      ],
+      "eyes": [
+        [
+          252,
+          408
+        ],
+        [
+          302,
+          408
+        ]
+      ]
+    },
+    {
+      "name": "gold",
+      "rect": [
+        526,
+        210,
+        493,
+        620
+      ],
+      "eyes": [
+        [
+          748,
+          408
+        ],
+        [
+          799,
+          408
+        ]
+      ]
+    },
+    {
+      "name": "violet",
+      "rect": [
+        1019,
+        210,
+        517,
+        620
+      ],
+      "eyes": [
+        [
+          1253,
+          408
+        ],
+        [
+          1304,
+          408
+        ]
+      ]
+    }
+  ],
+  "coordinateSystem": "Eye anchors are in global source atlas pixels; subtract region origin when drawing a cropped sprite."
+}
