@@ -42,3 +42,26 @@ Below podium a clean list of exactly three compact horizontal player cards with 
 "6" / "AXIS" / "940".
 Then a pinned player card just above the bottom navigation, brighter cyan with a restrained gold edge. Exact content "128" / our cyan robot avatar / "YOU" / "470". It must be completely visible with comfortable padding.
 Same bottom navigation SHOP / HOME / LEADERBOARD, only LEADERBOARD selected and illuminated cyan with a gold trophy. Keep all three labels visible. Dark navy quiet hangar background; no distracting battle. Readable English text, consistent alignment and spacing, full phone-height UI inside the image, no cropping, no phone mockup, no explanation outside screenshot.
+
+
+## Actualización: batería de energía
+
+Edición localizada con imagegen integrada. Se reemplaza el corazón por una batería cian con contador 5; se conserva MAX y el resto de cada pantalla.
+
+### HOME
+
+Use case: precise-object-edit. Edit this existing Robot Pulse HOME screenshot with ONE localized change.
+Replace ONLY the red heart icon in the top resource bar (the heart containing the numeral 5, immediately to the left of MAX) with a compact futuristic BATTERY icon in exactly that location and similar footprint. Battery design: a horizontal rectangular energy cell with a small positive terminal on the right, beveled dark gunmetal outline, bright cyan charged interior, and the existing white numeral "5" centered prominently inside with a dark outline for readability. It must look unmistakably like a battery, not a heart or shield. Keep "MAX" to its right exactly as it is. The battery represents five remaining energy charges / attempts; this is a thematic replacement for lives.
+Preserve EVERYTHING else: exact screen layout and portrait aspect, all HUD elements, logo, text, numbers, unlock cards, level path, original single-cannon robot, PLAY button, background, bottom nav and selected HOME state. Do not redesign or add anything else. No red heart remains. Full original screenshot, no cropping, opaque background.
+
+### SHOP
+
+Use case: precise-object-edit. Image 1 is the SHOP screen to edit. Image 2 is ONLY a reference for the battery icon in the top HUD.
+Make exactly one tiny localized change to Image 1: replace the red heart containing "5", immediately left of "MAX" in the top resource bar, with precisely the same cyan horizontal BATTERY icon shown in that position in Image 2. Match the reference battery's gunmetal rectangular bevel, right-side positive terminal, cyan charged interior and prominent white "5" with dark outline. Same position and scale as the original heart. Keep the adjacent word "MAX" unchanged. This depicts remaining robot energy charges.
+Preserve ALL other pixels and content of Image 1 as faithfully as possible: screenshot proportions and framing, logo, HUD coins and gear, all text, prices or scores, panels, background, and active bottom navigation state. This remains the SHOP page, not HOME. Do not borrow any central content from image 2. No red heart remains. No other changes. Output full portrait screenshot on opaque background, no cropping.
+
+### LEADERBOARD
+
+Use case: precise-object-edit. Image 1 is the LEADERBOARD screen to edit. Image 2 is ONLY a reference for the battery icon in the top HUD.
+Make exactly one tiny localized change to Image 1: replace the red heart containing "5", immediately left of "MAX" in the top resource bar, with precisely the same cyan horizontal BATTERY icon shown in that position in Image 2. Match the reference battery's gunmetal rectangular bevel, right-side positive terminal, cyan charged interior and prominent white "5" with dark outline. Same position and scale as the original heart. Keep the adjacent word "MAX" unchanged. This depicts remaining robot energy charges.
+Preserve ALL other pixels and content of Image 1 as faithfully as possible: screenshot proportions and framing, logo, HUD coins and gear, all text, prices or scores, panels, background, and active bottom navigation state. This remains the LEADERBOARD page, not HOME. Do not borrow any central content from image 2. No red heart remains. No other changes. Output full portrait screenshot on opaque background, no cropping.

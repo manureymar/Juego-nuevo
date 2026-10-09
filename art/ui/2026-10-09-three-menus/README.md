@@ -10,9 +10,13 @@ Conceptos visuales solicitados el 9 de octubre de 2026. Tres imágenes independi
 
 ## Diseño compartido
 
-Robot original cian con visor oscuro, ojos cálidos, antena ámbar y un solo cañón lateral. Paneles azul marino, acentos cian y acciones doradas. Barra superior con perfil, vidas, monedas y ajustes. Navegación inferior en el orden SHOP / HOME / LEADERBOARD.
+Robot original cian con visor oscuro, ojos cálidos, antena ámbar y un solo cañón lateral. Paneles azul marino, acentos cian y acciones doradas. Barra superior con perfil, energía (batería), monedas y ajustes. Navegación inferior en el orden SHOP / HOME / LEADERBOARD.
 
 La presentación de batalla existente sigue siendo la apertura del juego. HOME es el menú de campaña posterior.
+
+## Energía del robot — actualización del 9 de octubre
+
+Por decisión del usuario, una batería cian sustituye al corazón en HOME, SHOP y LEADERBOARD. Representa los intentos disponibles del robot. Se conserva la capacidad mostrada de cinco cargas: una derrota consume una carga. Con energía completa, el indicador muestra 5 MAX. Esta es una definición visual y de comportamiento pendiente de implementar; no establece tiempos de recarga ni precios de recuperación.
 
 ## Contenido de cada pantalla
 
