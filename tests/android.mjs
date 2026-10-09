@@ -82,7 +82,7 @@ try{
   await page.locator('.home-screen').waitFor();
   await capture('02-home');
   await nativeTap(page,'.bottom-nav [data-action=shop]');
-  await page.locator('.shop-screen').waitFor();
+  await page.locator('[data-action=pack]').first().waitFor();
   await capture('03-shop-en');
   assert.ok(await page.locator('#menu-music').evaluate(a=>a.currentTime)>=time,'Navigation must not restart music');
   assert.equal(await page.locator('[data-action=pack]').count(),6);
