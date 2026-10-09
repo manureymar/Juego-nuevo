@@ -1,0 +1,45 @@
+{
+  "schema_version": 1,
+  "status": "proposed_visual_spec_not_implemented",
+  "theme": "orbital_station_2d",
+  "palette": {
+    "background": "#0B1220",
+    "panel": "#172638",
+    "panel_edge": "#355573",
+    "text": "#F2F6FF",
+    "text_secondary": "#9BB4D1",
+    "cyan": "#20D9ED",
+    "coral": "#FF747A",
+    "amber": "#FFC640",
+    "violet": "#A66BFF"
+  },
+  "layout": {
+    "board_aspect_ratio": 1,
+    "waiting_slots": 5,
+    "queue_columns": 3,
+    "conveyor_capacity": 5,
+    "minimum_touch_target_logical_pixels": 48
+  },
+  "components": {
+    "pixel": "tinted_square",
+    "launcher": "reusable_arrowhead_drone_sprite_with_dynamic_ammo_text",
+    "rail": "closed_square_path_with_chamfered_corners",
+    "frame": "modular_2d_panels",
+    "background": "static_starfield_layer",
+    "projectile": "small_tinted_square",
+    "particle": "small_tinted_square"
+  },
+  "rendering": {
+    "real_time_3d_required": false,
+    "skeletal_animation_required": false,
+    "bloom_required": false,
+    "number_rotates_with_body": false,
+    "lighting": "sprite_edges_and_simple_alpha_accents"
+  },
+  "notes": [
+    "Paleta objetivo propuesta; no es una extracción exacta de los colores del PNG.",
+    "Separar cuerpo, número y efectos de cada nave.",
+    "Mantener la cabecera de cada cola junto al tablero.",
+    "El boceto no valida niveles ni mide rendimiento."
+  ]
+}
