@@ -70,7 +70,7 @@ function hud() {
   const recharge=profile.energy===MAX_ENERGY?t('max'):Math.ceil(Math.max(0,RECHARGE_MS-(Date.now()-profile.energyAt))/60000)+'m';
   return `<header class="hud ui-hud">
     ${button('profile',menuArt('avatar'),'ui-avatar',`aria-label="${t('profile')}"`)}
-    ${button('energy',`${sprite('section-plaque')}<span class="hud-battery">${sprite(profile.energy?'battery-full':'battery-low')}</span><b class="ui-energy-number">${profile.energy}</b><span class="ui-energy-label">${recharge}</span>`,'ui-energy',`aria-label="${t('energy')} ${profile.energy} / 5"`)}
+    ${button('energy',`${sprite('button-secondary')}<span class="hud-battery">${sprite(profile.energy?'battery-full':'battery-low')}</span><b class="ui-energy-number">${profile.energy}</b><span class="ui-energy-label">${recharge}</span>`,'ui-energy',`aria-label="${t('energy')} ${profile.energy} / 5"`)}
     ${button('coins',`${menuArt('currency')}<b class="ui-coin-number">${coins}</b>`,'ui-currency',`aria-label="${t('coins')}: ${profile.coins}"`)}
     ${button('settings',menuArt('settings'),'ui-settings',`aria-label="${t('settings')}"`)}
   </header>`;
@@ -287,7 +287,7 @@ function showTutorial() {
 function showSettings() {
   const wasRunning=engine?.isRunning&&screen==='game';if(wasRunning)engine.pause();
   const toggle=(name,value)=>button('toggle-'+name,`${sprite(value?'toggle-on':'toggle-off')}<span>${t(value?'on':'off')}</span>`,'toggle-button',`aria-pressed="${value}" aria-label="${t(name)}"`);
-  openModal(t('settings'),`<div class="settings-row"><span>${icon('globe')}${t('language')}</span><div class="language-options">${['en','es'].map(l=>button('set-language',`${sprite(profile.language===l?'tab-selected':'tab-idle')}<span>${l.toUpperCase()}</span>`,'language-tab',`data-language="${l}" aria-pressed="${profile.language===l}"`)).join('')}</div></div><div class="settings-row"><span>${icon('sound')}${t('sound')}</span>${toggle('sound',profile.sound)}</div><div class="settings-row"><span>${icon('music')}${t('music')}</span>${toggle('music',profile.music)}</div><div class="settings-row"><span>${t('energy')}</span><span class="settings-battery">${sprite(profile.energy?'battery-full':'battery-low')}<b>${profile.energy}</b></span><strong>${t('max')}</strong></div>`,[{label:t('close'),primary:true}],{kind:'settings',onClose:()=>{if(wasRunning)engine?.resume();}});
+  openModal(t('settings'),`<div class="settings-row"><span>${icon('globe')}${t('language')}</span><div class="language-options">${['en','es'].map(l=>button('set-language',`${sprite(profile.language===l?'tab-selected':'tab-idle')}<span>${l.toUpperCase()}</span>`,'language-tab',`data-language="${l}" aria-pressed="${profile.language===l}"`)).join('')}</div></div><div class="settings-row"><span>${icon('sound')}${t('sound')}</span>${toggle('sound',profile.sound)}</div><div class="settings-row"><span>${icon('music')}${t('music')}</span>${toggle('music',profile.music)}</div><div class="settings-row"><span>${t('energy')}</span><span class="settings-battery">${sprite(profile.energy?'battery-full':'battery-low')}<b>${profile.energy}</b></span><strong>${profile.energy===5?t('max'):'/ 5'}</strong></div>`,[{label:t('close'),primary:true}],{kind:'settings',onClose:()=>{if(wasRunning)engine?.resume();}});
 }
 
 function showEnergy() {
@@ -331,6 +331,7 @@ function showTool(key){
     openModal(t('tool_future'),`<div class="modal-symbol">${icon('lock')}</div><p>${t('futureToolBody')}</p>`,[{label:t('gotIt'),primary:true}]);return;
   }
   const pack=TOOL_PACKS[key];if(!pack)return;
+  if(key==='bay'&&engine.waiting.length>engine.level.parkingCapacity){toast(t('bayLimit'));return;}
   const actions=[];
   if(profile.tools[key]>0)actions.push({label:t('useTool'),primary:true,run:()=>activateTool(key)});
   actions.push({label:`${t('getTools')} ×${pack.count} · ${fmt(pack.cost)}`,primary:!profile.tools[key],run:()=>{

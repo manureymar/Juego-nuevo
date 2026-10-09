@@ -101,3 +101,28 @@ html[lang=es] .master-title{font-size:44px}
 
 .ui-energy .hud-battery{position:absolute;left:5%;top:14%;width:54%;height:71%}.ui-energy .ui-energy-number{left:7%;top:17%;width:43%;height:62%;font-size:4.2cqw;-webkit-text-stroke:.45cqw #00273a}.ui-energy .ui-energy-label{left:60%;right:8%;font-size:3.25cqw}
 .game-help{width:58px;height:58px}.queue-unit.depth-1{top:57px;height:136px}
+/* Preserve character proportions and give the three queue rows more space. */
+.game-scene .board-wrap{left:100px;top:276px;width:687px;height:687px}
+.game-scene .mission-progress{top:239px}
+.game-scene .game-heading{top:139px;height:99px}
+.game-heading .mission-heading h1{font-size:38px;line-height:1.15}.mission-heading p{font-size:23px;margin-top:5px}
+.game-scene .bay-heading{top:970px}.game-scene .waiting-bays{top:1009px;height:120px}
+.game-scene .empty-bay,.game-scene .waiting-robot{height:120px}
+.game-scene .queue-heading{top:1140px}.game-scene .launch-queues{top:1182px;height:414px}
+.game-scene .queue-unit.depth-0{width:205px;height:226px;bottom:0}
+.game-scene .queue-unit.depth-1{width:174px;height:191px;top:81px}
+.game-scene .queue-unit.depth-2{width:132px;height:145px;top:0}
+.game-scene .queue-unit .ammo-badge{bottom:9px;right:-3px}
+.modal.art-modal{padding-left:49px;padding-right:49px}
+.art-modal h2{font-size:21px;transform:translateY(13px)}
+.art-modal.settings h2{transform:translateY(10px)}
+.settings-row{font-size:13px}.settings-row .game-icon{width:27px;height:27px}
+.settings-row .language-tab{width:45px}.settings-row .toggle-button{width:76px}
+.art-modal .result-grid b{font-size:18px}
+/* Nine atlas slices preserve bevel thickness as buttons and plaques resize. */
+.gp-sliced{position:absolute;inset:0;display:grid;grid-template-columns:var(--slice-x,28px) 1fr var(--slice-x,28px);grid-template-rows:var(--slice-y,14px) 1fr var(--slice-y,14px);pointer-events:none}
+.gp-sliced>.gp-sprite{position:relative;inset:auto;width:100%;height:100%;min-width:0;min-height:0}
+.game-scene .mission-heading>.gp-sliced{--slice-x:60px;--slice-y:25px}
+.ui-energy>.gp-sliced{--slice-x:3cqw;--slice-y:1.5cqw}
+.belt-label>.gp-sliced{--slice-x:25px;--slice-y:9px}
+.art-modal .skin-button>.gp-sliced{--slice-x:14px;--slice-y:12px}
