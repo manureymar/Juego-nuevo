@@ -19,7 +19,7 @@ El documento inicial describe una posible investigación y desarrollo completos,
 
 ## Referencias visuales actuales
 
-- [Arte de apertura de Robot Pulse](art/presentacion/2026-10-09-robot-pulse-v1/README.md).
+- [Arte de apertura: combate de píxeles](art/presentacion/2026-10-09-robot-pulse-v2-accion/README.md).
 - [Robot con cañón: concepto y vista cenital](art/personajes/2026-10-09-robot-canon-v2/README.md).
 - [Cinco figuras pixeladas](art/figuras/2026-10-08-cinco-conceptos/README.md).
 - [Interfaz futurista: referencia de escenario](art/concepts/2026-10-08-v3-futurista/README.md).

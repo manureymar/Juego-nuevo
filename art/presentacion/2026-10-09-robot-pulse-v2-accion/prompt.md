@@ -1,0 +1,21 @@
+# Prompt de apertura de acción
+
+Modo: herramienta integrada de imágenes, composición nueva con referencia de identidad.
+
+Referencia: art/personajes/2026-10-09-robot-canon-v2/01-robot-canon-v2.png.
+
+```text
+Use case: ads-marketing / cinematic game key art.
+Create a completely NEW ACTION ILLUSTRATION for the opening of "ROBOT PULSE". The user rejected the earlier splash because it looked like a demonstration of a butterfly pixel puzzle. They now want real dramatic KEY ART: the little hero robot firing its cannon in the middle of a spectacular science-fiction battle against pixel constructs.
+The attached image is ONLY the approved ROBOT CHARACTER IDENTITY reference. Use its large three-quarter character as reference: compact cyan chamfered armor, graphite chassis, pale titanium trim, dark upward/front-slanted digital visor with two warm-white pixel eyes, stepped antenna with amber lamp, short stable feet/skids and ONE right-side energy cannon with a thick rectangular barrel and glowing square muzzle. Same recognizable little character and cannon, no human pilot, no redesign into a humanoid soldier.
+FORMAT: one portrait 9:16 full-bleed painterly-polished stylized commercial game illustration. This is a cinematic cover image, not a UI mockup, character sheet, diagram or screenshot.
+SCENE AND ACTION:
+A low dynamic camera close to the floor of a breached futuristic orbital foundry. The heroic cyan robot fills the foreground and lower-middle, braced with one little foot forward and body twisting into a powerful cannon shot. Face fully visible, alert determined eyes with a hint of its friendly personality. Show an unmistakable brilliant short cyan muzzle flare, a concentrated energy pulse travelling diagonally toward the upper-right and a vivid IMPACT where square pixel blocks explode apart. The robot has weight and momentum, weapon recoil and flying sparks; it is actively fighting, not standing still posing.
+The adversary is a massive abstract menacing VOXEL CONSTRUCT built entirely from hundreds of visible small colored CUBES, advancing from the right/back of the scene. Jagged block-built armored limbs and a simple angular glowing core imply a fictional digital enemy, not a realistic animal. Cyan outer blocks where the shot lands break into flying square fragments; purple, coral and amber cubes form deeper intact layers. A second much smaller distant voxel swarm creates battlefield depth, but the composition stays focused on this ONE hero and ONE main impact.
+Dramatic cinematic storytelling: collapsed futuristic beams, a few angled structural silhouettes, cyan-lit floor seams, warm orange distant energy flashes, displaced cubical debris, rising stylized smoke, a star-filled breach far behind. Depth layers, strong diagonal action line, controlled motion blur only on sparks/debris, sharp robot face and cannon silhouette. It should feel like a brave small robot battling a storm of living pixels. Vibrant thrilling fantasy action, not grim realistic military war.
+LIGHTING: rich navy atmosphere, powerful cyan energy light on the robot, warm amber rim from behind, beautiful purple/coral pixel enemies, deep contrasted shadows with readable body silhouette. High-end stylized game illustration with intentional composition and textured brush-like atmospheric lighting, no flat clip art, no sterile product layout.
+BRANDING:
+Near the top, comfortably inside safe margins, the exact title "ROBOT PULSE" in bold sophisticated futuristic lettering, two lines if needed, correctly spelled with the T in ROBOT. Title should be striking but occupy at most 15–18 percent of the image so the action ART dominates. Ivory/titanium and cyan lettering with a small amber pulse-line accent.
+NO other text. No "Toca para comenzar", no progress bar, no counters, no buttons.
+ABSOLUTE AVOIDS: NO butterfly, NO bird, NO flower, NO ringed planet mosaic, NO recognizable sample-level figure, NO framed pixel picture, NO upright display screen, NO square gameplay board, NO conveyor diagram, NO UI panels, NO grid background, NO interface demonstration. Enemy cubes and energy fragments are physically present in the action scene, not pictures on screens. No gore, no humans, no real-world logos, no watermark. Make it unmistakably epic narrative game art.
+```
