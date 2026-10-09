@@ -4,25 +4,25 @@ Primera versión jugable de Robot Pulse: un puzle original de robots lanzadores,
 
 ## Probar en Android
 
-- [Descargar RobotPulse-0.4.0.apk](https://github.com/manureymar/Juego-nuevo/raw/refs/heads/main/downloads/RobotPulse-0.4.0.apk)
+- [Descargar RobotPulse-0.5.0.apk](https://github.com/manureymar/Juego-nuevo/raw/refs/heads/main/downloads/RobotPulse-0.5.0.apk)
 - [Estado de la compilación y pruebas](https://github.com/manureymar/Juego-nuevo/actions/workflows/android.yml)
 - [Instrucciones de instalación](docs/ANDROID.md)
 
-APK 0.4.0 disponible (69,7 MB): compilación, firma e instalación en emulador Android verificadas el 9 de octubre de 2026. Es una versión de prueba firmada para instalación directa, no una publicación en Google Play. Compatible con Android 8.0 o posterior.
+APK 0.5.0 disponible (75,4 MB): compilación, firma e instalación en emulador Android verificadas el 9 de octubre de 2026. Es una versión de prueba firmada para instalación directa, no una publicación en Google Play. Compatible con Android 8.0 o posterior.
 
-[Capturas reales de las pantallas y del nivel](docs/screenshots-v0.4/README.md) · [Informe de verificación](docs/VERIFICATION.md)
+[Capturas reales de las pantallas y del nivel](docs/screenshots-v0.5/README.md) · [Informe de verificación](docs/VERIFICATION.md)
 
 ## Qué incluye
 
 - Apertura con el fondo de batalla, el logo original y el botón PLAY/JUGAR, sin textos adicionales.
-- HOME: arte de campaña integrado, robot con acabado seleccionable, nivel 1 y continuación de la partida guardada; sin scroll.
-- SHOP: arte integrado, seis paquetes y panel de monedas gratis, sin scroll y con navegación inferior visible. Compras de prueba con confirmación, sin cobros reales. Recarga desde la batería; acabados desde el avatar.
+- HOME: arte de campaña integrado, robot ilustrado, nivel 1 y continuación de la partida guardada; sin scroll.
+- SHOP: arte integrado, seis paquetes y panel de monedas gratis, sin scroll y con navegación inferior visible. Compras de prueba con confirmación, sin cobros reales. Recarga desde la batería.
 - LEADERBOARD: podios y robots ilustrados, clasificación mensual, posición personal dinámica y archivo Máster de podios por mes, sin scroll. Rivales de ejemplo locales, sin servidor.
 - Nivel 1 completo: figura sencilla de 42 píxeles, tres colores, robots cenitales, munición exacta por color, cinta para cinco robots y cinco espacios de espera independientes.
 - Disparos automáticos solo al primer bloque expuesto de su color. Relanzamiento de robots que vuelven con munición.
-- Tres filas visibles de robots y herramientas funcionales: bandeja extra, selección de robot y mezcla de colas.
+- Seis robots visibles en tres columnas y dos filas, con plataformas, avance animado y ojos expresivos y herramientas funcionales: bandeja extra, selección de robot y mezcla de colas.
 - Victoria, premio, puntuación, estrellas, pausa, derrota, reinicio y continuidad al cerrar y abrir.
-- Batería con celda cian sencilla y número grande, compartida por las pantallas. Cinco cargas: cada derrota o abandono consume una; ganar no consume. Regeneración de prueba cada 30 minutos y recarga por 120 monedas.
+- Batería con celda cian sencilla y número grande, compartida por las pantallas. Cinco cargas: cada derrota o abandono consume una; ganar no consume. Cuenta regresiva MM:SS actualizada cada segundo y regeneración de prueba cada 30 minutos y recarga por 120 monedas.
 - Interfaz en inglés y español; título ROBOT PULSE siempre en inglés. Música aportada por el propietario, efecto de botón original y controles separados de música y efectos.
 
 Los niveles 2 y 3 se muestran bloqueados. El alcance implementado es el primer nivel, no una campaña completa. La economía es ajustable y de prueba. No hay anuncios, cuentas, pagos reales ni servicios de terceros dentro de la app.
@@ -64,7 +64,7 @@ Por instrucción del propietario, **este repositorio es el único destino perman
 
 ## Referencias visuales
 
-- [Nivel, herramientas y ventanas: integración 0.4.0](docs/UI-0.4.0.md).
+- [Nivel, herramientas y ventanas: integración 0.5.0](docs/UI-0.5.0.md).
 
 - [Pantalla inicial aprobada](art/presentacion/2026-10-09-robot-pulse-v3-play/README.md).
 - [Robot con cañón y vista cenital](art/personajes/2026-10-09-robot-canon-v2/README.md).
