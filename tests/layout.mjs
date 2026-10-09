@@ -3,10 +3,10 @@ export async function settleArt(page) {
   await page.waitForFunction(()=>!document.querySelector('#toast')?.classList.contains('visible')); 
   await page.evaluate(async()=>{
     await document.fonts.ready;
-    await Promise.all([...document.querySelectorAll('#app img')].map(img=>img.decode().catch(()=>{})));
+    await Promise.all([...document.querySelectorAll('#app img,#modal-root img')].map(img=>img.decode().catch(()=>{})));
     await new Promise(resolve=>requestAnimationFrame(()=>requestAnimationFrame(resolve)));
   });
-  const failed=await page.locator('#app img').evaluateAll(imgs=>imgs.filter(x=>!x.complete||!x.naturalWidth).map(x=>x.src));
+  const failed=await page.locator('#app img,#modal-root img').evaluateAll(imgs=>imgs.filter(x=>!x.complete||!x.naturalWidth).map(x=>x.src));
   assert.deepEqual(failed,[],'All artwork must load');
 }
 export async function assertControlsVisible(page,selector='#app button') {

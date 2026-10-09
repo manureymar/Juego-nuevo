@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <!-- No network, camera, account, microphone or storage permissions. -->
     <application android:allowBackup="false" android:label="Robot Pulse"
-        android:icon="@drawable/ic_robot_pulse" android:roundIcon="@drawable/ic_robot_pulse"
+        android:icon="@drawable/robot_pulse_launcher" android:roundIcon="@drawable/robot_pulse_launcher"
         android:theme="@style/AppTheme" android:usesCleartextTraffic="false"
         android:supportsRtl="true" android:enableOnBackInvokedCallback="false">
         <activity android:name=".MainActivity" android:exported="true"

@@ -2,6 +2,7 @@ import { monthKey } from './ranking.js';
 export const SAVE_KEY = 'robot-pulse-v1';
 export const MAX_ENERGY = 5;
 export const RECHARGE_MS = 30 * 60 * 1000;
+export const TOOL_PACKS={bay:{count:1,cost:300},select:{count:3,cost:1900},shuffle:{count:3,cost:1500}};
 export const PACKS = [
   { coins: 1000, price: '$1.99' }, { coins: 3000, price: '$4.99' }, { coins: 7500, price: '$9.99' },
   { coins: 16000, price: '$19.99' }, { coins: 40000, price: '$39.99' }, { coins: 90000, price: '$79.99' },
@@ -13,7 +14,7 @@ export const SKINS = [
 ];
 
 export function defaultProfile(now = Date.now()) {
-  return { version: 1, coins: 200, energy: 5, energyAt: now, bestScore: 0, monthlyKey: monthKey(now), monthlyScore: 0, bestStars: 0, wins: 0, language: 'en', sound: true, music: true, skin: 'cyan', ownedSkins: ['cyan'], dailyClaim: '', rewardedRuns: [], lostRuns: [], session: null, tutorialSeen: false };
+  return { version: 1, tools:{bay:1,select:1,shuffle:1}, coins: 200, energy: 5, energyAt: now, bestScore: 0, monthlyKey: monthKey(now), monthlyScore: 0, bestStars: 0, wins: 0, language: 'en', sound: true, music: true, skin: 'cyan', ownedSkins: ['cyan'], dailyClaim: '', rewardedRuns: [], lostRuns: [], session: null, tutorialSeen: false };
 }
 
 const bounded = (v, max, fallback = 0) => Number.isFinite(v) ? Math.max(0, Math.min(max, Math.floor(v))) : fallback;
@@ -21,6 +22,7 @@ export function sanitizeProfile(raw, now = Date.now()) {
   const p = defaultProfile(now);
   if (!raw || raw.version !== 1) return p;
   p.coins = bounded(raw.coins, 9999999, 200);
+  for(const key of Object.keys(TOOL_PACKS))p.tools[key]=bounded(raw.tools?.[key],999,1);
   p.energy = bounded(raw.energy, MAX_ENERGY, 5);
   p.energyAt = Number.isFinite(raw.energyAt) ? Math.min(now, Math.max(0, raw.energyAt)) : now;
   p.bestScore = bounded(raw.bestScore, 1000000);
@@ -89,6 +91,22 @@ export function buySkin(p, id) {
   }
   p.skin = id;
   return 'ok';
+}
+
+export function buyTools(p,key){
+  const pack=TOOL_PACKS[key];
+  if(!pack)return 'invalid';
+  if(p.tools[key]+pack.count>999)return 'full';
+  if(p.coins<pack.cost)return 'funds';
+  p.coins-=pack.cost;p.tools[key]+=pack.count;
+  return 'ok';
+}
+
+export function useTool(p,key,apply){
+  if(!TOOL_PACKS[key]||!p.tools[key])return {ok:false,error:'no_tools'};
+  const result=apply();
+  if(result.ok)p.tools[key]--;
+  return result;
 }
 
 export function localDate(now = new Date()) { return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`; }

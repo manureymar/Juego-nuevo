@@ -1,0 +1,103 @@
+/* Runtime pieces from the approved artwork; labels and hit areas remain live. */
+.gp-sprite{position:absolute;inset:0;display:block;overflow:hidden;pointer-events:none}
+.gp-sprite img{position:absolute;max-width:none;max-height:none;object-fit:fill;pointer-events:none}
+.game-icon{position:relative;inset:auto;display:inline-block;width:1.6em;height:1.6em;flex:none;vertical-align:middle}
+.game-backdrop{position:absolute;inset:0;overflow:hidden;background:#061324 url('assets/gameplay/hangar-background.png') center/cover}
+.game-scene{position:absolute;left:50%;top:50%;width:887px;height:1774px;display:block;padding:0;overflow:hidden;transform-origin:center;font-family:Tektur,system-ui,sans-serif;font-weight:800}
+.game-scene button{margin:0;padding:0;border:0;border-radius:0;background:none;box-shadow:none;min-height:0;font:inherit;letter-spacing:0}
+.game-scene button:active:not(:disabled){filter:brightness(1.2);transform:none}
+.game-scene .ui-hud{position:absolute;left:0;top:0;width:100%;height:140px}
+.game-scene .game-heading{position:absolute;left:37px;right:37px;top:145px;height:101px;display:flex;padding:0;gap:12px}
+.gp-icon-button{position:relative;width:99px;height:99px;flex:none;display:grid;place-items:center}
+.gp-icon-button .game-icon{width:61px;height:61px}
+.mission-heading{position:relative;flex:1;height:100%;display:flex;flex-direction:column;justify-content:center}
+.game-heading .mission-heading h1{position:relative;font-size:43px;line-height:1.1;text-transform:uppercase;text-shadow:0 3px #042940}
+.mission-heading p{position:relative;margin-top:4px;font-size:23px;line-height:1.2;text-transform:uppercase;color:#a7e4ff}
+.game-scene .mission-progress{position:absolute;left:100px;right:100px;top:249px;height:51px;display:flex;align-items:flex-start;gap:0;padding:0;font-size:20px;color:#bdeaff}
+.game-scene .progress-track{position:absolute;left:0;right:0;top:21px;width:100%;height:32px;background:none;border-radius:0;overflow:visible}
+.progress-track #progress-bar{position:absolute;left:8%;top:39%;height:23%;background:#48f4ff;box-shadow:0 0 12px #25cdff;border-radius:0}
+.game-scene .board-wrap{position:absolute;left:56px;top:300px;width:775px;height:775px;max-width:none;margin:0}
+.game-scene #board{width:100%;height:100%}
+.game-scene .belt-label{bottom:0;left:50%;width:330px;height:38px;border:0;border-radius:0;background:none;padding:0;display:grid;place-items:center;color:#c9eaff;font-size:20px}
+.belt-label>span:last-child{position:relative}
+.game-scene .bay-heading,.game-scene .queue-heading{position:absolute;left:50px;right:50px;display:flex;align-items:center;justify-content:space-between;padding:0;height:37px}
+.game-scene .bay-heading{top:1085px}.game-scene .queue-heading{top:1255px}
+.game-scene .bay-heading h2,.game-scene .queue-heading h2{font-size:24px;text-transform:uppercase;letter-spacing:2px;color:#c3ebff;text-shadow:0 2px 3px #001326}
+.game-scene .bay-heading>span{font-size:23px}
+.game-scene .waiting-bays{position:absolute;left:45px;right:45px;top:1124px;height:123px;display:grid;grid-template-columns:repeat(var(--bays,5),minmax(0,1fr));gap:8px}
+.game-scene .empty-bay,.game-scene .waiting-robot{position:relative;height:123px;width:100%;border:0;border-radius:0;background:none;box-shadow:none;display:block;padding:0}
+.empty-bay .empty-mark{position:absolute;inset:0;display:grid;place-items:center;color:#3e7298;font-size:40px;text-shadow:0 2px #041a31}
+.game-scene .bay-unit{inset:15px 14px 18px}
+.game-scene .ammo-badge{position:absolute;right:5px;bottom:3px;width:67px;height:43px;min-width:0;padding:0;border:0;border-radius:0;background:none;font-size:30px;font-weight:900;z-index:2}
+.ammo-badge b{position:relative;display:grid;place-items:center;width:100%;height:100%;line-height:1;text-shadow:0 2px #000}
+.game-scene .waiting-robot .ammo-badge{width:49px;height:35px;font-size:25px;right:8px;bottom:5px}
+.game-help{position:relative;width:54px;height:40px}.game-help .game-icon{width:40px;height:40px}
+.game-scene .launch-queues{position:absolute;left:53px;right:53px;top:1298px;height:296px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:25px}
+.launch-column{position:relative;height:100%;min-width:0}
+.game-scene .queue-unit{position:absolute;display:block;left:50%;transform:translateX(-50%);padding:0;width:100%;height:163px}
+.game-scene .queue-unit:active:not(:disabled){transform:translateX(-50%)}
+.queue-unit.depth-0{bottom:0;z-index:3}.queue-unit.depth-1{top:64px;width:87%;height:142px;z-index:2}.queue-unit.depth-2{top:-10px;width:72%;height:119px;z-index:1}
+.queue-unit.depth-1 .ammo-badge{bottom:17px;right:4px;width:47px;height:34px;font-size:25px}.queue-unit.depth-2 .ammo-badge{bottom:17px;right:3px;width:40px;height:30px;font-size:22px}
+.queue-unit.selectable{filter:drop-shadow(0 0 8px #fff)}
+.game-scene .queue-empty{position:absolute;inset:0;height:auto;border:0;background:none;opacity:.35}.queue-empty .game-icon{width:70px;height:70px}
+.booster-bar{position:absolute;left:54px;right:54px;top:1615px;height:145px;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:28px}
+.game-scene .booster-button{position:relative;display:block;width:100%;height:122px}
+.booster-button>.gp-sprite{left:12px;right:12px}.booster-icon{position:absolute;inset:25px 39px 26px;display:grid;place-items:center}.booster-icon .game-icon{width:100%;height:100%}
+.tool-quantity{position:absolute;right:1px;bottom:2px;min-width:40px;height:35px;display:grid;place-items:center;background:#07192a;border:2px solid #61d2ed;border-radius:8px;font-size:25px;color:white;text-shadow:0 2px #000}
+.booster-button.locked .tool-quantity{font-size:17px;min-width:64px;color:#ffdc7a;border-color:#b89139}
+.booster-name{position:absolute;top:126px;left:-20px;right:-20px;white-space:nowrap;text-align:center;font-size:21px;text-shadow:0 2px 3px #000;color:#d0eaff}
+.game-scene .cancel-selection{grid-column:1/-1;align-self:center;height:105px;font-size:33px}
+/* Dialog artwork is a frame; every title, setting and action is semantic HTML. */
+.modal-scrim{padding:12px;overflow:hidden}
+.modal.art-modal{width:380px;flex-shrink:0;max-width:calc(100vw - 18px);max-height:none;min-height:370px;overflow:visible;border:0;border-radius:0;background:none;box-shadow:none;padding:38px 35px 35px;transform-origin:center;font-family:Tektur,system-ui,sans-serif}
+.art-modal .modal-frame{z-index:-1;filter:drop-shadow(0 12px 24px #000b)}
+.art-modal h2{height:51px;display:flex;align-items:center;justify-content:center;margin:0 6px 29px 0;font-size:22px;line-height:1.08;letter-spacing:0;color:#e8f9ff;text-shadow:0 2px #153b52}
+.art-modal .modal-close{position:absolute;top:18px;right:12px;width:46px;height:46px;z-index:2;background:none;border:0;border-radius:0;padding:7px}
+.art-modal .modal-close .game-icon{width:100%;height:100%}
+.art-modal .modal-body{position:relative}.art-modal .modal-body p{color:#c8e4f4;font-size:13px;line-height:1.45;margin:12px 0}
+.art-modal .modal-actions{position:relative;margin-top:20px;gap:8px}
+.art-button,.art-modal .art-button{position:relative;background:none!important;border:0!important;border-radius:0!important;box-shadow:none!important;padding:12px 19px;min-height:52px;font-family:Tektur,system-ui,sans-serif;letter-spacing:0;font-size:14px}
+.art-button .button-label{position:relative;z-index:1;display:flex;align-items:center;justify-content:center;gap:5px;line-height:1.15;text-align:center}
+.art-button.primary{color:#06172a;font-weight:900}.art-button.secondary{color:#d7f4ff}.art-button.danger-button{color:white}
+.art-modal .modal-actions>.art-button{min-height:50px;font-size:13px}
+.art-modal.settings{min-height:495px;padding-top:28px}.art-modal.settings h2{margin-bottom:22px}
+.settings-row{margin:0;padding:12px 0;min-height:64px;font-size:14px;border-color:#4ca8d333}
+.settings-row>span{gap:9px}.settings-row .game-icon{width:33px;height:33px}
+.settings-row .language-options{display:flex;gap:3px}
+.settings-row button{position:relative;margin:0;border:0;border-radius:0;background:none;min-height:42px;min-width:0;font-family:Tektur,system-ui,sans-serif;font-weight:800}
+.language-tab{width:48px;height:42px}.language-tab>span:last-child{position:relative}
+.settings-row .toggle-button{width:82px;height:42px}.toggle-button>span:last-child{position:absolute;left:9%;top:31%;width:43%;font-size:11px;line-height:1}.toggle-button[aria-pressed=false]>span:last-child{left:49%}
+.settings-battery{position:relative;width:97px;height:46px}.settings-battery b{position:relative;font-size:28px;color:white;text-shadow:0 2px 3px #002544;width:83%;text-align:center}
+.settings-row>strong{font-size:17px}
+.modal-symbol>.game-icon,.tool-dialog-art>.game-icon{width:80px;height:80px;margin:2px auto 10px}
+.tool-stock{display:block;font-size:15px;color:#ffda5b;margin:8px 0}
+.result-trophy .game-icon{width:68px;height:68px}.result-stars{margin:3px 0 8px;gap:8px}.result-stars span .game-icon{width:35px;height:35px}.result-stars .unearned{opacity:.24;filter:grayscale(1)}
+.art-modal .result-grid{margin-top:10px;gap:5px}.result-grid>div{background:#051529aa;border-radius:0;padding:10px 3px}.result-grid b{font-size:19px}.result-grid .game-icon{width:18px;height:18px}
+.art-modal .new-best{background:none;color:#ffd953;padding:3px;font-size:11px}
+.modal-battery{width:117px;height:60px}.modal-battery>b{left:7%;top:10%;width:75%;height:78%;font-size:35px;-webkit-text-stroke:3px #002648}
+.coin-pack-art{position:relative;width:132px;height:116px;margin:0 auto}
+.skin-card{border-radius:0;background:#07233d88}.art-modal .skin-button{font-size:10px;padding:7px 5px;min-height:40px}
+.tutorial-list{gap:10px}.art-modal .tutorial-list p{margin:0;font-size:12px}.tutorial-list b{background:#07324c;border-radius:0}
+#toast{font-family:Tektur,system-ui,sans-serif;border-radius:4px;border:1px solid #4edfff;background:#061e37ed;box-shadow:0 0 10px #29b5e455}
+/* Master is a paged archive of two monthly podiums. No vertical scroll. */
+.master-screen{background:#051b32 url('assets/gameplay/hangar-background.png') center/cover}
+.master-logo{position:absolute;left:269px;top:135px;width:346px;height:136px}
+.master-title{position:absolute;left:120px;right:120px;top:292px;font-size:49px;text-transform:uppercase;text-align:center}
+html[lang=es] .master-title{font-size:44px}
+.history-heading{position:absolute;left:80px;right:80px;top:491px;height:68px;display:flex;align-items:center;justify-content:center}
+.history-heading h2{font-size:28px;text-transform:uppercase;color:#bbf0ff;letter-spacing:1px}
+.menu-scene .history-heading button{position:absolute;top:0;width:68px;height:68px}.history-prev{left:0}.history-next{right:0;transform:rotate(180deg)}
+.history-heading .game-icon{width:60px;height:60px}
+.history-months{position:absolute;left:58px;right:58px;top:580px;bottom:266px;display:grid;grid-template-rows:1fr 1fr;gap:22px}
+.history-month{position:relative;border:2px solid #1c799f;background:#03182be0;clip-path:polygon(3% 0,97% 0,100% 6%,100% 94%,97% 100%,3% 100%,0 94%,0 6%)}
+.history-month h3{position:absolute;left:0;right:0;top:11px;text-align:center;font-size:29px;text-transform:uppercase;color:#d2f3ff}
+.history-podium{position:absolute;left:13px;right:13px;top:58px;bottom:0}
+.history-pilot{position:absolute;width:33.333%;height:100%}.history-place-1{left:33.333%;top:-8px}.history-place-2{left:0;top:14px}.history-place-3{left:66.666%;top:14px}
+.history-base{position:absolute;left:0;right:0;top:41%;height:50%}.history-character{position:absolute;left:13%;right:13%;top:0;height:46%}
+.history-pilot>b{position:absolute;left:0;right:0;top:46%;text-align:center;font-size:37px;text-shadow:0 2px #121926}
+.history-pilot>strong{position:absolute;left:0;right:0;top:67%;text-align:center;font-size:27px}
+.history-score{position:absolute;left:0;right:0;top:79%;text-align:center;font-size:24px;color:#ffd94f}
+@media(prefers-reduced-motion:reduce){.progress-track i{transition:none}}
+
+.ui-energy .hud-battery{position:absolute;left:5%;top:14%;width:54%;height:71%}.ui-energy .ui-energy-number{left:7%;top:17%;width:43%;height:62%;font-size:4.2cqw;-webkit-text-stroke:.45cqw #00273a}.ui-energy .ui-energy-label{left:60%;right:8%;font-size:3.25cqw}
+.game-help{width:58px;height:58px}.queue-unit.depth-1{top:57px;height:136px}

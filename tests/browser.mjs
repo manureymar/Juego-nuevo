@@ -6,11 +6,11 @@ const { chromium } = await import(process.env.CODEX_PRIMARY_RUNTIME_NODE_MODULES
 mkdirSync('test-results',{recursive:true});
 const server=spawn(process.execPath,['scripts/serve.mjs'],{stdio:['ignore','pipe','inherit']});
 await new Promise((resolve,reject)=>{server.stdout.once('data',resolve);server.once('error',reject);});
-let browser;
+let browser,page;
 const errors=[],checks=[];
 try{
   browser=await chromium.launch({headless:true,args:['--no-sandbox']});
-  const page=await browser.newPage({viewport:{width:390,height:844},deviceScaleFactor:1,hasTouch:true,isMobile:true});
+  page=await browser.newPage({viewport:{width:390,height:844},deviceScaleFactor:1,hasTouch:true,isMobile:true});
   page.on('pageerror',error=>errors.push(error.message));
   page.on('response',r=>{if(r.status()>=400)errors.push(`HTTP ${r.status()}: ${r.url()}`);});
   await page.goto('http://127.0.0.1:4173/?test=1');
@@ -43,16 +43,44 @@ try{
   assert.equal(await page.locator('[data-tab="master"]').getAttribute('aria-pressed'),'true');
   await settleArt(page);await assertControlsVisible(page);
   await page.screenshot({path:'test-results/04-leaderboard.png'});
+  assert.equal(await page.locator('.history-month').count(),2);
+  const month=await page.locator('.history-month h3').first().innerText();
+  await page.locator('[data-action=history-page][data-delta=\"1\"]').click();
+  assert.notEqual(await page.locator('.history-month h3').first().innerText(),month);
   checks.push('Splash, all three menus, test purchase, daily supply and ranking filters');
   await page.locator('.bottom-nav [data-action="home"]').click();
   await page.locator('.play-button').click();
   await page.locator('[data-action="modal-action"]').first().click();
   assert.equal(await page.locator('#menu-music').evaluate(a=>a.paused),true);
+  await settleArt(page);await assertControlsVisible(page);
+  assert.equal(await page.locator('.queue-unit').count(),9);
+  await page.screenshot({path:'test-results/level-01-ready.png'});
+  await page.locator('[data-tool=bay]').click();await settleArt(page);await assertControlsVisible(page,'.modal button');
+  await page.screenshot({path:'test-results/tool-extra-bay.png'});
+  await page.locator('[data-action=modal-action]').first().click();
+  assert.equal(await page.locator('#waiting-bays>div').count(),6);
+  assert.equal(await page.evaluate(()=>window.__rpTest.profile.tools.bay),0);
+  await page.locator('[data-tool=select]').click();await page.locator('[data-action=modal-action]').first().click();
+  assert.equal(await page.locator('[data-action=select-robot]').count(),9);
+  await page.locator('[data-action=cancel-selection]').click();
+  assert.equal(await page.evaluate(()=>window.__rpTest.profile.tools.select),1);
+  await page.locator('[data-tool=shuffle]').click();await page.locator('[data-action=modal-action]').first().click();
+  assert.equal(await page.evaluate(()=>window.__rpTest.profile.tools.shuffle),0);
+  await page.locator('[data-tool=select]').click();await page.locator('[data-action=modal-action]').first().click();
+  await page.locator('[data-action=select-robot][data-index="2"]').first().click();
+  assert.equal(await page.evaluate(()=>window.__rpTest.profile.tools.select),0);
+  await page.evaluate(()=>window.__rpTest.advance(10));
+  checks.push('Three queue rows, extra bay, shuffle, rear selection, cancellation without spending, tool inventory persisted');
+
   await page.locator('[data-action="launch-queue"][data-column="0"]').click();
   await page.evaluate(()=>window.__rpTest.advance(3));
   await page.screenshot({path:'test-results/05-gameplay.png'});
+  for(let attempt=0;attempt<6&&await page.evaluate(()=>window.__rpTest.engine.remaining===42);attempt++){
+    const column=await page.evaluate(()=>{const g=window.__rpTest.engine,e=g.exposedCounts();return g.queues.map((q,i)=>({q,i})).filter(c=>c.q.length).sort((a,b)=>(e[b.q[0].color]||0)-(e[a.q[0].color]||0))[0]?.i;});
+    assert.notEqual(column,undefined);await page.locator(`[data-action="launch-queue"][data-column="${column}"]`).click();await page.evaluate(()=>window.__rpTest.advance(10));
+  }
   const blocksBefore=await page.evaluate(()=>window.__rpTest.engine.remaining);
-  assert.ok(blocksBefore<78);
+  assert.ok(blocksBefore<42);
   await page.locator('[data-action="pause"]').last().click();
   const paused=await page.evaluate(()=>window.__rpTest.engine.elapsed);
   await page.evaluate(()=>window.__rpTest.advance(2));
@@ -140,6 +168,7 @@ try{
       }
     }
   }
+  await page.locator('[data-tab=monthly]').click();
   await page.locator('[data-region=country]').click();
   assert.equal(await page.locator('[data-region=country]').getAttribute('aria-pressed'),'true');
   await page.locator('[data-tab=monthly]').click();
@@ -148,7 +177,7 @@ try{
   await page.locator('[data-action=close-modal]').click();
   // A player moving onto the podium must get the actual equipped character.
   await page.evaluate(()=>{window.__rpTest.profile.bestScore=2000;window.__rpTest.profile.monthlyScore=2000;});
-  await page.locator('[data-tab=master]').click();
+  await page.locator('[data-tab=monthly]').click();
   assert.equal(await page.locator('.place-1 .leader-pilot-name').innerText(),'TÚ');
   assert.equal(await page.locator('.personal-row .leader-rank').innerText(),'1');
   for(let energy=0;energy<=5;energy++){
@@ -161,8 +190,22 @@ try{
   assert.match(await page.locator('.modal-body').innerText(),/sectores/);
   await page.locator('[data-action=close-modal]').click();
   checks.push('Home and Leaderboard fit three phone sizes in EN/ES; all filters, profile rows, locked levels and battery values 0–5 work; player can take first place');
+  for(const lang of ['en','es']){
+    await page.locator('[data-action=settings]').click();await page.locator(`[data-language="${lang}"]`).click();
+    await settleArt(page);await assertControlsVisible(page,'.modal button');
+    await page.screenshot({path:`test-results/settings-${lang}.png`});await page.locator('[data-action=close-modal]').click();
+    await page.locator('.play-button').click();
+    for(const size of [{width:360,height:640},{width:390,height:844},{width:412,height:915}]){
+      await page.setViewportSize(size);await settleArt(page);await assertControlsVisible(page);
+      await page.screenshot({path:`test-results/game-${lang}-${size.width}x${size.height}.png`});
+    }
+    await page.locator('[data-action=pause]').last().click();await settleArt(page);await assertControlsVisible(page,'.modal button');
+    await page.screenshot({path:`test-results/pause-${lang}.png`});
+    await page.locator('[data-action=modal-action]').nth(2).click();await page.locator('[data-action=modal-action]').nth(1).click();
+  }
+  checks.push('Gameplay and illustrated dialogs fit EN/ES phone layouts without scroll');
   assert.deepEqual(errors,[]);
   writeFileSync('test-results/browser-results.json',JSON.stringify({passed:true,checks,errors},null,2));
   console.log(`Browser checks passed: ${checks.length} groups; phone screenshots captured.`);
-}catch(error){writeFileSync('test-results/browser-results.json',JSON.stringify({passed:false,checks,errors,error:String(error)},null,2));throw error;}
+}catch(error){await page?.screenshot({path:'test-results/failure.png'}).catch(()=>{});writeFileSync('test-results/browser-results.json',JSON.stringify({passed:false,checks,errors,error:String(error)},null,2));throw error;}
 finally{await browser?.close();server.kill();}

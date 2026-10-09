@@ -44,6 +44,35 @@ export class GameEngine {
     return this.launch(robot);
   }
 
+  selectQueue(column, index) {
+    const queue=this.queues[column], robot=queue?.[index];
+    const error=this.canLaunch(robot);
+    if(error)return {ok:false,error};
+    queue.splice(index,1);
+    return this.launch(robot);
+  }
+
+  addWaitingBay() {
+    if(!this.isRunning)return {ok:false,error:'not_playing'};
+    if(this.waiting.length>=this.level.parkingCapacity+1)return {ok:false,error:'bay_limit'};
+    this.waiting.push(null);
+    this.events.push({type:'bay-added'});
+    return {ok:true};
+  }
+
+  shuffleQueues(random=Math.random) {
+    if(!this.isRunning)return {ok:false,error:'not_playing'};
+    const robots=this.queues.flat();
+    if(robots.length<2)return {ok:false,error:'no_queue'};
+    const before=robots.map(r=>r.id).join(',');
+    for(let i=robots.length-1;i>0;i--){const j=Math.floor(Math.max(0,Math.min(.999999,random()))*(i+1));[robots[i],robots[j]]=[robots[j],robots[i]];}
+    if(robots.map(r=>r.id).join(',')===before)robots.push(robots.shift());
+    let offset=0;
+    this.queues=this.queues.map(q=>{const next=robots.slice(offset,offset+q.length);offset+=q.length;return next;});
+    this.events.push({type:'shuffled'});
+    return {ok:true};
+  }
+
   launch(robot) {
     // A small launch queue keeps all five units visually separated at the entry.
     const earliest = Math.min(0, ...this.active.map(r => r.progress));
@@ -55,7 +84,7 @@ export class GameEngine {
     return { ok: true };
   }
 
-  /** side: bottom, right, top, left; index follows clockwise travel. */
+  /** Side order is bottom, right, top, left: counterclockwise on screen. */
   lane(step) {
     const n = this.level.size;
     const side = Math.floor(step / n);
@@ -105,7 +134,7 @@ export class GameEngine {
           robot.ammo--;
           this.shots++;
           this.destroyed++;
-          this.events.push({ type: 'shot', color: robot.color, step, target });
+          this.events.push({ type: 'shot', color: robot.color, id:robot.id, step, target });
           if (!this.remaining) { this.status = 'won'; this.events.push({ type: 'won' }); break; }
         }
       }
@@ -141,15 +170,15 @@ export class GameEngine {
   }
 
   snapshot() {
-    return JSON.parse(JSON.stringify({ version: 1, levelId: this.level.id, grid: this.grid, queues: this.queues, active: this.active, waiting: this.waiting, status: this.status, beforePause: this.beforePause, elapsed: this.elapsed, shots: this.shots, launches: this.launches, destroyed: this.destroyed, reason: this.reason }));
+    return JSON.parse(JSON.stringify({ version: 2, levelId: this.level.id, levelRevision:this.level.revision||1, grid: this.grid, queues: this.queues, active: this.active, waiting: this.waiting, status: this.status, beforePause: this.beforePause, elapsed: this.elapsed, shots: this.shots, launches: this.launches, destroyed: this.destroyed, reason: this.reason }));
   }
 
   static restore(s, level = LEVEL_ONE) {
     const fresh = new GameEngine(level);
-    if (!s || s.version !== 1 || s.levelId !== level.id) return null;
+    if (!s || s.version !== 2 || s.levelId !== level.id || s.levelRevision !== (level.revision||1)) return null;
     if (!Array.isArray(s.grid) || s.grid.length !== level.size || s.grid.some(row => !Array.isArray(row) || row.length !== level.size || row.some(c => c !== null && !COLORS[c]))) return null;
     if (!Array.isArray(s.queues) || s.queues.length !== 3 || s.queues.some(q => !Array.isArray(q))) return null;
-    if (!Array.isArray(s.active) || s.active.length > level.beltCapacity || !Array.isArray(s.waiting) || s.waiting.length !== level.parkingCapacity) return null;
+    if (!Array.isArray(s.active) || s.active.length > level.beltCapacity || !Array.isArray(s.waiting) || ![level.parkingCapacity,level.parkingCapacity+1].includes(s.waiting.length)) return null;
     const robots = [...s.active, ...s.waiting.filter(Boolean), ...s.queues.flat()];
     if (new Set(robots.map(r => r?.id)).size !== robots.length) return null;
     if (robots.some(r => !r || !COLORS[r.color] || !Number.isInteger(r.ammo) || r.ammo < 1 || r.ammo > 100 || typeof r.id !== 'string')) return null;

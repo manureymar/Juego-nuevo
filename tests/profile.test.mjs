@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { defaultProfile, sanitizeProfile, loseRun, winRun, refreshEnergy, RECHARGE_MS, refillEnergy, claimDaily, buySkin, SaveStore } from '../game/src/profile.js';
+import { defaultProfile, sanitizeProfile, loseRun, winRun, refreshEnergy, RECHARGE_MS, refillEnergy, claimDaily, buySkin, SaveStore, buyTools, useTool } from '../game/src/profile.js';
 
 test('a defeat takes exactly one battery charge; duplicate callbacks cannot double-charge',()=>{
   const p=defaultProfile(1000);assert.ok(loseRun(p,'run1',1000));assert.equal(p.energy,4);
@@ -32,4 +32,14 @@ test('daily supply cannot be repeatedly claimed on the same day',()=>{
 test('invalid stored values are bounded and storage failures do not break the game',()=>{
   const p=sanitizeProfile({version:1,coins:-9,energy:999,language:'xx',ownedSkins:['evil'],skin:'evil'});assert.equal(p.coins,0);assert.equal(p.energy,5);assert.equal(p.language,'en');assert.equal(p.skin,'cyan');
   const store=new SaveStore({getItem(){throw Error('blocked');},setItem(){throw Error('quota');}});assert.equal(store.load().energy,5);assert.equal(store.save(defaultProfile()),false);
+});
+
+test('tool purchases and consumption are atomic and survive profile loading',()=>{
+ const p=defaultProfile();const before=p.coins;
+ assert.equal(buyTools(p,'shuffle'),'funds');assert.equal(p.coins,before);
+ p.coins=2000;assert.equal(buyTools(p,'select'),'ok');assert.equal(p.coins,100);assert.equal(p.tools.select,4);
+ assert.equal(useTool(p,'select',()=>({ok:false,error:'belt_full'})).ok,false);assert.equal(p.tools.select,4);
+ assert.equal(useTool(p,'select',()=>({ok:true})).ok,true);assert.equal(p.tools.select,3);
+ assert.equal(sanitizeProfile(JSON.parse(JSON.stringify(p))).tools.select,3);
+ p.tools.bay=0;assert.equal(useTool(p,'bay',()=>{throw Error('Must not apply');}).error,'no_tools');
 });

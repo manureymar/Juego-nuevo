@@ -14,7 +14,7 @@ function choose(engine){
 test('level has exact ammunition for every color and five independent capacities',()=>{
   const counts=blockCounts(LEVEL_ONE.grid),ammo={};
   for(const r of LEVEL_ONE.queues.flat())ammo[r.color]=(ammo[r.color]||0)+r.ammo;
-  assert.deepEqual(ammo,counts);assert.equal(new GameEngine().total,78);
+  assert.deepEqual(ammo,counts);assert.equal(new GameEngine().total,42);
   assert.equal(LEVEL_ONE.beltCapacity,5);assert.equal(LEVEL_ONE.parkingCapacity,5);
 });
 test('only queue heads can launch; belt never accepts a sixth robot',()=>{
@@ -26,7 +26,7 @@ test('only queue heads can launch; belt never accepts a sixth robot',()=>{
   assert.equal(g.queues[0].length,before);
 });
 test('enclosed violet pixels block a violet robot: no ammo wasted; it parks and relaunches',()=>{
-  const g=new GameEngine();g.launchQueue(2);advance(g,10);
+  const g=new GameEngine({...LEVEL_ONE,size:3,grid:['AAA','APA','AAA'],queues:[[{color:'P',ammo:4}],[],[]]});g.launchQueue(0);advance(g,10);
   assert.equal(g.destroyed,0);assert.equal(g.active.length,0);
   assert.equal(g.waiting[0].color,'P');assert.equal(g.waiting[0].ammo,4);
   assert.equal(g.launchWaiting(0).ok,true);assert.equal(g.waiting[0],null);
@@ -38,7 +38,7 @@ test('level one can be won through actual conveyor simulation without altering b
     assert.ok((c.waiting?g.launchWaiting(c.index):g.launchQueue(c.index)).ok);
     advance(g,10);
   }
-  assert.equal(g.status,'won');assert.equal(g.remaining,0);assert.equal(g.shots,78);assert.ok(g.result().score>0);
+  assert.equal(g.status,'won');assert.equal(g.remaining,0);assert.equal(g.shots,42);assert.ok(g.result().score>0);
 });
 test('a full waiting area causes a loss when a robot returns, not just when five park',()=>{
   const level={...LEVEL_ONE,size:1,grid:['A'],speed:4,queues:[Array.from({length:6},()=>({color:'C',ammo:1})),[],[]]};
@@ -48,7 +48,7 @@ test('a full waiting area causes a loss when a robot returns, not just when five
   g.launchQueue(0);advance(g,2);assert.equal(g.status,'lost');assert.equal(g.reason,'parking_full');
 });
 test('pausing freezes simulation and restoring a run preserves grid, ammo and time',()=>{
-  const g=new GameEngine();g.launchQueue(0);advance(g,2);g.pause();
+  const g=new GameEngine();g.launchQueue(0);advance(g,.2);g.pause();
   const before=g.snapshot();g.tick(.1);assert.deepEqual(g.snapshot(),before);
   const restored=GameEngine.restore(before);assert.equal(restored.status,'playing');
   assert.deepEqual(restored.grid,g.grid);assert.equal(restored.active[0].ammo,g.active[0].ammo);
@@ -61,4 +61,19 @@ test('malformed saves fail safely instead of crashing or launching invalid robot
 test('a terminal result cannot be changed by a second failure or ticking',()=>{
   const g=new GameEngine();assert.equal(g.fail(),true);const before=g.snapshot();
   assert.equal(g.fail(),false);g.tick(.1);assert.deepEqual(g.snapshot(),before);
+});
+
+test('tools preserve ammunition, select a rear robot and persist exactly one extra bay',()=>{
+ const g=new GameEngine();const rear=g.queues[0][2];
+ assert.equal(g.selectQueue(0,2).ok,true);assert.equal(g.active[0].id,rear.id);assert.equal(g.queues[0].length,2);
+ assert.equal(g.addWaitingBay().ok,true);assert.equal(g.waiting.length,6);assert.equal(g.addWaitingBay().error,'bay_limit');
+ const before=g.queues.flat().map(r=>[r.id,r.color,r.ammo]).sort();
+ assert.equal(g.shuffleQueues(()=>.5).ok,true);
+ assert.deepEqual(g.queues.flat().map(r=>[r.id,r.color,r.ammo]).sort(),before);
+ const restored=GameEngine.restore(g.snapshot());assert.ok(restored);assert.equal(restored.waiting.length,6);assert.deepEqual(restored.queues,g.queues);
+ while(g.active.length<5){const c=g.queues.findIndex(q=>q.length);g.launchQueue(c);}
+ const saved=JSON.stringify(g.queues);assert.equal(g.selectQueue(g.queues.findIndex(q=>q.length),0).error,'belt_full');assert.equal(JSON.stringify(g.queues),saved);
+});
+test('old level revisions cannot restore incompatible blocks or ammunition',()=>{
+ const snapshot=new GameEngine().snapshot();snapshot.levelRevision=1;assert.equal(GameEngine.restore(snapshot),null);
 });

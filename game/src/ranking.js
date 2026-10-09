@@ -21,3 +21,16 @@ export function leaderboardRows(profile,tab,region,you='You',now=Date.now()) {
     .sort((a,b)=>b.score-a.score||Number(b.player)-Number(a.player))
     .map((row,index)=>({...row,rank:index+1}));
 }
+
+// Demonstration archive. Dates move with the calendar; these are not live results.
+export function historyMonths(page=0,language='en',now=Date.now()){
+  const current=new Date(now);
+  return Array.from({length:2},(_,i)=>{
+    const date=new Date(Date.UTC(current.getUTCFullYear(),current.getUTCMonth()-1-page*2-i,1));
+    return {key:date.toISOString().slice(0,7),label:new Intl.DateTimeFormat(language,{month:'long',year:'numeric',timeZone:'UTC'}).format(date),pilots:[
+      {name:i?'VOLT':'NOVA',skin:i?'violet':'cyan',score:1820-i*110},
+      {name:i?'LUNA':'ECHO',skin:i?'green':'amber',score:1630-i*90},
+      {name:'AXEL',skin:'red',score:1470-i*80}
+    ]};
+  });
+}
