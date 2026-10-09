@@ -1,0 +1,152 @@
+[
+  {
+    "id": "robots",
+    "path": "assets/robots-atlas.png",
+    "width": 1254,
+    "height": 1254,
+    "bytes": 1746776,
+    "sha256": "b6a785c7772de0b1e447beb417786b6a1f6ff4c64e38e30215c8f50b923ea8b8",
+    "gitBlob": "75d99ddc9821b2c04c4641e55cb08bdbb84b3071",
+    "transparent": true
+  },
+  {
+    "id": "controls-clean",
+    "path": "assets/controls-atlas.png",
+    "width": 1536,
+    "height": 1024,
+    "bytes": 2072579,
+    "sha256": "9b5527efdb8b2f1f727959b50dd2ad754a3b203507d5449088d4074a279f0514",
+    "gitBlob": "8335d38501830b197c8b4eee500f003ac1260f8c",
+    "transparent": true
+  },
+  {
+    "id": "icons",
+    "path": "assets/icons-atlas.png",
+    "width": 1254,
+    "height": 1254,
+    "bytes": 2104445,
+    "sha256": "152a0a681b986e9592e7bafdb43da745404bd82c670333d27b7d2ef224ecc915",
+    "gitBlob": "faaf5110186d5085e8d94a1892f14a289ab9e5bf",
+    "transparent": true
+  },
+  {
+    "id": "arena",
+    "path": "assets/arena-plate.png",
+    "width": 1254,
+    "height": 1254,
+    "bytes": 2254609,
+    "sha256": "c5979e949df4d6c0f8f49b09328f8087c751fd73bc7213a250071ce946477ece",
+    "gitBlob": "7fbe73bd48f1df76e597e031af259065ada85e5a",
+    "transparent": true
+  },
+  {
+    "id": "modal-frames",
+    "path": "assets/modal-frames-atlas.png",
+    "width": 1774,
+    "height": 887,
+    "bytes": 1733629,
+    "sha256": "bbe762a3db4022cbfc330067861be047b607c425d653aacb3c87d9b32d1064b7",
+    "gitBlob": "5c824f67738a7fb6393e51ae8f4b13a97b21106e",
+    "transparent": true
+  },
+  {
+    "id": "tiles-fx",
+    "path": "assets/tiles-fx-atlas.png",
+    "width": 1448,
+    "height": 1086,
+    "bytes": 1154012,
+    "sha256": "a88fad908733445b450054d0e132fdeb50416f08739a18af713a500bb46a7a5e",
+    "gitBlob": "2ccda4667a9f0fa8cbd03b1afa78f6d051922d2b",
+    "transparent": true
+  },
+  {
+    "id": "background",
+    "path": "assets/hangar-background.png",
+    "width": 887,
+    "height": 1774,
+    "bytes": 2009580,
+    "sha256": "c5634c4baf628c092912fad3799f3c64638a58f7f2bc32fe4cd895cee07d7eba",
+    "gitBlob": "3c22559d0be1cada7c9b65911aa3d1a736313b26",
+    "transparent": false
+  },
+  {
+    "id": "hud-states",
+    "path": "assets/hud-states-atlas.png",
+    "width": 1254,
+    "height": 1254,
+    "bytes": 1689447,
+    "sha256": "1060eaf4f79686ff388d8e78414f7f437eeb56d836072103ab28cd20343f7860",
+    "gitBlob": "a6be8191a0763e51a0c0e16eebca4e3810f4c05f",
+    "transparent": true
+  },
+  {
+    "id": "settings-final",
+    "path": "previews/settings.png",
+    "width": 887,
+    "height": 1774,
+    "bytes": 1855215,
+    "sha256": "0e2e529bed8c59fb1345b7c5a14d0ca178943175f183bc969b96637ad3a62b31",
+    "gitBlob": "f13a4a435f47f3511115d96fc985188c5241743d",
+    "transparent": false
+  },
+  {
+    "id": "boosters-preview",
+    "path": "previews/boosters.png",
+    "width": 1774,
+    "height": 887,
+    "bytes": 2248126,
+    "sha256": "f7511a2a8946afcd4271122056139d10e44273f596ad47e2652eb7de09ee79a4",
+    "gitBlob": "0806cb47f5a63fa81e96db9947147830e069f700",
+    "transparent": false
+  },
+  {
+    "id": "utility-dialogs",
+    "path": "previews/utility-dialogs.png",
+    "width": 1774,
+    "height": 887,
+    "bytes": 2111767,
+    "sha256": "c6dcc6f1eb944dfb41ae23b85d971ce8dd58406e59b922bd4d911b4cb1b43c13",
+    "gitBlob": "f8c4e32a8814eb61aee0cc7952ff30469961b87e",
+    "transparent": false
+  },
+  {
+    "id": "level-approved-proposal",
+    "path": "previews/level-01.png",
+    "width": 887,
+    "height": 1774,
+    "bytes": 2503215,
+    "sha256": "6f6d9151d876972fcb1e2d70387e54c3eec1aa694a4bdd7547cd57705b6aad7f",
+    "gitBlob": "8118a2a16d3b5f0d576968692b677dfca597efd1",
+    "transparent": false
+  },
+  {
+    "id": "results-preview",
+    "path": "previews/results-pause.png",
+    "width": 1971,
+    "height": 798,
+    "bytes": 2147076,
+    "sha256": "5c3e2256c0c0f23ed48e5a0f59ac4805e9dc3806007ac2c824db219eeaeda003",
+    "gitBlob": "0006b4b6a1ad344965ce526b3dbc4c1578cca660",
+    "transparent": false
+  },
+  {
+    "id": "leaderboard-master",
+    "path": "previews/leaderboard-master.png",
+    "width": 887,
+    "height": 1774,
+    "bytes": 2120277,
+    "sha256": "d3206bbfcc09a2cfb1806b01af3776b22a21a26b5e78c38bd2bc5d8911fb788e",
+    "gitBlob": "224f4602b6c929505226bccac21a74187808dff0",
+    "transparent": false
+  },
+  {
+    "id": "robot-detail",
+    "path": "previews/robot-bay-and-shot.png",
+    "width": 1774,
+    "height": 887,
+    "bytes": 2406736,
+    "sha256": "f002e241990aee3aee4d4c548bdeaa87de062f54893a962186f768d549de4c26",
+    "gitBlob": "a0a3b2c187f1f51427d0996edb83c606af6c06a0",
+    "transparent": false
+  }
+]

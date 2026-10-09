@@ -1,0 +1,200 @@
+{
+  "settings": {
+    "frame": "modal-settings",
+    "icons": [
+      "language",
+      "sound",
+      "music"
+    ],
+    "controls": [
+      "tab-selected",
+      "tab-idle",
+      "toggle-on",
+      "toggle-off",
+      "battery-full",
+      "button-primary"
+    ]
+  },
+  "extra-bay": {
+    "frame": "modal-info",
+    "icon": "extra-bay",
+    "quantity": 1,
+    "exampleCost": 300,
+    "action": "add-waiting-bay"
+  },
+  "select": {
+    "frame": "modal-info",
+    "icon": "select",
+    "quantity": 3,
+    "exampleCost": 1900,
+    "action": "select-robot-from-queue"
+  },
+  "shuffle": {
+    "frame": "modal-info",
+    "icon": "shuffle",
+    "quantity": 3,
+    "exampleCost": 1500,
+    "action": "shuffle-remaining-queues"
+  },
+  "future-tool": {
+    "frame": "modal-info",
+    "icon": "lock",
+    "unlockLevel": null,
+    "note": "Unknown fourth tool in reference is locked at level18; do not invent function or assign this unlock to Robot Pulse without balancing."
+  },
+  "coin-purchase": {
+    "frame": "modal-info",
+    "existingRepoArt": "game/assets/ui/pack-3000.png",
+    "actions": [
+      "confirm",
+      "cancel"
+    ],
+    "note": "Display actual localized store price in runtime; preview does not enable purchases."
+  },
+  "energy": {
+    "frame": "modal-info",
+    "sprite": "battery-full",
+    "actions": [
+      "recharge",
+      "close"
+    ],
+    "dynamic": [
+      "energy",
+      "nextCharge",
+      "cost"
+    ]
+  },
+  "ranking-info": {
+    "frame": "modal-info",
+    "icon": "trophy",
+    "actions": [
+      "got-it"
+    ]
+  },
+  "pilot-profile": {
+    "frame": "modal-info",
+    "sprite": "robot-cyan-queue",
+    "dynamic": [
+      "name",
+      "score",
+      "skin"
+    ],
+    "actions": [
+      "close"
+    ]
+  },
+  "robot-skins": {
+    "frame": "modal-settings",
+    "sprites": [
+      "robot-cyan-queue",
+      "robot-violet-queue",
+      "robot-amber-queue"
+    ],
+    "actions": [
+      "equip",
+      "close"
+    ]
+  },
+  "daily-reward": {
+    "frame": "modal-reward",
+    "existingRepoArt": "game/assets/ui/reward-chest.png",
+    "actions": [
+      "claim",
+      "close"
+    ]
+  },
+  "level-locked": {
+    "frame": "modal-info",
+    "icon": "lock",
+    "dynamic": [
+      "requiredLevel"
+    ],
+    "actions": [
+      "got-it"
+    ]
+  },
+  "tutorial": {
+    "frame": "modal-settings",
+    "sprite": "robot-cyan-queue",
+    "actions": [
+      "next",
+      "got-it"
+    ],
+    "note": "Short guided overlay; no permanent bottom tutorial banner."
+  },
+  "pause": {
+    "frame": "modal-settings",
+    "icon": "pause",
+    "actions": [
+      "resume",
+      "restart",
+      "home"
+    ]
+  },
+  "exit-confirm": {
+    "frame": "modal-info",
+    "actions": [
+      "cancel",
+      "exit"
+    ],
+    "dynamic": [
+      "energyCost"
+    ]
+  },
+  "victory": {
+    "frame": "modal-reward",
+    "icons": [
+      "trophy",
+      "star",
+      "coin"
+    ],
+    "actions": [
+      "continue",
+      "rewarded-ad"
+    ],
+    "dynamic": [
+      "level",
+      "stars",
+      "reward"
+    ],
+    "note": "Star count and reward are code. Rewarded ad is a future integration, no ad was configured here."
+  },
+  "defeat": {
+    "frame": "modal-info",
+    "sprite": "battery-low",
+    "actions": [
+      "retry",
+      "home"
+    ],
+    "dynamic": [
+      "reason",
+      "energy"
+    ],
+    "accent": "danger"
+  },
+  "toast": {
+    "frame": "section-plaque",
+    "dynamic": [
+      "message"
+    ],
+    "durationMs": 2200
+  },
+  "master-history": {
+    "reuse": "game/assets/ui-v3/manifest.json",
+    "sprites": [
+      "podium-gold",
+      "podium-silver",
+      "podium-bronze",
+      "crown",
+      "robot-cyan",
+      "robot-violet",
+      "robot-amber"
+    ],
+    "dynamic": [
+      "month",
+      "names",
+      "scores"
+    ],
+    "note": "Two visible month groups as proposal, use paging for older history; no backend supplied."
+  }
+}

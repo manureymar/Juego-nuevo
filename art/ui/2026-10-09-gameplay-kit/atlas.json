@@ -1,0 +1,895 @@
+{
+  "version": 1,
+  "status": "art-prepared-not-integrated",
+  "coordinateUnit": "source pixels",
+  "sprites": {
+    "robot-cyan-queue": {
+      "file": "assets/robots-atlas.png",
+      "rect": [
+        0,
+        0,
+        418,
+        460
+      ],
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "anchor": [
+        0.5,
+        0.92
+      ]
+    },
+    "robot-cyan-overhead": {
+      "file": "assets/robots-atlas.png",
+      "rect": [
+        0,
+        467,
+        418,
+        334
+      ],
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "anchor": [
+        0.55,
+        0.55
+      ],
+      "facing": "up",
+      "cannonTip": [
+        0.33,
+        0.12
+      ]
+    },
+    "robot-cyan-firing": {
+      "file": "assets/robots-atlas.png",
+      "rect": [
+        0,
+        802,
+        418,
+        427
+      ],
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "anchor": [
+        0.55,
+        0.64
+      ],
+      "facing": "up",
+      "note": "Optional pose reference; prefer idle sprite plus separate flash to avoid pivot drift."
+    },
+    "robot-violet-queue": {
+      "file": "assets/robots-atlas.png",
+      "rect": [
+        418,
+        0,
+        418,
+        460
+      ],
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "anchor": [
+        0.5,
+        0.92
+      ]
+    },
+    "robot-violet-overhead": {
+      "file": "assets/robots-atlas.png",
+      "rect": [
+        418,
+        467,
+        418,
+        334
+      ],
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "anchor": [
+        0.55,
+        0.55
+      ],
+      "facing": "up",
+      "cannonTip": [
+        0.33,
+        0.12
+      ]
+    },
+    "robot-violet-firing": {
+      "file": "assets/robots-atlas.png",
+      "rect": [
+        418,
+        802,
+        418,
+        427
+      ],
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "anchor": [
+        0.55,
+        0.64
+      ],
+      "facing": "up",
+      "note": "Optional pose reference; prefer idle sprite plus separate flash to avoid pivot drift."
+    },
+    "robot-amber-queue": {
+      "file": "assets/robots-atlas.png",
+      "rect": [
+        836,
+        0,
+        418,
+        460
+      ],
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "anchor": [
+        0.5,
+        0.92
+      ]
+    },
+    "robot-amber-overhead": {
+      "file": "assets/robots-atlas.png",
+      "rect": [
+        836,
+        467,
+        418,
+        334
+      ],
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "anchor": [
+        0.55,
+        0.55
+      ],
+      "facing": "up",
+      "cannonTip": [
+        0.33,
+        0.12
+      ]
+    },
+    "robot-amber-firing": {
+      "file": "assets/robots-atlas.png",
+      "rect": [
+        836,
+        802,
+        418,
+        427
+      ],
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "anchor": [
+        0.55,
+        0.64
+      ],
+      "facing": "up",
+      "note": "Optional pose reference; prefer idle sprite plus separate flash to avoid pivot drift."
+    },
+    "button-primary": {
+      "file": "assets/controls-atlas.png",
+      "rect": [
+        38,
+        28,
+        485,
+        218
+      ],
+      "sourceSize": [
+        1536,
+        1024
+      ]
+    },
+    "button-primary-pressed": {
+      "file": "assets/controls-atlas.png",
+      "rect": [
+        532,
+        28,
+        480,
+        218
+      ],
+      "sourceSize": [
+        1536,
+        1024
+      ]
+    },
+    "button-disabled": {
+      "file": "assets/controls-atlas.png",
+      "rect": [
+        1027,
+        28,
+        477,
+        218
+      ],
+      "sourceSize": [
+        1536,
+        1024
+      ]
+    },
+    "button-secondary": {
+      "file": "assets/controls-atlas.png",
+      "rect": [
+        37,
+        266,
+        485,
+        210
+      ],
+      "sourceSize": [
+        1536,
+        1024
+      ]
+    },
+    "button-selected": {
+      "file": "assets/controls-atlas.png",
+      "rect": [
+        532,
+        266,
+        480,
+        210
+      ],
+      "sourceSize": [
+        1536,
+        1024
+      ]
+    },
+    "button-danger": {
+      "file": "assets/controls-atlas.png",
+      "rect": [
+        1027,
+        266,
+        477,
+        210
+      ],
+      "sourceSize": [
+        1536,
+        1024
+      ]
+    },
+    "icon-button-frame": {
+      "file": "assets/controls-atlas.png",
+      "rect": [
+        106,
+        480,
+        340,
+        325
+      ],
+      "sourceSize": [
+        1536,
+        1024
+      ]
+    },
+    "waiting-bay": {
+      "file": "assets/controls-atlas.png",
+      "rect": [
+        602,
+        478,
+        352,
+        330
+      ],
+      "sourceSize": [
+        1536,
+        1024
+      ]
+    },
+    "booster-frame": {
+      "file": "assets/controls-atlas.png",
+      "rect": [
+        1087,
+        479,
+        355,
+        330
+      ],
+      "sourceSize": [
+        1536,
+        1024
+      ]
+    },
+    "battery-base": {
+      "file": "assets/controls-atlas.png",
+      "rect": [
+        37,
+        806,
+        489,
+        190
+      ],
+      "sourceSize": [
+        1536,
+        1024
+      ]
+    },
+    "progress-track": {
+      "file": "assets/controls-atlas.png",
+      "rect": [
+        536,
+        831,
+        638,
+        134
+      ],
+      "sourceSize": [
+        1536,
+        1024
+      ]
+    },
+    "ammo-badge": {
+      "file": "assets/controls-atlas.png",
+      "rect": [
+        1185,
+        805,
+        318,
+        185
+      ],
+      "sourceSize": [
+        1536,
+        1024
+      ]
+    },
+    "icon-extra-bay": {
+      "file": "assets/icons-atlas.png",
+      "rect": [
+        8,
+        42,
+        309,
+        291
+      ],
+      "sourceSize": [
+        1254,
+        1254
+      ]
+    },
+    "icon-select": {
+      "file": "assets/icons-atlas.png",
+      "rect": [
+        320,
+        0,
+        320,
+        356
+      ],
+      "sourceSize": [
+        1254,
+        1254
+      ]
+    },
+    "icon-shuffle": {
+      "file": "assets/icons-atlas.png",
+      "rect": [
+        637,
+        64,
+        322,
+        273
+      ],
+      "sourceSize": [
+        1254,
+        1254
+      ]
+    },
+    "icon-lock": {
+      "file": "assets/icons-atlas.png",
+      "rect": [
+        970,
+        28,
+        278,
+        299
+      ],
+      "sourceSize": [
+        1254,
+        1254
+      ]
+    },
+    "icon-settings": {
+      "file": "assets/icons-atlas.png",
+      "rect": [
+        8,
+        350,
+        319,
+        309
+      ],
+      "sourceSize": [
+        1254,
+        1254
+      ]
+    },
+    "icon-sound": {
+      "file": "assets/icons-atlas.png",
+      "rect": [
+        330,
+        351,
+        305,
+        299
+      ],
+      "sourceSize": [
+        1254,
+        1254
+      ]
+    },
+    "icon-music": {
+      "file": "assets/icons-atlas.png",
+      "rect": [
+        645,
+        351,
+        288,
+        303
+      ],
+      "sourceSize": [
+        1254,
+        1254
+      ]
+    },
+    "icon-language": {
+      "file": "assets/icons-atlas.png",
+      "rect": [
+        941,
+        348,
+        308,
+        310
+      ],
+      "sourceSize": [
+        1254,
+        1254
+      ]
+    },
+    "icon-back": {
+      "file": "assets/icons-atlas.png",
+      "rect": [
+        32,
+        666,
+        241,
+        252
+      ],
+      "sourceSize": [
+        1254,
+        1254
+      ]
+    },
+    "icon-pause": {
+      "file": "assets/icons-atlas.png",
+      "rect": [
+        346,
+        666,
+        256,
+        254
+      ],
+      "sourceSize": [
+        1254,
+        1254
+      ]
+    },
+    "icon-play": {
+      "file": "assets/icons-atlas.png",
+      "rect": [
+        652,
+        652,
+        281,
+        277
+      ],
+      "sourceSize": [
+        1254,
+        1254
+      ]
+    },
+    "icon-close": {
+      "file": "assets/icons-atlas.png",
+      "rect": [
+        958,
+        662,
+        288,
+        268
+      ],
+      "sourceSize": [
+        1254,
+        1254
+      ]
+    },
+    "icon-trophy": {
+      "file": "assets/icons-atlas.png",
+      "rect": [
+        8,
+        925,
+        320,
+        322
+      ],
+      "sourceSize": [
+        1254,
+        1254
+      ]
+    },
+    "icon-coin": {
+      "file": "assets/icons-atlas.png",
+      "rect": [
+        328,
+        929,
+        303,
+        312
+      ],
+      "sourceSize": [
+        1254,
+        1254
+      ]
+    },
+    "icon-star": {
+      "file": "assets/icons-atlas.png",
+      "rect": [
+        631,
+        929,
+        302,
+        304
+      ],
+      "sourceSize": [
+        1254,
+        1254
+      ]
+    },
+    "icon-chest": {
+      "file": "assets/icons-atlas.png",
+      "rect": [
+        940,
+        928,
+        309,
+        320
+      ],
+      "sourceSize": [
+        1254,
+        1254
+      ]
+    },
+    "modal-info": {
+      "file": "assets/modal-frames-atlas.png",
+      "rect": [
+        0,
+        90,
+        590,
+        750
+      ],
+      "sourceSize": [
+        1774,
+        887
+      ],
+      "note": "Preserve corners when stretching; text and actions are separate."
+    },
+    "modal-settings": {
+      "file": "assets/modal-frames-atlas.png",
+      "rect": [
+        590,
+        0,
+        594,
+        841
+      ],
+      "sourceSize": [
+        1774,
+        887
+      ],
+      "note": "Preserve corners when stretching; text and actions are separate."
+    },
+    "modal-reward": {
+      "file": "assets/modal-frames-atlas.png",
+      "rect": [
+        1184,
+        90,
+        590,
+        750
+      ],
+      "sourceSize": [
+        1774,
+        887
+      ],
+      "note": "Preserve corners when stretching; text and actions are separate."
+    },
+    "tile-cyan": {
+      "file": "assets/tiles-fx-atlas.png",
+      "rect": [
+        0,
+        0,
+        425,
+        365
+      ],
+      "sourceSize": [
+        1448,
+        1086
+      ]
+    },
+    "projectile-cyan": {
+      "file": "assets/tiles-fx-atlas.png",
+      "rect": [
+        425,
+        0,
+        335,
+        365
+      ],
+      "sourceSize": [
+        1448,
+        1086
+      ]
+    },
+    "muzzle-cyan": {
+      "file": "assets/tiles-fx-atlas.png",
+      "rect": [
+        760,
+        0,
+        310,
+        365
+      ],
+      "sourceSize": [
+        1448,
+        1086
+      ]
+    },
+    "impact-cyan": {
+      "file": "assets/tiles-fx-atlas.png",
+      "rect": [
+        1070,
+        0,
+        378,
+        365
+      ],
+      "sourceSize": [
+        1448,
+        1086
+      ]
+    },
+    "tile-violet": {
+      "file": "assets/tiles-fx-atlas.png",
+      "rect": [
+        0,
+        365,
+        425,
+        355
+      ],
+      "sourceSize": [
+        1448,
+        1086
+      ]
+    },
+    "projectile-violet": {
+      "file": "assets/tiles-fx-atlas.png",
+      "rect": [
+        425,
+        365,
+        335,
+        355
+      ],
+      "sourceSize": [
+        1448,
+        1086
+      ]
+    },
+    "muzzle-violet": {
+      "file": "assets/tiles-fx-atlas.png",
+      "rect": [
+        760,
+        365,
+        310,
+        355
+      ],
+      "sourceSize": [
+        1448,
+        1086
+      ]
+    },
+    "impact-violet": {
+      "file": "assets/tiles-fx-atlas.png",
+      "rect": [
+        1070,
+        365,
+        378,
+        355
+      ],
+      "sourceSize": [
+        1448,
+        1086
+      ]
+    },
+    "tile-amber": {
+      "file": "assets/tiles-fx-atlas.png",
+      "rect": [
+        0,
+        720,
+        425,
+        366
+      ],
+      "sourceSize": [
+        1448,
+        1086
+      ]
+    },
+    "projectile-amber": {
+      "file": "assets/tiles-fx-atlas.png",
+      "rect": [
+        425,
+        720,
+        335,
+        366
+      ],
+      "sourceSize": [
+        1448,
+        1086
+      ]
+    },
+    "muzzle-amber": {
+      "file": "assets/tiles-fx-atlas.png",
+      "rect": [
+        760,
+        720,
+        310,
+        366
+      ],
+      "sourceSize": [
+        1448,
+        1086
+      ]
+    },
+    "impact-amber": {
+      "file": "assets/tiles-fx-atlas.png",
+      "rect": [
+        1070,
+        720,
+        378,
+        366
+      ],
+      "sourceSize": [
+        1448,
+        1086
+      ]
+    },
+    "battery-full": {
+      "file": "assets/hud-states-atlas.png",
+      "rect": [
+        15,
+        73,
+        615,
+        269
+      ],
+      "sourceSize": [
+        1254,
+        1254
+      ]
+    },
+    "battery-low": {
+      "file": "assets/hud-states-atlas.png",
+      "rect": [
+        636,
+        73,
+        612,
+        269
+      ],
+      "sourceSize": [
+        1254,
+        1254
+      ]
+    },
+    "toggle-on": {
+      "file": "assets/hud-states-atlas.png",
+      "rect": [
+        15,
+        373,
+        600,
+        295
+      ],
+      "sourceSize": [
+        1254,
+        1254
+      ]
+    },
+    "toggle-off": {
+      "file": "assets/hud-states-atlas.png",
+      "rect": [
+        636,
+        373,
+        612,
+        295
+      ],
+      "sourceSize": [
+        1254,
+        1254
+      ]
+    },
+    "tab-selected": {
+      "file": "assets/hud-states-atlas.png",
+      "rect": [
+        15,
+        688,
+        590,
+        283
+      ],
+      "sourceSize": [
+        1254,
+        1254
+      ]
+    },
+    "tab-idle": {
+      "file": "assets/hud-states-atlas.png",
+      "rect": [
+        636,
+        688,
+        612,
+        283
+      ],
+      "sourceSize": [
+        1254,
+        1254
+      ]
+    },
+    "level-plaque": {
+      "file": "assets/hud-states-atlas.png",
+      "rect": [
+        15,
+        987,
+        773,
+        214
+      ],
+      "sourceSize": [
+        1254,
+        1254
+      ]
+    },
+    "section-plaque": {
+      "file": "assets/hud-states-atlas.png",
+      "rect": [
+        806,
+        987,
+        442,
+        214
+      ],
+      "sourceSize": [
+        1254,
+        1254
+      ]
+    },
+    "arena": {
+      "file": "assets/arena-plate.png",
+      "rect": [
+        0,
+        0,
+        1254,
+        1254
+      ],
+      "sourceSize": [
+        1254,
+        1254
+      ],
+      "playfield": [
+        270,
+        254,
+        708,
+        709
+      ],
+      "trackCenters": {
+        "left": 195,
+        "right": 1060,
+        "top": 175,
+        "bottom": 1053
+      },
+      "note": "Geometry is a visual guide. Fit exact collision/shooting lanes to game grid during integration."
+    },
+    "background": {
+      "file": "assets/hangar-background.png",
+      "rect": [
+        0,
+        0,
+        887,
+        1774
+      ],
+      "sourceSize": [
+        887,
+        1774
+      ]
+    }
+  },
+  "count": 62,
+  "notes": [
+    "Original PNGs are preserved; rectangles are non-destructive atlas regions.",
+    "Text, prices, ammo, progress and unlock state are runtime overlays.",
+    "Queue shows 3 columns and up to 3 visible rows, constrained by actual remaining queue length.",
+    "Use overhead idle sprite plus independent effects for coherent animation, not full preview images.",
+    "Directional arrows are code, never part of arena plate.",
+    "Bounds are checked against source sizes; in-engine visual alignment and touch testing remain pending."
+  ]
+}
