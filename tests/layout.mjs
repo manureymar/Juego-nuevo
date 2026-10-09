@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 export async function settleArt(page) {
+  await page.waitForFunction(()=>!document.querySelector('#toast')?.classList.contains('visible')); 
   await page.evaluate(async()=>{
     await document.fonts.ready;
     await Promise.all([...document.querySelectorAll('#app img')].map(img=>img.decode().catch(()=>{})));
@@ -16,5 +17,9 @@ export async function assertControlsVisible(page,selector='#app button') {
     return bad?[{name,rect:{x:r.x,y:r.y,w:r.width,h:r.height},hit:hit?.outerHTML.slice(0,150)}]:[];
   }));
   assert.deepEqual(failures,[],'Controls must fit the viewport and receive touches');
+  for(const label of await page.locator('.art-currency > b').all()){
+    const contained=await label.evaluate(b=>{const r=b.getBoundingClientRect(),p=b.parentElement.getBoundingClientRect();return r.top>=p.top-.5&&r.bottom<=p.bottom+.5;});
+    assert.equal(contained,true,'Coin balance must stay inside its frame');
+  }
   assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth&&document.documentElement.scrollHeight<=innerHeight),true,'Document must not scroll');
 }

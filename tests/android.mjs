@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import {execFileSync} from 'node:child_process';
 import {mkdirSync,writeFileSync} from 'node:fs';
-import {chromium} from 'playwright';
+import {_android as android} from 'playwright';
 import {settleArt,assertControlsVisible} from './layout.mjs';
 
 const pkg='com.manureymar.robotpulse.preview';
@@ -15,18 +15,16 @@ async function until(fn,seconds=30){
   while(Date.now()<end){try{const result=await fn();if(result)return result;}catch(e){last=e;}await delay(250);}
   throw new Error('Android condition timed out: '+(last||''));
 }
-let browser;
+let device;
 try{
   adb('shell','settings','put','system','font_scale','1.4');
   adb('install','-r','android/app/build/outputs/apk/debug/app-debug.apk');
   adb('shell','am','force-stop',pkg);
   adb('shell','am','start','-W','-n',pkg+'/com.manureymar.robotpulse.MainActivity');
-  const pid=await until(()=>adb('shell','pidof',pkg).trim());
-  await until(()=>adb('shell','cat','/proc/net/unix').includes('webview_devtools_remote_'+pid));
-  adb('forward','tcp:9222','localabstract:webview_devtools_remote_'+pid);
-  await until(async()=>{const r=await fetch('http://127.0.0.1:9222/json/version');return r.ok;});
-  browser=await chromium.connectOverCDP('http://127.0.0.1:9222');
-  const page=await until(()=>browser.contexts()[0]?.pages().find(p=>p.url().includes('appassets.androidplatform.net')));
+  [device]=await android.devices();
+  assert.ok(device,'Android device is connected');
+  const webview=await device.webView({pkg});
+  const page=await webview.page();
   page.on('pageerror',e=>errors.push(e.message));
   page.on('response',r=>{if(r.status()>=400)errors.push(`HTTP ${r.status()}: ${r.url()}`);});
   page.setDefaultTimeout(20000);
@@ -89,4 +87,4 @@ try{
   try{writeFileSync('test-results/android/failure.png',execFileSync('adb',['exec-out','screencap','-p'],{maxBuffer:20*1024*1024}));}catch{}
   try{writeFileSync('test-results/android/logcat.txt',adb('logcat','-d','-t','1000'));}catch{}
   throw error;
-}finally{await browser?.close();}
+}finally{await device?.close();}
