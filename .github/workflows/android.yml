@@ -1,0 +1,82 @@
+name: Robot Pulse — test and Android APK
+
+on:
+  push:
+    branches: [main]
+    paths: ['game/**', 'android/**', 'scripts/**', 'tests/**', 'package.json', '.github/workflows/android.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: robot-pulse-android
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check assets and deterministic game tests
+        run: |
+          npm run check
+          npm test
+      - name: Install browser test runner
+        run: |
+          npm install --no-save --package-lock=false playwright@1.56.1
+          npx playwright install --with-deps chromium
+      - name: Test the mobile game in Chromium
+        run: npm run test:browser
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: robot-pulse-browser-checks
+          path: test-results/
+          retention-days: 30
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.11.1'
+      - name: Install Android platform
+        run: sdkmanager 'platforms;android-35' 'build-tools;35.0.0'
+      - name: Build installable offline APK
+        run: gradle -p android assembleDebug --no-daemon
+      - name: Verify APK signature and package
+        run: |
+          "$ANDROID_HOME/build-tools/35.0.0/apksigner" verify --verbose android/app/build/outputs/apk/debug/app-debug.apk
+          "$ANDROID_HOME/build-tools/35.0.0/aapt" dump badging android/app/build/outputs/apk/debug/app-debug.apk > test-results/apk-info.txt
+          mkdir -p downloads
+          cp android/app/build/outputs/apk/debug/app-debug.apk downloads/RobotPulse-0.1.0.apk
+          cd downloads
+          sha256sum RobotPulse-0.1.0.apk > SHA256SUMS.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: RobotPulse-Android-0.1.0
+          path: |
+            downloads/RobotPulse-0.1.0.apk
+            downloads/SHA256SUMS.txt
+            test-results/apk-info.txt
+          retention-days: 90
+      - name: Save the tested APK in this repository
+        run: |
+          git fetch origin main
+          if [ "$(git rev-parse origin/main)" != "$GITHUB_SHA" ]; then
+            echo 'A newer source revision exists; its run will publish the next APK.'
+            exit 0
+          fi
+          git config user.name 'Robot Pulse build'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add downloads/RobotPulse-0.1.0.apk downloads/SHA256SUMS.txt
+          git diff --cached --quiet && exit 0
+          git commit -m 'build: save tested Android preview APK [skip ci]'
+          git push origin HEAD:main
