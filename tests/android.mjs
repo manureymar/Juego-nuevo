@@ -144,7 +144,7 @@ try{
   assert.equal(await page.locator('.queue-unit').count(),9);
   await nativeTap(page,'[data-tool=bay]');
   await settleArt(page);await assertControlsVisible(page,'.modal button');
-  writeFileSync('test-results/android/11-tool.png',execFileSync('adb',['exec-out','screencap','-p']));
+  writeFileSync('test-results/android/11-tool.png',execFileSync('adb',['exec-out','screencap','-p'],{maxBuffer:20*1024*1024}));
   await page.locator('[data-action=modal-action]').first().click();
   assert.equal(await page.locator('#waiting-bays>div').count(),6);
   await nativeTap(page,'[data-action=launch-queue][data-column="0"]');
@@ -153,7 +153,7 @@ try{
   const remaining=await page.locator('#remaining').innerText();await delay(500);
   assert.equal(await page.locator('#remaining').innerText(),remaining);
   await settleArt(page);await assertControlsVisible(page,'.modal button');
-  writeFileSync('test-results/android/13-pause.png',execFileSync('adb',['exec-out','screencap','-p']));
+  writeFileSync('test-results/android/13-pause.png',execFileSync('adb',['exec-out','screencap','-p'],{maxBuffer:20*1024*1024}));
   await page.locator('[data-action=modal-action]').nth(2).click();await page.locator('[data-action=modal-action]').nth(1).click();
   checks.push('Installed APK: nine queue robots, extra waiting bay, native launch, rendered shots and pause work offline');
   checks.push('Illustrated Home and Leaderboard fit native display; battery number, native navigation, ranking filters, profile rows and locked levels respond in EN/ES');
