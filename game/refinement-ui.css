@@ -1,0 +1,87 @@
+/* 0.5: fixed frame caps, live labels, six visible queue units, wide arena. */
+.hud-background{position:absolute;inset:0;pointer-events:none;background:url('assets/ui-v3/home-clean.png') top center/100% auto no-repeat}
+.ui-hud .ui-energy{left:3%;top:20%;width:40%;height:67%;display:flex;align-items:center;gap:2%;padding:0 3%;background:linear-gradient(145deg,#09243fe0,#031127f0);border:2px solid #285b7d;border-radius:13px;box-shadow:inset 0 2px #88d9ff33,0 4px 9px #0006}
+.ui-energy .hud-battery{position:relative;inset:auto;width:56%;height:auto;aspect-ratio:489/190;flex:none}
+.ui-energy .ui-energy-number{left:17%;top:20%;width:60%;height:60%;font-size:5.1cqw;-webkit-text-stroke:.25cqw #063347;line-height:1;text-shadow:0 2px 2px #04374b}
+.ui-energy .ui-energy-label{position:relative;inset:auto;display:grid;width:42%;height:auto;font-size:4.1cqw;font-variant-numeric:tabular-nums;text-transform:none;letter-spacing:0}
+.ui-hud .ui-currency{left:47%;top:21%;width:34%;height:65%}
+.ui-hud .ui-settings{left:84%;top:14%;width:13%;height:82%}
+.ui-coin-number{font-size:4.5cqw}
+.home-screen .scene-brand{display:none}
+
+.game-scene{overflow:hidden}
+.game-scene .ui-hud{height:128px}
+.game-scene .game-heading{left:25px;right:25px;top:133px;height:91px;gap:12px}
+.game-heading .mission-heading h1{font-size:41px;line-height:1.05}
+.game-heading .mission-heading p{font-size:23px;margin-top:4px}
+.game-scene .gp-icon-button{width:91px;height:91px}
+.game-scene .gp-icon-button .game-icon{width:53px;height:53px}
+.game-scene .board-wrap{left:10px;top:225px;width:867px;height:867px}
+.game-scene .belt-label{bottom:-6px;width:310px;height:42px;font-size:23px}
+.game-scene .waiting-bays{left:34px;right:34px;top:1100px;height:142px;gap:9px}
+.game-scene .empty-bay,.game-scene .waiting-robot{height:142px}
+.game-scene .bay-unit{inset:4px 1px 15px}
+.game-scene .waiting-robot .ammo-badge{width:57px;height:34px;font-size:24px;right:50%;bottom:6px;transform:translateX(50%)}
+.game-scene .launch-queues{left:28px;right:28px;top:1250px;height:319px;gap:20px}
+.game-scene .queue-unit{transform-origin:center;isolation:isolate}
+.game-scene .queue-unit.depth-0{width:252px;height:232px;bottom:0;top:auto;z-index:3}
+.game-scene .queue-unit.depth-1{width:196px;height:180px;top:0;z-index:2}
+.queue-platform{position:absolute;left:0;right:0;top:auto;bottom:0;height:71px;filter:drop-shadow(0 10px 7px #000b)}
+.queue-unit .queue-unit-art{position:absolute;inset:0 15px 26px}
+.live-robot{display:block;position:relative}
+.robot-eyes{position:absolute;inset:0;width:100%;height:100%;fill:#fff3ab;filter:drop-shadow(0 0 5px #ffa52b);pointer-events:none}
+.open-eyes{transform-box:fill-box;transform-origin:center;animation:robot-blink 4.7s infinite;animation-delay:var(--eye-delay,0s)}
+.happy-eyes{opacity:0;fill:none;stroke:#fff3ab;stroke-width:11;stroke-linecap:round}
+.is-happy .open-eyes{opacity:0}.is-happy .happy-eyes{opacity:1}
+.depth-1 .queue-platform{height:55px}.depth-1 .queue-unit-art{inset:0 12px 20px}
+.game-scene .queue-unit .ammo-badge{bottom:1px;right:50%;transform:translateX(50%);width:73px;height:42px;font-size:31px}
+.game-scene .queue-unit.depth-1 .ammo-badge{bottom:1px;width:60px;height:34px;font-size:25px}
+.game-scene .queue-unit.selectable{filter:drop-shadow(0 0 10px #fff5ac)}
+.game-scene .queue-empty{top:auto;bottom:0;height:60px;opacity:.3}
+.game-scene .booster-bar{left:33px;right:33px;top:1583px;height:179px;gap:23px}
+.game-scene .booster-button{height:177px;filter:drop-shadow(0 9px 4px #000c)}
+.booster-button:before{content:'';position:absolute;inset:13px 5px -1px;border-radius:50%;background:linear-gradient(#75c5e0,#09192c 64%,#304454 88%,#031222);box-shadow:inset 0 -7px #050f1f,0 7px 0 #010611,0 12px 12px #0008}
+.booster-button>.gp-sprite{inset:0 0 9px}
+.booster-button[data-tool=bay]>.gp-sprite{filter:sepia(.75) saturate(2.2) hue-rotate(345deg)}
+.booster-icon{inset:40px 44px 44px}
+.tool-quantity{right:1px;bottom:2px;min-width:41px;height:34px;font-size:25px;border-width:2px;background:#07243be8}
+.booster-button.locked .tool-quantity:empty{display:none}
+.game-scene .cancel-selection{height:112px;font-size:32px;position:relative}
+@keyframes robot-blink{0%,35%,40%,100%{transform:scaleY(1)}37%,38%{transform:scaleY(.075)}}
+@media(prefers-reduced-motion:reduce){.open-eyes{animation:none}}
+
+/* Every dialog uses the same non-stretching header, X socket and footer. */
+.modal-scrim{padding:10px;background:#020b18ca;backdrop-filter:blur(8px)}
+.modal.art-modal,.modal.art-modal.settings{width:400px;max-width:calc(100vw - 20px);min-height:0;max-height:none;padding:0 43px 42px;overflow:visible;isolation:isolate}
+.modal-sliced{position:absolute;inset:0;display:grid;grid-template-columns:58px 1fr 58px;grid-template-rows:123px 1fr 64px;pointer-events:none;z-index:-1;filter:drop-shadow(0 14px 22px #0009)}
+.modal-sliced>.gp-sprite{position:relative;inset:auto;min-width:0;min-height:0}
+.modal-header{position:relative;height:123px;margin-inline:-43px}
+.art-modal h2,.art-modal.settings h2{position:absolute;left:54px;right:75px;top:45px;height:53px;margin:0;transform:none;font-size:clamp(19px,5.4vw,24px);line-height:1.1;letter-spacing:0;display:flex;align-items:center;justify-content:center;text-wrap:balance}
+.art-modal .modal-close{position:absolute;right:11px;top:39px;width:48px;height:47px;padding:9px;display:grid;place-items:center;border:0;background:transparent;z-index:2}
+.art-modal .modal-close .game-icon{width:29px;height:29px;display:block}
+.art-modal .modal-body{font-family:Tektur,system-ui,sans-serif;font-weight:500;text-align:center}
+.art-modal .modal-body p{font-size:16px;line-height:1.45;margin:10px 0 16px;color:#d5ebf7;overflow-wrap:anywhere}
+.art-modal .modal-actions{margin-top:18px;gap:9px}
+.art-modal .art-button,.art-modal .modal-actions>.art-button{min-height:62px;padding:18px 23px;font-size:16px;line-height:1.2}
+.art-modal .art-button>.gp-sliced{--slice-x:32px;--slice-y:21px}
+.art-button .button-label{min-height:22px;line-height:1.2;text-wrap:balance}
+.art-modal .modal-body>.art-button{width:100%}
+.art-modal .settings-row{min-height:73px;margin:0;padding:12px 0;font-size:16px;gap:7px}
+.settings-row>span{gap:8px}.art-modal .settings-row .game-icon{width:25px;height:25px}
+.settings-row .language-options{gap:4px}
+.settings-row .language-tab{width:47px;height:45px;font-size:15px}
+.settings-row .toggle-button{width:82px;height:42px;flex:none}
+.toggle-button>span:last-child{font-size:13px;top:30%}
+.settings-row .settings-battery{position:relative;width:110px;height:43px;flex:none}
+.settings-battery b{position:absolute;left:17%;top:21%;width:60%;height:60%;display:grid;place-items:center;font-size:29px;text-shadow:0 2px #003143;line-height:1}
+.settings-row>strong{font-size:17px;font-variant-numeric:tabular-nums;min-width:51px;text-align:right}
+.art-modal .energy-display{margin:8px 0 16px;gap:12px;font-size:30px}
+.art-modal .modal-battery{width:133px;height:58px}
+.art-modal .modal-battery>b{font-size:32px;-webkit-text-stroke:1px #01354a}
+.modal-symbol>.game-icon,.tool-dialog-art>.game-icon{width:81px;height:81px;margin:0 auto 8px}
+.art-modal .tool-stock{font-size:17px;margin:6px 0 13px}
+.art-modal .result-grid{margin-top:12px;gap:6px}.art-modal .result-grid b{font-size:20px}.art-modal .result-grid small{font-size:12px}
+.art-modal .new-best{font-size:14px}.art-modal .tutorial-list{gap:10px}.art-modal .tutorial-list p{font-size:14px;line-height:1.4;margin:0}
+.art-modal .tutorial-list b{min-width:24px}.art-modal .color-key{font-size:12px}
+.art-modal .skin-grid{gap:5px}.art-modal .skin-card{padding:8px 3px}.art-modal .skin-button{font-size:11px;min-height:43px;padding:9px 8px}
+.art-modal .skin-card .profile-pilot-art{width:76px;height:67px}.art-modal .skin-card h3{font-size:12px}

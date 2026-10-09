@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { defaultProfile, sanitizeProfile, loseRun, winRun, refreshEnergy, RECHARGE_MS, refillEnergy, claimDaily, buySkin, SaveStore, buyTools, useTool } from '../game/src/profile.js';
+import { defaultProfile, sanitizeProfile, loseRun, winRun, refreshEnergy, energyCountdown, RECHARGE_MS, refillEnergy, claimDaily, buySkin, SaveStore, buyTools, useTool } from '../game/src/profile.js';
 
 test('a defeat takes exactly one battery charge; duplicate callbacks cannot double-charge',()=>{
   const p=defaultProfile(1000);assert.ok(loseRun(p,'run1',1000));assert.equal(p.energy,4);
@@ -42,4 +42,14 @@ test('tool purchases and consumption are atomic and survive profile loading',()=
  assert.equal(useTool(p,'select',()=>({ok:true})).ok,true);assert.equal(p.tools.select,3);
  assert.equal(sanitizeProfile(JSON.parse(JSON.stringify(p))).tools.select,3);
  p.tools.bay=0;assert.equal(useTool(p,'bay',()=>{throw Error('Must not apply');}).error,'no_tools');
+});
+
+
+test('recharge countdown shows seconds, survives background time and reaches MAX only at full charge',()=>{
+ const p=defaultProfile(1000);loseRun(p,'countdown',1000);
+ assert.equal(energyCountdown(p,1000),'30:00');assert.equal(energyCountdown(p,2000),'29:59');
+ assert.equal(energyCountdown(p,61000),'29:00');assert.equal(energyCountdown(p,1800500),'00:01');
+ refreshEnergy(p,1801000);assert.equal(energyCountdown(p,1801000),'MAX');assert.equal(p.energy,5);
+ p.energy=3;p.energyAt=1000;refreshEnergy(p,1802000);assert.equal(energyCountdown(p,1802000),'29:59');
+ assert.equal(energyCountdown(p,0),'30:00');
 });

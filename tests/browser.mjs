@@ -25,6 +25,7 @@ try{
   assert.equal(await page.locator('.hero-image img').evaluate(img=>img.complete&&img.naturalWidth>0),true);
   await settleArt(page);await assertControlsVisible(page);
   await page.waitForFunction(()=>!document.querySelector('#menu-music').paused&&document.querySelector('#menu-music').currentTime>0);
+  assert.equal(await page.locator('.home-screen .scene-brand,.ui-avatar').count(),0);
   await page.screenshot({path:'test-results/02-home.png'});
   await page.locator('.bottom-nav [data-action="shop"]').click();
   await page.locator('[data-action="pack"]').first().click();
@@ -53,7 +54,9 @@ try{
   await page.locator('[data-action="modal-action"]').first().click();
   assert.equal(await page.locator('#menu-music').evaluate(a=>a.paused),true);
   await settleArt(page);await assertControlsVisible(page);
-  assert.equal(await page.locator('.queue-unit').count(),9);
+  assert.equal(await page.locator('.queue-unit').count(),6);
+  assert.equal(await page.locator('.ui-avatar,#remaining,#progress-percent,.queue-heading,.bay-heading').count(),0);
+  assert.equal(await page.locator('[data-action=pause]').count(),1);
   await page.screenshot({path:'test-results/level-01-ready.png'});
   await page.locator('[data-tool=bay]').click();await settleArt(page);await assertControlsVisible(page,'.modal button');
   await page.screenshot({path:'test-results/tool-extra-bay.png'});
@@ -61,16 +64,16 @@ try{
   assert.equal(await page.locator('#waiting-bays>div').count(),6);
   assert.equal(await page.evaluate(()=>window.__rpTest.profile.tools.bay),0);
   await page.locator('[data-tool=select]').click();await page.locator('[data-action=modal-action]').first().click();
-  assert.equal(await page.locator('[data-action=select-robot]').count(),9);
+  assert.equal(await page.locator('[data-action=select-robot]').count(),6);
   await page.locator('[data-action=cancel-selection]').click();
   assert.equal(await page.evaluate(()=>window.__rpTest.profile.tools.select),1);
   await page.locator('[data-tool=shuffle]').click();await page.locator('[data-action=modal-action]').first().click();
   assert.equal(await page.evaluate(()=>window.__rpTest.profile.tools.shuffle),0);
   await page.locator('[data-tool=select]').click();await page.locator('[data-action=modal-action]').first().click();
-  await page.locator('[data-action=select-robot][data-index="2"]').first().click();
+  await page.locator('[data-action=select-robot][data-index="1"]').first().click();
   assert.equal(await page.evaluate(()=>window.__rpTest.profile.tools.select),0);
   await page.evaluate(()=>window.__rpTest.advance(10));
-  checks.push('Three queue rows, extra bay, shuffle, rear selection, cancellation without spending, tool inventory persisted');
+  checks.push('Two visible queue rows, extra bay, shuffle, rear selection, cancellation without spending, tool inventory persisted');
 
   await page.locator('[data-action="launch-queue"][data-column="0"]').click();
   await page.evaluate(()=>window.__rpTest.advance(3));
@@ -106,6 +109,7 @@ try{
     await page.evaluate(()=>window.__rpTest.advance(10));
   }
   assert.equal(await page.evaluate(()=>window.__rpTest.engine.status),'won');
+  await page.locator('.modal.win').waitFor();
   assert.equal(await page.evaluate(()=>window.__rpTest.profile.energy),5);
   assert.equal(await page.evaluate(()=>window.__rpTest.profile.coins),1340);
   await page.screenshot({path:'test-results/06-victory.png'});
@@ -120,6 +124,10 @@ try{
   await page.locator('[data-action="modal-action"]').nth(2).click();
   await page.locator('[data-action="modal-action"]').nth(1).click();
   assert.equal(await page.evaluate(()=>window.__rpTest.profile.energy),4);
+  assert.match(await page.locator('.ui-energy-label').innerText(),/^\d{2}:\d{2}$/);
+  const countdownBefore=await page.locator('.ui-energy-label').innerText();
+  await page.waitForFunction(before=>document.querySelector('.ui-energy-label').textContent!==before,countdownBefore);
+  assert.match(await page.locator('.ui-energy-label').innerText(),/^29:/);
   await page.locator('.bottom-nav [data-action="shop"]').click();
   await page.locator('[data-action="energy"]').click();
   await page.locator('[data-action="refill"]').click();

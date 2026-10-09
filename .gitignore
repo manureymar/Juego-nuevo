@@ -5,6 +5,7 @@ android/local.properties
 android/**/build/
 *.keystore
 *.jks
+!android/preview-signing.keystore
 playwright-report/
 test-results/
 .DS_Store

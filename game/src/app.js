@@ -1,6 +1,6 @@
 import { GameEngine } from './engine.js';
 import { COLORS } from './level.js';
-import { SaveStore, SKINS, PACKS, MAX_ENERGY, RECHARGE_MS, refreshEnergy, TOOL_PACKS, buyTools, useTool, winRun, loseRun, refillEnergy, buySkin, claimDaily, localDate } from './profile.js';
+import { SaveStore, SKINS, PACKS, MAX_ENERGY, RECHARGE_MS, energyCountdown, refreshEnergy, TOOL_PACKS, buyTools, useTool, winRun, loseRun, refillEnergy, buySkin, claimDaily, localDate } from './profile.js';
 import { icon as legacyIcon } from './icons.js';
 import { sprite, gameRobot, gameIcon, GAME_ART } from './game-art.js';
 import { translator } from './i18n.js';
@@ -67,10 +67,9 @@ function sound(kind='tap') {
 function hud() {
   refreshEnergy(profile);
   const coins=profile.coins<100000?fmt(profile.coins):new Intl.NumberFormat(profile.language,{notation:'compact',maximumFractionDigits:1}).format(profile.coins);
-  const recharge=profile.energy===MAX_ENERGY?t('max'):Math.ceil(Math.max(0,RECHARGE_MS-(Date.now()-profile.energyAt))/60000)+'m';
-  return `<header class="hud ui-hud">
-    ${button('profile',menuArt('avatar'),'ui-avatar',`aria-label="${t('profile')}"`)}
-    ${button('energy',`${sprite('button-secondary')}<span class="hud-battery">${sprite(profile.energy?'battery-full':'battery-low')}</span><b class="ui-energy-number">${profile.energy}</b><span class="ui-energy-label">${recharge}</span>`,'ui-energy',`aria-label="${t('energy')} ${profile.energy} / 5"`)}
+  const recharge=energyCountdown(profile);
+  return `<header class="hud ui-hud"><span class="hud-background" aria-hidden="true"></span>
+    ${button('energy',`<span class="hud-battery">${sprite('battery-base')}<b class="ui-energy-number">${profile.energy}</b></span><span class="ui-energy-label" data-energy-timer>${recharge}</span>`,'ui-energy',`aria-label="${t('energy')} ${profile.energy} / 5"`)}
     ${button('coins',`${menuArt('currency')}<b class="ui-coin-number">${coins}</b>`,'ui-currency',`aria-label="${t('coins')}: ${profile.coins}"`)}
     ${button('settings',menuArt('settings'),'ui-settings',`aria-label="${t('settings')}"`)}
   </header>`;
@@ -121,8 +120,8 @@ function render() {
 function homeView() {
   const unlocks=[['cube',15],['cannon',20],['shield',25],['coins',30]];
   return `<section class="menu-scene home-screen" data-scene-width="887" data-scene-height="1774" aria-label="${t('home')}">
-    <img class="scene-layer" src="assets/ui-v3/home-layer.png" alt="" aria-hidden="true">
-    ${hud()}<div class="scene-brand" role="img" aria-label="Robot Pulse"></div>
+    <img class="scene-layer" src="assets/ui-v3/home-clean.png" alt="" aria-hidden="true">
+    ${hud()}
     <h1 class="home-title scene-title metal-text">${t('campaign')}</h1><p class="home-sector">${t('sector')}</p>
     <div class="campaign-controls">${[3,2,1].map(n=>button(n===1?'start':'locked',`<span>${n}</span>`,'campaign-node node-'+n,`aria-label="${t('level')} ${n}${n>1?' '+t('locked'):''}"`)).join('')}
     ${unlocks.map(([name,n])=>button('locked',`<span>${t('levelAbbr')} ${n}</span>`,'campaign-unlock unlock-'+name,`aria-label="${t('nextUnlock')}: ${t('level')} ${n}"`)).join('')}</div>
@@ -189,11 +188,9 @@ function masterView(){
 function gameView() {
   return `<div class="game-backdrop"><section class="game-scene game-screen" data-scene-width="887" data-scene-height="1774">
     ${hud()}
-    <div class="game-heading">${button('pause',sprite('icon-button-frame')+icon('back'),'gp-icon-button',`aria-label="${t('back')}"`)}<div class="mission-heading">${sprite('level-plaque')}<h1>${t('level')} 01</h1><p>${t('firstContact')}</p></div>${button('pause',sprite('icon-button-frame')+icon('pause'),'gp-icon-button',`aria-label="${t('pause')}"`)}</div>
-    <div class="mission-progress"><span id="remaining"></span><span id="progress-percent"></span><div class="progress-track">${sprite('progress-track')}<i id="progress-bar"></i></div></div>
+    <div class="game-heading"><div class="mission-heading">${sprite('level-plaque')}<h1>${t('level')} 01</h1><p>${t('firstContact')}</p></div>${button('pause',sprite('icon-button-frame')+icon('pause'),'gp-icon-button',`aria-label="${t('pause')}"`)}</div>
     <div class="board-wrap"><canvas id="board" role="img" aria-label="${t('clear')}"></canvas><div class="belt-label">${sprite('section-plaque')}<span>${t('conveyor')} <b id="belt-count">0 / 5</b></span></div></div>
-    <div class="bay-heading"><h2>${t('waiting')}</h2><span id="bay-count">0 / 5</span></div><div id="waiting-bays" class="waiting-bays"></div>
-    <div class="queue-heading"><h2 id="queue-title">${t('queue')}</h2>${button('help',icon('help'),'game-help',`aria-label="${t('how')}"`)}</div>
+    <div id="waiting-bays" class="waiting-bays"></div>
     <div id="launch-queues" class="launch-queues"></div><div id="booster-bar" class="booster-bar"></div>
   </section></div>`;
 }
@@ -203,31 +200,52 @@ function renderGameControls() {
   const badge=r=>`<span class="ammo-badge">${sprite('ammo-badge')}<b>${r.ammo}</b></span>`;
   const bays=document.querySelector('#waiting-bays');bays.style.setProperty('--bays',engine.waiting.length);
   bays.innerHTML=engine.waiting.map((r,i)=>r?button('launch-waiting',sprite('waiting-bay')+gameRobot(r.color,'overhead','bay-unit')+badge(r),'waiting-robot',`data-slot="${i}" data-color="${r.color}" ${selectingRobot?'disabled':''} aria-label="${t('launch')} ${t({C:'cyan',A:'amber',P:'violet'}[r.color])}, ${r.ammo} ${t('ammo')}"`):`<div class="empty-bay" aria-label="${t('waiting')} ${i+1}">${sprite('waiting-bay')}<span class="empty-mark">+</span></div>`).join('');
-  document.querySelector('#launch-queues').innerHTML=engine.queues.map((q,col)=>`<div class="launch-column">${q.slice(0,3).map((r,index)=>{
-    const content=gameRobot(r.color,'queue','queue-unit-art')+badge(r),cls=`queue-unit depth-${index}${selectingRobot?' selectable':''}`;
-    return index===0||selectingRobot?button(selectingRobot?'select-robot':'launch-queue',content,cls,`data-column="${col}" data-index="${index}" data-color="${r.color}" aria-label="${t('launch')} ${t({C:'cyan',A:'amber',P:'violet'}[r.color])}, ${r.ammo} ${t('ammo')}"`):`<div class="${cls}" aria-hidden="true">${content}</div>`;
-  }).join('')}${!q.length?`<div class="queue-empty">${icon('check')}</div>`:''}</div>`).join('');
-  document.querySelector('#queue-title').textContent=selectingRobot?t('selectAny'):t('queue');
+  const area=document.querySelector('#launch-queues');
+  const signature=JSON.stringify([engine.queues,selectingRobot]);
+  if(area.dataset.signature!==signature){
+    const old=new Map([...area.querySelectorAll('[data-robot-id]')].map(el=>[el.dataset.robotId,{el,rect:el.getBoundingClientRect(),depth:el.dataset.index}]));
+    const template=document.createElement('template');
+    template.innerHTML=engine.queues.map((q,col)=>`<div class="launch-column">${q.slice(0,2).map((r,index)=>{
+      const content=sprite('robot-platform','queue-platform')+gameRobot(r.color,'queue','queue-unit-art')+badge(r),cls=`queue-unit depth-${index}${selectingRobot?' selectable':''}`;
+      const attrs=`data-robot-id="${r.id}" data-column="${col}" data-index="${index}" data-color="${r.color}" style="--eye-delay:-${col*.71+index*1.13}s" aria-label="${t('launch')} ${t({C:'cyan',A:'amber',P:'violet'}[r.color])}, ${r.ammo} ${t('ammo')}"`;
+      return index===0||selectingRobot?button(selectingRobot?'select-robot':'launch-queue',content,cls,attrs):`<div class="${cls}" ${attrs} aria-hidden="true">${content}</div>`;
+    }).join('')}${!q.length?`<div class="queue-empty">${sprite('robot-platform')}</div>`:''}</div>`).join('');
+    for(const el of template.content.querySelectorAll('[data-robot-id]')){
+      const previous=old.get(el.dataset.robotId);
+      if(previous?.el.tagName===el.tagName){
+        const keep=previous.el;for(const a of [...keep.attributes])keep.removeAttribute(a.name);
+        for(const a of el.attributes)keep.setAttribute(a.name,a.value);
+        el.replaceWith(keep);
+      }
+    }
+    area.replaceChildren(template.content);area.dataset.signature=signature;
+    const scale=document.querySelector('.game-scene').getBoundingClientRect().width/887;
+    for(const el of area.querySelectorAll('[data-robot-id]')){
+      const previous=old.get(el.dataset.robotId);
+      if(previous&&previous.depth!==el.dataset.index){
+        el.classList.add('is-happy');setTimeout(()=>el.classList.remove('is-happy'),1000);
+        if(!matchMedia('(prefers-reduced-motion: reduce)').matches){
+          const r=el.getBoundingClientRect(),a=previous.rect,dx=(a.x+a.width/2-r.x-r.width/2)/scale,dy=(a.y+a.height/2-r.y-r.height/2)/scale;
+          el.animate([{transform:`translateX(-50%) translate(${dx}px,${dy}px) scale(${a.width/r.width},${a.height/r.height})`},{transform:'translateX(-50%)'}],{duration:380,easing:'cubic-bezier(.2,.8,.2,1)'});
+        }
+      }
+    }
+  }
   document.querySelector('#booster-bar').innerHTML=selectingRobot?button('cancel-selection',t('cancel'),'secondary cancel-selection'):
-    ['bay','select','shuffle','future'].map(key=>button('tool',`${sprite('booster-frame')}<span class="booster-icon">${icon(key==='bay'?'extra-bay':key==='future'?'lock':key)}</span><b class="tool-quantity">${key==='future'?t('levelAbbr')+'18':profile.tools[key]}</b><span class="booster-name">${t('tool_'+key)}</span>`,'booster-button '+(key==='future'?'locked':''),`data-tool="${key}" aria-label="${t('tool_'+key)}${key==='future'?'':', '+profile.tools[key]}"`)).join('');
+    ['bay','select','shuffle','future'].map(key=>button('tool',`${sprite('booster-frame')}<span class="booster-icon">${icon(key==='bay'?'extra-bay':key==='future'?'lock':key)}</span><b class="tool-quantity">${key==='future'?'':profile.tools[key]}</b>`,'booster-button '+(key==='future'?'locked':''),`data-tool="${key}" aria-label="${t('tool_'+key)}${key==='future'?'':', '+profile.tools[key]}"`)).join('');
   updateGameStats();
 }
 
 function updateGameStats() {
   if(screen!=='game'||!engine)return;
-  document.querySelector('#remaining').textContent=`${engine.remaining} ${t('remaining')}`;
-  const progress=Math.round(engine.destroyed/engine.total*100);
-  document.querySelector('#progress-percent').textContent=`${progress}%`;
-  document.querySelector('#progress-bar').style.width=`${progress*.84}%`;
   document.querySelector('#belt-count').textContent=`${engine.active.length} / ${engine.level.beltCapacity}`;
-  document.querySelector('#bay-count').textContent=`${engine.waiting.filter(Boolean).length} / ${engine.waiting.length}`;
 }
 
 function processEvents(events) {
   if(events.some(e=>['launch','park','spent','bay-added','shuffled'].includes(e.type)))renderGameControls();
   if(events.some(e=>e.type==='shot')){updateGameStats();sound('shot');}
   if(events.some(e=>e.type==='launch'))sound('launch');
-  if(events.some(e=>e.type==='won'||e.type==='lost'))finishRun();
+  if(events.some(e=>e.type==='won'||e.type==='lost')){setTimeout(finishRun,520);}
   else persistSession(events.some(e=>e.type==='launch'||e.type==='park'));
 }
 
@@ -287,14 +305,14 @@ function showTutorial() {
 function showSettings() {
   const wasRunning=engine?.isRunning&&screen==='game';if(wasRunning)engine.pause();
   const toggle=(name,value)=>button('toggle-'+name,`${sprite(value?'toggle-on':'toggle-off')}<span>${t(value?'on':'off')}</span>`,'toggle-button',`aria-pressed="${value}" aria-label="${t(name)}"`);
-  openModal(t('settings'),`<div class="settings-row"><span>${icon('globe')}${t('language')}</span><div class="language-options">${['en','es'].map(l=>button('set-language',`${sprite(profile.language===l?'tab-selected':'tab-idle')}<span>${l.toUpperCase()}</span>`,'language-tab',`data-language="${l}" aria-pressed="${profile.language===l}"`)).join('')}</div></div><div class="settings-row"><span>${icon('sound')}${t('sound')}</span>${toggle('sound',profile.sound)}</div><div class="settings-row"><span>${icon('music')}${t('music')}</span>${toggle('music',profile.music)}</div><div class="settings-row"><span>${t('energy')}</span><span class="settings-battery">${sprite(profile.energy?'battery-full':'battery-low')}<b>${profile.energy}</b></span><strong>${profile.energy===5?t('max'):'/ 5'}</strong></div>`,[{label:t('close'),primary:true}],{kind:'settings',onClose:()=>{if(wasRunning)engine?.resume();}});
+  openModal(t('settings'),`<div class="settings-row"><span>${icon('globe')}${t('language')}</span><div class="language-options">${['en','es'].map(l=>button('set-language',`${sprite(profile.language===l?'tab-selected':'tab-idle')}<span>${l.toUpperCase()}</span>`,'language-tab',`data-language="${l}" aria-pressed="${profile.language===l}"`)).join('')}</div></div><div class="settings-row"><span>${icon('sound')}${t('sound')}</span>${toggle('sound',profile.sound)}</div><div class="settings-row"><span>${icon('music')}${t('music')}</span>${toggle('music',profile.music)}</div><div class="settings-row"><span>${t('energy')}</span><span class="settings-battery">${sprite('battery-base')}<b>${profile.energy}</b></span><strong data-energy-timer>${energyCountdown(profile)}</strong></div>`,[{label:t('close'),primary:true}],{kind:'settings',onClose:()=>{if(wasRunning)engine?.resume();}});
 }
 
 function showEnergy() {
   refreshEnergy(profile);
-  const ms=Math.max(0,RECHARGE_MS-(Date.now()-profile.energyAt)),minutes=Math.ceil(ms/60000);
+  const countdown=energyCountdown(profile);
   const wasRunning=engine?.isRunning&&screen==='game';if(wasRunning)engine.pause();
-  openModal(t('energy'),`<div class="energy-display"><span class="modal-battery">${sprite(profile.energy?'battery-full':'battery-low')}<b>${profile.energy}</b></span><strong>/ 5</strong></div><p>${t('energyInfo')}</p>${profile.energy<5?`<p>${t('nextCharge')}: ${minutes} min</p>`:`<p>${t('full')}</p>`}${profile.energy<5?button('refill',`${t('recharge')} · 120 ${t('coins')}`,'primary'):''}`,[{label:t('gotIt'),primary:true}],{onClose:()=>{if(wasRunning)engine?.resume();}});
+  openModal(t('energy'),`<div class="energy-display"><span class="modal-battery">${sprite(profile.energy?'battery-full':'battery-low')}<b>${profile.energy}</b></span><strong>/ 5</strong></div><p>${t('energyInfo')}</p>${profile.energy<5?`<p>${t('nextCharge')}: <b data-energy-timer>${countdown}</b></p>`:`<p>${t('full')}</p>`}${profile.energy<5?button('refill',`${t('recharge')} · 120 ${t('coins')}`,'primary'):''}`,[{label:t('gotIt'),primary:true}],{onClose:()=>{if(wasRunning)engine?.resume();}});
 }
 
 function openModal(title,body,actions,options={}) {
@@ -302,8 +320,8 @@ function openModal(title,body,actions,options={}) {
   const autoPause=screen==='game'&&engine?.isRunning;
   if(autoPause)engine.pause();
   modal={actions,options,autoPause,previous:document.activeElement};
-  const frame=options.result==='win'?'modal-reward':options.kind==='settings'?'modal-settings':'modal-info';
-  modalRoot.innerHTML=`<div class="modal-scrim"><section class="modal art-modal ${options.result||''} ${options.kind||''}" role="dialog" aria-modal="true" aria-labelledby="dialog-title">${sprite(frame,'modal-frame')}${options.closable!==false?button('close-modal',icon('close'),'modal-close',`aria-label="${t('close')}"`):''}<h2 id="dialog-title">${escapeHTML(title)}</h2><div class="modal-body">${body}</div><div class="modal-actions">${actions.map((a,i)=>button('modal-action',escapeHTML(a.label),a.primary?'primary':a.danger?'danger-button':'secondary',`data-index="${i}" ${a.disabled?'disabled':''}`)).join('')}</div></section></div>`;
+  const frame=options.result==='win'?'modal-reward':'modal-info';
+  modalRoot.innerHTML=`<div class="modal-scrim"><section class="modal art-modal ${options.result||''} ${options.kind||''}" role="dialog" aria-modal="true" aria-labelledby="dialog-title">${sprite(frame,'modal-frame')}<header class="modal-header">${options.closable!==false?button('close-modal',icon('close'),'modal-close',`aria-label="${t('close')}"`):''}<h2 id="dialog-title">${escapeHTML(title)}</h2></header><div class="modal-body">${body}</div><div class="modal-actions">${actions.map((a,i)=>button('modal-action',escapeHTML(a.label),a.primary?'primary':a.danger?'danger-button':'secondary',`data-index="${i}" ${a.disabled?'disabled':''}`)).join('')}</div></section></div>`;
   root.inert=true;
   requestAnimationFrame(()=>{fitModal();modalRoot.querySelector('.modal-actions button:not(:disabled)')?.focus();});
 }
@@ -422,9 +440,8 @@ document.addEventListener('robotpulse:pause',()=>{if(screen==='game'&&engine?.is
 setInterval(()=>{
   const previous=profile.energy;refreshEnergy(profile);
   if(previous!==profile.energy){save();if(screen!=='game'&&!modal)render();}
-  document.querySelectorAll('.ui-energy-number,.modal-battery>b').forEach(el=>el.textContent=profile.energy);
-  const chargeLabel=document.querySelector('.ui-energy-label');
-  if(chargeLabel)chargeLabel.textContent=profile.energy===MAX_ENERGY?t('max'):Math.ceil(Math.max(0,RECHARGE_MS-(Date.now()-profile.energyAt))/60000)+'m';
+  document.querySelectorAll('.ui-energy-number,.modal-battery>b,.settings-battery>b').forEach(el=>el.textContent=profile.energy);
+  document.querySelectorAll('[data-energy-timer]').forEach(el=>el.textContent=energyCountdown(profile));
   const period=document.querySelector('.leader-period span');
   if(period&&rankingTab==='monthly')period.textContent=monthRemaining();
   persistSession();

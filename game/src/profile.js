@@ -2,6 +2,11 @@ import { monthKey } from './ranking.js';
 export const SAVE_KEY = 'robot-pulse-v1';
 export const MAX_ENERGY = 5;
 export const RECHARGE_MS = 30 * 60 * 1000;
+export function energyCountdown(p, now = Date.now()) {
+  if (p.energy >= MAX_ENERGY) return 'MAX';
+  const seconds = Math.max(0, Math.ceil((RECHARGE_MS - Math.max(0, now - p.energyAt)) / 1000));
+  return `${String(Math.floor(seconds / 60)).padStart(2, '0')}:${String(seconds % 60).padStart(2, '0')}`;
+}
 export const TOOL_PACKS={bay:{count:1,cost:300},select:{count:3,cost:1900},shuffle:{count:3,cost:1500}};
 export const PACKS = [
   { coins: 1000, price: '$1.99' }, { coins: 3000, price: '$4.99' }, { coins: 7500, price: '$9.99' },

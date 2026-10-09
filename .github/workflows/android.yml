@@ -33,7 +33,9 @@ jobs:
           npm install --no-save --package-lock=false playwright@1.56.1
           npx playwright install --with-deps chromium
       - name: Test the mobile game in Chromium
-        run: npm run test:browser
+        run: |
+          node tests/dialogs.mjs
+          npm run test:browser
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -55,7 +57,11 @@ jobs:
       - name: Install Android platform
         run: sdkmanager 'platforms;android-35' 'build-tools;35.0.0'
       - name: Build installable offline APK
-        run: gradle -p android assembleDebug --no-daemon
+        run: |
+          if [ ! -f android/preview-signing.keystore ]; then
+            keytool -genkeypair -keystore android/preview-signing.keystore -storepass android -keypass android -alias androiddebugkey -keyalg RSA -keysize 2048 -validity 10000 -dname 'CN=Robot Pulse Preview, OU=Preview, O=Robot Pulse, C=US' -noprompt
+          fi
+          gradle -p android assembleDebug --no-daemon
       - name: Enable Android emulator acceleration
         run: |
           echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
@@ -82,14 +88,14 @@ jobs:
           "$ANDROID_HOME/build-tools/35.0.0/apksigner" verify --verbose --print-certs android/app/build/outputs/apk/debug/app-debug.apk
           "$ANDROID_HOME/build-tools/35.0.0/aapt" dump badging android/app/build/outputs/apk/debug/app-debug.apk > test-results/apk-info.txt
           mkdir -p downloads
-          cp android/app/build/outputs/apk/debug/app-debug.apk downloads/RobotPulse-0.4.0.apk
+          cp android/app/build/outputs/apk/debug/app-debug.apk downloads/RobotPulse-0.5.0.apk
           cd downloads
-          sha256sum RobotPulse-0.4.0.apk > SHA256SUMS.txt
+          sha256sum RobotPulse-0.5.0.apk > SHA256SUMS.txt
       - uses: actions/upload-artifact@v4
         with:
-          name: RobotPulse-Android-0.4.0
+          name: RobotPulse-Android-0.5.0
           path: |
-            downloads/RobotPulse-0.4.0.apk
+            downloads/RobotPulse-0.5.0.apk
             downloads/SHA256SUMS.txt
             test-results/apk-info.txt
           retention-days: 90
@@ -102,7 +108,7 @@ jobs:
           fi
           git config user.name 'Robot Pulse build'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add downloads/RobotPulse-0.4.0.apk downloads/SHA256SUMS.txt
+          git add downloads/RobotPulse-0.5.0.apk downloads/SHA256SUMS.txt android/preview-signing.keystore
           git diff --cached --quiet && exit 0
           git commit -m 'build: save tested Android preview APK [skip ci]'
           git push origin HEAD:main

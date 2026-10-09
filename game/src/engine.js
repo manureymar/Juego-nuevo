@@ -76,7 +76,7 @@ export class GameEngine {
   launch(robot) {
     // A small launch queue keeps all five units visually separated at the entry.
     const earliest = Math.min(0, ...this.active.map(r => r.progress));
-    const progress = this.active.length && earliest < 2 ? earliest - 2 : -0.01;
+    const progress = this.active.length && earliest < 3 ? earliest - 3 : -0.01;
     this.active.push({ ...robot, progress });
     this.status = 'playing';
     this.launches++;

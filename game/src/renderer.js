@@ -1,11 +1,11 @@
 import { COLORS } from './level.js';
 import { drawSprite, robotColor, artReady } from './game-art.js';
 
-const SIZE=512, GRID=112, CELL=24, TOP=72, BOTTOM=430, LEFT=79, RIGHT=433;
+const SIZE=512, GRID=108, FIELD=296, TOP=72, BOTTOM=430, LEFT=79, RIGHT=433;
 export class BoardRenderer {
   constructor(canvas,engine,onEvents){
     this.canvas=canvas;this.ctx=canvas.getContext('2d');this.engine=engine;this.onEvents=onEvents;
-    this.effects=[];this.raf=0;this.last=0;this.acc=0;this.visual=0;this.ready=false;
+    this.cell=FIELD/engine.level.size;this.effects=[];this.raf=0;this.last=0;this.acc=0;this.visual=0;this.ready=false;
     this.reduced=globalThis.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
     const dpr=Math.min(globalThis.devicePixelRatio||1,3);
     canvas.width=SIZE*dpr;canvas.height=SIZE*dpr;this.ctx.scale(dpr,dpr);
@@ -19,7 +19,7 @@ export class BoardRenderer {
     if(this.ready&&this.engine.status!=='paused'){
       this.visual+=dt;this.acc+=dt;
       while(this.acc>=1/60){this.engine.tick(1/60);this.acc-=1/60;}
-      this.effects=this.effects.filter(e=>(e.age+=dt)<.36);
+      this.effects=this.effects.filter(e=>(e.age+=dt)<.62);
     }
     const events=this.engine.drainEvents();
     for(const e of events)if(e.type==='shot')this.effects.push({...e,age:0});
@@ -28,16 +28,16 @@ export class BoardRenderer {
   }
   point(step){
     const n=this.engine.level.size,d=((step%(4*n))+4*n)%(4*n),lane=this.engine.lane(Math.floor(d));
-    const v=GRID+(lane.index+.5)*CELL;
+    const v=GRID+(lane.index+.5)*this.cell;
     return lane.side===0?{x:v,y:BOTTOM,side:0}:lane.side===1?{x:RIGHT,y:v,side:1}:lane.side===2?{x:v,y:TOP,side:2}:{x:LEFT,y:v,side:3};
   }
   position(progress){
     const d=Math.max(0,progress),f=d-Math.floor(d),a=this.point(Math.floor(d)),b=this.point(Math.floor(d)+1);
-    return{x:a.x+(b.x-a.x)*f,y:a.y+(b.y-a.y)*f,side:a.side};
+    return{x:a.x+(b.x-a.x)*f,y:a.y+(b.y-a.y)*f,side:a.side,angle:-Math.PI/2*(a.side+(b.side!==a.side?f:0))};
   }
   muzzle(point){
-    const angle=[0,-Math.PI/2,Math.PI,Math.PI/2][point.side];
-    const ox=-8,oy=-19;
+    const angle=point.angle??[0,-Math.PI/2,Math.PI,Math.PI/2][point.side];
+    const ox=-15,oy=-28;
     return{x:point.x+ox*Math.cos(angle)-oy*Math.sin(angle),y:point.y+ox*Math.sin(angle)+oy*Math.cos(angle)};
   }
   arrows(){
@@ -51,7 +51,7 @@ export class BoardRenderer {
   }
   tile(row,col,color,alpha=1){
     const c=this.ctx;c.save();c.globalAlpha=alpha;
-    drawSprite(c,'tile-'+robotColor[color],GRID+col*CELL,GRID+row*CELL,CELL,CELL);c.restore();
+    drawSprite(c,'tile-'+robotColor[color],GRID+col*this.cell,GRID+row*this.cell,this.cell,this.cell);c.restore();
   }
   draw(){
     const c=this.ctx,g=this.engine;c.clearRect(0,0,SIZE,SIZE);
@@ -59,31 +59,48 @@ export class BoardRenderer {
     drawSprite(c,'arena',0,0,SIZE,SIZE);
     c.strokeStyle='#174659';c.lineWidth=.65;
     for(let i=0;i<=g.level.size;i++){
-      c.beginPath();c.moveTo(GRID+i*CELL,GRID);c.lineTo(GRID+i*CELL,GRID+g.level.size*CELL);c.stroke();
-      c.beginPath();c.moveTo(GRID,GRID+i*CELL);c.lineTo(GRID+g.level.size*CELL,GRID+i*CELL);c.stroke();
+      c.beginPath();c.moveTo(GRID+i*this.cell,GRID);c.lineTo(GRID+i*this.cell,GRID+g.level.size*this.cell);c.stroke();
+      c.beginPath();c.moveTo(GRID,GRID+i*this.cell);c.lineTo(GRID+g.level.size*this.cell,GRID+i*this.cell);c.stroke();
     }
     this.arrows();
     for(let r=0;r<g.grid.length;r++)for(let col=0;col<g.grid[r].length;col++)if(g.grid[r][col])this.tile(r,col,g.grid[r][col]);
+    for(const r of g.active){
+      if(r.progress<-.35)continue;
+      const p=this.position(r.progress);this.robot(p.x,p.y,p.angle,r.color,r.ammo,Math.min(1,(r.progress+.35)*3));
+    }
     for(const e of this.effects){
-      const color=robotColor[e.color],from=this.muzzle(this.point(e.step)),tx=GRID+(e.target.col+.5)*CELL,ty=GRID+(e.target.row+.5)*CELL;
-      const flight=.13;
+      const p=this.point(e.step),from=this.muzzle(p),tx=GRID+(e.target.col+.5)*this.cell,ty=GRID+(e.target.row+.5)*this.cell;
+      const hex=COLORS[e.color].hex,flight=.19;
       if(e.age<flight){
         this.tile(e.target.row,e.target.col,e.color);
-        const f=e.age/flight,px=from.x+(tx-from.x)*f,py=from.y+(ty-from.y)*f;
-        c.save();c.strokeStyle=COLORS[e.color].hex;c.shadowColor=c.strokeStyle;c.shadowBlur=10;c.lineWidth=2.5;
-        c.beginPath();c.moveTo(px-(tx-from.x)*.08,py-(ty-from.y)*.08);c.lineTo(px,py);c.stroke();
-        c.translate(px,py);c.rotate(Math.atan2(ty-from.y,tx-from.x)+Math.PI/2);drawSprite(c,'projectile-'+color,-7,-14,14,28);c.restore();
-        drawSprite(c,'muzzle-'+color,from.x-10,from.y-10,20,20);
+        // The last shot keeps its robot visible until the muzzle pulse ends.
+        if(!g.active.some(r=>r.id===e.id)&&e.age<.10)this.robot(p.x,p.y,-Math.PI/2*p.side,e.color,0,1-e.age/.12);
+        const f=e.age/flight,px=from.x+(tx-from.x)*f,py=from.y+(ty-from.y)*f,tail=Math.max(0,f-.30);
+        c.save();c.globalCompositeOperation='lighter';c.lineCap='round';c.shadowColor=hex;c.shadowBlur=16;
+        c.strokeStyle=hex;c.lineWidth=7;c.beginPath();c.moveTo(from.x+(tx-from.x)*tail,from.y+(ty-from.y)*tail);c.lineTo(px,py);c.stroke();
+        c.strokeStyle='#f4ffff';c.lineWidth=2.7;c.shadowBlur=6;c.stroke();
+        c.fillStyle='#fff';c.beginPath();c.arc(px,py,3.8,0,Math.PI*2);c.fill();
+        if(e.age<.09){drawSprite(c,'muzzle-'+robotColor[e.color],from.x-20,from.y-20,40,40);}
+        c.restore();
       }else{
-        c.save();c.globalAlpha=1-(e.age-flight)/(.36-flight);
-        drawSprite(c,'impact-'+color,tx-19,ty-19,38,38);c.restore();
+        const age=e.age-flight,q=age/(.62-flight);
+        c.save();c.globalCompositeOperation='lighter';c.globalAlpha=1-q;
+        c.shadowColor=hex;c.shadowBlur=13;c.strokeStyle=hex;c.lineWidth=2;
+        c.beginPath();c.arc(tx,ty,4+q*this.cell*.85,0,Math.PI*2);c.stroke();
+        drawSprite(c,'impact-'+robotColor[e.color],tx-26,ty-26,52,52);
+        for(let k=0;k<8;k++){
+          const a=k*Math.PI/4+(e.target.col+e.target.row)*.19,d=(8+q*34)*(k%2?.8:1);
+          c.save();c.translate(tx+Math.cos(a)*d,ty+Math.sin(a)*d);c.rotate(a+q*2);c.fillStyle=k%2?hex:'#eeffff';const size=(4-k%2)*(1-q*.65);c.fillRect(-size/2,-size/2,size,size);c.restore();
+        }
+        c.restore();
       }
     }
-    for(const r of g.active){const p=this.position(r.progress);this.robot(p.x,p.y,p.side,r.color,r.ammo,r.progress<0?.5:1);}
   }
-  robot(x,y,side,color,ammo,opacity){
-    const c=this.ctx;c.save();c.globalAlpha=opacity;c.translate(x,y);c.rotate([0,-Math.PI/2,Math.PI,Math.PI/2][side]);
-    drawSprite(c,'robot-'+robotColor[color]+'-overhead',-30,-26,60,48);c.restore();
-    c.save();c.translate(x,y);drawSprite(c,'ammo-badge',-13,19,26,17);c.font='800 12px Tektur, sans-serif';c.fillStyle='#fff';c.textAlign='center';c.textBaseline='middle';c.fillText(String(ammo),0,27);c.restore();
+
+  robot(x,y,angle,color,ammo,opacity){
+    const c=this.ctx;c.save();c.globalAlpha=opacity;c.translate(x,y);c.rotate(angle);
+    c.shadowColor='#001020';c.shadowBlur=7;c.shadowOffsetY=3;
+    drawSprite(c,'robot-'+robotColor[color]+'-overhead',-44,-35,88,70);c.restore();
+    c.save();c.globalAlpha=opacity;c.translate(x,y);drawSprite(c,'ammo-badge',-17,25,34,22);c.font='800 15px Tektur, sans-serif';c.fillStyle='#fff';c.textAlign='center';c.textBaseline='middle';c.fillText(String(ammo),0,36);c.restore();
   }
 }

@@ -22,4 +22,17 @@ export async function assertControlsVisible(page,selector='#app button') {
     assert.equal(contained,true,'Currency and battery values must stay inside their frames');
   }
   assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth&&document.documentElement.scrollHeight<=innerHeight),true,'Document must not scroll');
+  if(await page.locator('.modal-header').count()){
+    const failures=await page.evaluate(()=>{
+      const header=document.querySelector('.modal-header').getBoundingClientRect(),title=document.querySelector('#dialog-title').getBoundingClientRect(),close=document.querySelector('.modal-close')?.getBoundingClientRect();
+      const out=[];
+      if(title.top<header.top||title.bottom>header.bottom||close&&title.right>close.left)out.push('Header title overlaps its edge or the close button');
+      if(close&&(close.top<header.top||close.right>header.right||close.bottom>header.bottom))out.push('Close button leaves its fixed header socket');
+      const body=document.querySelector('.modal-body').getBoundingClientRect(),actions=document.querySelector('.modal-actions').getBoundingClientRect();
+      if(body.bottom>actions.top+1)out.push('Dialog content overlaps actions');
+      for(const label of document.querySelectorAll('.modal .button-label'))if(label.scrollWidth>label.clientWidth+1)out.push('Action text exceeds its button');
+      return out;
+    });
+    assert.deepEqual(failures,[],'Dialog titles, close sockets and action labels must stay aligned');
+  }
 }
