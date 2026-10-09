@@ -1,0 +1,18 @@
+{
+  "status": "design_copy_not_integrated",
+  "defaultLocale": "en",
+  "supportedLocales": [
+    "en",
+    "es"
+  ],
+  "strings": {
+    "en": {
+      "gameTitle": "Robot Pulse",
+      "play": "PLAY"
+    },
+    "es": {
+      "gameTitle": "Robot Pulse",
+      "play": "JUGAR"
+    }
+  }
+}

@@ -19,9 +19,13 @@ El documento inicial describe una posible investigación y desarrollo completos,
 
 ## Referencias visuales actuales
 
-- [Arte de apertura: combate de píxeles](art/presentacion/2026-10-09-robot-pulse-v2-accion/README.md).
+- [Pantalla inicial: héroe frontal y PLAY](art/presentacion/2026-10-09-robot-pulse-v3-play/README.md).
 - [Robot con cañón: concepto y vista cenital](art/personajes/2026-10-09-robot-canon-v2/README.md).
 - [Cinco figuras pixeladas](art/figuras/2026-10-08-cinco-conceptos/README.md).
 - [Interfaz futurista: referencia de escenario](art/concepts/2026-10-08-v3-futurista/README.md).
 
 Las imágenes son conceptos, no capturas de una aplicación funcionando. Las iteraciones anteriores se conservan como historial del diseño.
+
+## Idiomas de la interfaz
+
+Inglés como idioma principal y español como traducción, según la indicación del propietario del 9 de octubre de 2026. Acción principal de la pantalla inicial: PLAY en inglés y JUGAR en español. Robot Pulse conserva el mismo nombre en ambos idiomas.
