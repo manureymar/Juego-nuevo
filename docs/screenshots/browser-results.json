@@ -1,0 +1,10 @@
+{
+  "passed": true,
+  "checks": [
+    "Splash, all three menus, test purchase, daily supply and ranking filters",
+    "Real shots, pause freezes simulation, saved run survives reload",
+    "Level cleared with real input, coins awarded once, battery unchanged, best score shown",
+    "Quit costs one charge, coin recharge works, Spanish UI and 360px layout"
+  ],
+  "errors": []
+}
