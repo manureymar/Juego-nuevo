@@ -4,24 +4,24 @@ Primera versión jugable de Robot Pulse: un puzle original de robots lanzadores,
 
 ## Probar en Android
 
-- [Descargar RobotPulse-0.2.0.apk](https://github.com/manureymar/Juego-nuevo/raw/refs/heads/main/downloads/RobotPulse-0.2.0.apk)
+- [Descargar RobotPulse-0.3.0.apk](https://github.com/manureymar/Juego-nuevo/raw/refs/heads/main/downloads/RobotPulse-0.3.0.apk)
 - [Estado de la compilación y pruebas](https://github.com/manureymar/Juego-nuevo/actions/workflows/android.yml)
 - [Instrucciones de instalación](docs/ANDROID.md)
 
-APK 0.2.0 disponible (44,2 MB): compilación, firma e instalación en emulador Android verificadas el 9 de octubre de 2026. Es una versión de prueba firmada para instalación directa, no una publicación en Google Play. Compatible con Android 8.0 o posterior.
+APK 0.3.0 disponible (52 MB): compilación, firma e instalación en emulador Android verificadas el 9 de octubre de 2026. Es una versión de prueba firmada para instalación directa, no una publicación en Google Play. Compatible con Android 8.0 o posterior.
 
-[Capturas reales de las pantallas y del nivel](docs/screenshots-v0.2/README.md) · [Informe de verificación](docs/VERIFICATION.md)
+[Capturas reales de las pantallas y del nivel](docs/screenshots-v0.3/README.md) · [Informe de verificación](docs/VERIFICATION.md)
 
 ## Qué incluye
 
 - Apertura con el fondo de batalla, el logo original y el botón PLAY/JUGAR, sin textos adicionales.
-- HOME: selección del primer nivel, robot y acceso a la partida guardada.
+- HOME: arte de campaña integrado, robot con acabado seleccionable, nivel 1 y continuación de la partida guardada; sin scroll.
 - SHOP: arte integrado, seis paquetes y panel de monedas gratis, sin scroll y con navegación inferior visible. Compras de prueba con confirmación, sin cobros reales. Recarga desde la batería; acabados desde el avatar.
-- LEADERBOARD: mejor marca local y rivales de ejemplo, con filtros. No es un ranking conectado a un servidor.
+- LEADERBOARD: podios y robots ilustrados, marca mensual y general, filtros y posición personal dinámica, sin scroll. Rivales de ejemplo locales, sin servidor.
 - Nivel 1 completo: figura original de 78 píxeles, tres colores, robots cenitales, munición exacta por color, cinta para cinco robots y cinco espacios de espera independientes.
 - Disparos automáticos solo al primer bloque expuesto de su color. Relanzamiento de robots que vuelven con munición.
 - Victoria, premio, puntuación, estrellas, pausa, derrota, reinicio y continuidad al cerrar y abrir.
-- Batería con cinco cargas: cada derrota o abandono consume una; ganar no consume. Regeneración de prueba cada 30 minutos y recarga por 120 monedas.
+- Batería con celda cian sencilla y número grande, compartida por las pantallas. Cinco cargas: cada derrota o abandono consume una; ganar no consume. Regeneración de prueba cada 30 minutos y recarga por 120 monedas.
 - Interfaz en inglés y español; título ROBOT PULSE siempre en inglés. Música aportada por el propietario, efecto de botón original y controles separados de música y efectos.
 
 Los niveles 2 y 3 se muestran bloqueados. El alcance implementado es el primer nivel, no una campaña completa. La economía es ajustable y de prueba. No hay anuncios, cuentas, pagos reales ni servicios de terceros dentro de la app.
@@ -62,6 +62,8 @@ Las pruebas de navegador requieren Playwright (el flujo de GitHub instala una ve
 Por instrucción del propietario, **este repositorio es el único destino permanente** del código, arte, recursos y documentación del juego. Los avances se guardan con su historial de cambios. No se utiliza otro repositorio ni servicio como destino alternativo del proyecto.
 
 ## Referencias visuales
+
+- [Home y Leaderboard: recursos e integración 0.3.0](docs/UI-0.3.0.md).
 
 - [Pantalla inicial aprobada](art/presentacion/2026-10-09-robot-pulse-v3-play/README.md).
 - [Robot con cañón y vista cenital](art/personajes/2026-10-09-robot-canon-v2/README.md).

@@ -1,40 +1,42 @@
-# Verificación de Robot Pulse 0.2.0
+# Verificación de Robot Pulse 0.3.0
 
 Fecha: 9 de octubre de 2026.
 
-- Código comprobado: `2966b4a993561d617754b9034c67862a61cdebab`.
-- [Ejecución de compilación y pruebas](https://github.com/manureymar/Juego-nuevo/actions/runs/37955704944).
-- [APK](../downloads/RobotPulse-0.2.0.apk) · [Capturas reales](screenshots-v0.2/README.md).
+- Código comprobado: `3422c3d4736134888b429864997b6fc3cb967449`.
+- [Compilación y pruebas aprobadas](https://github.com/manureymar/Juego-nuevo/actions/runs/37964435656).
+- [APK](../downloads/RobotPulse-0.3.0.apk) · [Capturas reales](screenshots-v0.3/README.md).
 
 | Comprobación | Resultado |
 | --- | --- |
-| Motor, economía y guardado | 14 pruebas aprobadas |
-| Recorrido web | Partida ganada con el motor real; navegación, compras de prueba, recarga, guardado y español correctos |
-| Shop sin scroll | Controles visibles y pulsables en 360 × 640, 360 × 740, 390 × 844 y 412 × 915; capturas revisadas |
+| Motor, economía, guardado y clasificación mensual | 17 pruebas aprobadas |
+| Recorrido web | Nivel ganado mediante el motor; guardado, navegación, compras de prueba, recarga y audio correctos |
+| Home y Leaderboard sin scroll | EN/ES en 360 × 640, 390 × 844 y 412 × 915; controles visibles y pulsables; capturas revisadas |
+| Shop | EN/ES, cuatro tamaños, seis paquetes y premio diario comprobados |
+| Datos dinámicos | Filtros de período y región, fichas de pilotos, jugador en primer lugar, batería 0–5 y niveles futuros |
+| Clasificación mensual | Cambio de mes UTC, año nuevo y febrero bisiesto; récord general conservado |
 | Instalación Android | APK instalado y abierto en Android 15, Pixel 7 emulado |
-| Ajuste nativo | Fuente del sistema a 1,4; escala del WebView fijada, sin recortes en los controles |
-| Pulsaciones | Apertura y Shop mediante entrada táctil nativa; seis paquetes y premio diario comprobados |
-| Música | Arranca antes de tocar el juego, continúa entre menús, repite, se pausa en segundo plano y vuelve al regresar |
-| Efectos | WAV de botón decodificado correctamente; controles de sonido y música separados |
-| Idioma y Atrás | Inglés/español y botón Atrás nativo comprobados |
-| Uso sin conexión | Recorrido Android con Wi-Fi y datos desactivados; recursos y audio locales |
-| Errores de JavaScript / recursos | Ninguno en los recorridos aprobados |
-| Firma e integridad | Firma comprobada con apksigner; ZIP íntegro; checksum coincidente |
-| Recursos empaquetados | 47 archivos coinciden byte por byte con `game/` |
+| Ajuste nativo | WebView 412 × 863, DPR 2,625; fuente del sistema 1,4; capturas EN/ES revisadas |
+| Pulsaciones | Entrada táctil nativa en Home, Shop y Leaderboard; filtros y filas responden |
+| Música y efectos | Inicio automático, continuidad, bucle, pausa en segundo plano y controles separados; WAV decodificado |
+| Uso sin conexión | Recorrido Android con Wi-Fi y datos desactivados |
+| Errores JavaScript / recursos | Ninguno en los recorridos aprobados |
+| Firma e integridad | apksigner aprobado; ZIP íntegro; checksum coincide con el artefacto |
+| Recursos empaquetados | 55 archivos coinciden byte por byte con game/ |
+| Archivo publicado | Tamaño y blob Git coinciden con el APK verificado |
 | Teléfono físico del propietario | Pendiente de su prueba |
 
-Archivo: `RobotPulse-0.2.0.apk`, 44,230,357 bytes. Paquete `com.manureymar.robotpulse.preview`, versión `0.2.0-preview`, código 2. Android mínimo API 26; objetivo 35. APK de prueba con firma de depuración, sin permisos de red, cámara, micrófono, contactos o almacenamiento.
+Archivo: `RobotPulse-0.3.0.apk`, 52,002,109 bytes. Paquete `com.manureymar.robotpulse.preview`, versión `0.3.0-preview`, código 3. Android mínimo API 26; objetivo 35. APK de prueba con firma de depuración.
 
 SHA-256:
 
 ```text
-6c2ac86b60d30bf6cfae1540ec1a5df2542461f308014c5ebae52dac8f196f4a
+0800680e1c356cd2cbff506e7bb487d6b6ed9eae41a7e77d0ee80cb199a12458
 ```
 
-El recorrido nativo cierra el aviso educativo de pantalla completa de Android. También reconoce un aviso observado del Pixel Launcher del emulador al arrancar en frío; un fallo de Robot Pulse nunca se descarta como si la prueba hubiese pasado. Las capturas finales se guardan después de cerrar los avisos del sistema.
+Certificado SHA-256: `9abe63ceeca1f820ca8e6d134677b4644ff1d48d76d74e26c70931b6493b0701`.
 
-Las compras siguen siendo simuladas, la clasificación es local y el contenido jugable sigue siendo el primer nivel. La revisión visual de esta entrega se concentra en apertura y Shop; el rediseño completo de Home, Leaderboard y la partida queda para la siguiente fase.
+Blob Git del APK: `5c948a04c877300f28a8bbabc0485517e0a7b3d8`.
 
-La firma de prueba de 0.2.0 difiere de la de 0.1.0. Para sustituir la aplicación anterior se necesita desinstalarla, lo que borra sus datos locales.
+La firma difiere de la de 0.2.0. Para sustituir esa instalación hay que desinstalarla; esto borra su progreso local. No se incluye una clave de firma privada en el repositorio.
 
-Huella SHA-256 del certificado de 0.2.0: `af8be1463484685ae32f4a6dcc4f5900d1d8eb6311cc16fb08a830caa9d23a06`.
+Las compras siguen simuladas, los rivales son ejemplos locales y el primer nivel es el contenido jugable. Home, Leaderboard y la batería ahora usan el arte de las referencias. La pantalla de la partida mantiene su implementación anterior. La validación nativa descarta únicamente los avisos conocidos del sistema/emulador; un fallo de Robot Pulse haría fallar la prueba.

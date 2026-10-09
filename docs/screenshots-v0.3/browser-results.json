@@ -1,0 +1,12 @@
+{
+  "passed": true,
+  "checks": [
+    "Splash, all three menus, test purchase, daily supply and ranking filters",
+    "Real shots, pause freezes simulation, saved run survives reload",
+    "Level cleared with real input, coins awarded once, battery unchanged, best score shown",
+    "Music plays across menus, pauses during gameplay/background, independent mute; Shop fits 4 phone sizes in both languages",
+    "Quit costs one charge, coin recharge works, Spanish UI and 360px layout",
+    "Home and Leaderboard fit three phone sizes in EN/ES; all filters, profile rows, locked levels and battery values 0–5 work; player can take first place"
+  ],
+  "errors": []
+}

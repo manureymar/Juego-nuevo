@@ -1,11 +1,11 @@
 # Instalar y probar Robot Pulse en Android
 
-1. Abre desde el teléfono el enlace [RobotPulse-0.2.0.apk](https://github.com/manureymar/Juego-nuevo/raw/refs/heads/main/downloads/RobotPulse-0.2.0.apk).
+1. Abre desde el teléfono el enlace [RobotPulse-0.3.0.apk](https://github.com/manureymar/Juego-nuevo/raw/refs/heads/main/downloads/RobotPulse-0.3.0.apk).
 2. Guarda el archivo y ábrelo desde Descargas.
 3. Si Android lo solicita, permite que el navegador o el gestor de archivos instale esa aplicación.
 4. Pulsa Instalar y abre **Robot Pulse**.
 
-**Actualización desde 0.1.0:** los certificados de las dos compilaciones de prueba son distintos. Desinstala 0.1.0 antes de instalar 0.2.0; esto elimina el progreso local de la versión anterior.
+**Actualización desde 0.2.0:** los certificados de las dos compilaciones de prueba son distintos. Desinstala 0.2.0 antes de instalar 0.3.0; esto elimina el progreso local de la versión anterior.
 
 Requisitos de esta versión: Android 8.0 o posterior y Android System WebView actualizado. El APK incluye el juego, las ilustraciones, la tipografía y tu música; después de descargarlo funciona sin internet. La app no solicita acceso a cámara, micrófono, archivos, contactos ni internet.
 
@@ -32,4 +32,4 @@ En Android Studio abre la carpeta `android/`, instala SDK 35 / Build Tools 35.0.
 gradle -p android assembleDebug
 ```
 
-El APK se genera en `android/app/build/outputs/apk/debug/app-debug.apk`. El flujo [Android](../.github/workflows/android.yml) ejecuta las pruebas, compila, verifica la firma y copia el archivo a `downloads/RobotPulse-0.2.0.apk`. Si el código cambia durante una compilación, solo la versión más reciente publica el APK.
+El APK se genera en `android/app/build/outputs/apk/debug/app-debug.apk`. El flujo [Android](../.github/workflows/android.yml) ejecuta las pruebas, compila, verifica la firma y copia el archivo a `downloads/RobotPulse-0.3.0.apk`. Si el código cambia durante una compilación, solo la versión más reciente publica el APK.
