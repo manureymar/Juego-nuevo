@@ -37,6 +37,8 @@
 .game-scene .queue-unit .ammo-badge{bottom:1px;right:50%;transform:translateX(50%);width:73px;height:42px;font-size:31px}
 .game-scene .queue-unit.depth-1 .ammo-badge{bottom:1px;width:60px;height:34px;font-size:25px}
 .game-scene .queue-unit.selectable{filter:drop-shadow(0 0 10px #fff5ac)}
+.game-scene .queue-unit.selectable.depth-1{z-index:5}
+.live-robot{pointer-events:none}
 .game-scene .queue-empty{top:auto;bottom:0;height:60px;opacity:.3}
 .game-scene .booster-bar{left:33px;right:33px;top:1583px;height:179px;gap:23px}
 .game-scene .booster-button{height:177px;filter:drop-shadow(0 9px 4px #000c)}
@@ -59,7 +61,7 @@
 .art-modal h2,.art-modal.settings h2{position:absolute;left:54px;right:75px;top:45px;height:53px;margin:0;transform:none;font-size:clamp(19px,5.4vw,24px);line-height:1.1;letter-spacing:0;display:flex;align-items:center;justify-content:center;text-wrap:balance}
 .art-modal .modal-close{position:absolute;right:11px;top:39px;width:48px;height:47px;padding:9px;display:grid;place-items:center;border:0;background:transparent;z-index:2}
 .art-modal .modal-close .game-icon{width:29px;height:29px;display:block}
-.art-modal .modal-body{font-family:Tektur,system-ui,sans-serif;font-weight:500;text-align:center}
+.art-modal .modal-body{font-family:Tektur,system-ui,sans-serif;font-weight:500;text-align:center;padding-inline:22px}
 .art-modal .modal-body p{font-size:16px;line-height:1.45;margin:10px 0 16px;color:#d5ebf7;overflow-wrap:anywhere}
 .art-modal .modal-actions{margin-top:18px;gap:9px}
 .art-modal .art-button,.art-modal .modal-actions>.art-button{min-height:62px;padding:18px 23px;font-size:16px;line-height:1.2}
@@ -72,7 +74,7 @@
 .settings-row .language-tab{width:47px;height:45px;font-size:15px}
 .settings-row .toggle-button{width:82px;height:42px;flex:none}
 .toggle-button>span:last-child{font-size:13px;top:30%}
-.settings-row .settings-battery{position:relative;width:110px;height:43px;flex:none}
+.settings-row .settings-battery{position:relative;width:86px;height:38px;flex:none}
 .settings-battery b{position:absolute;left:17%;top:21%;width:60%;height:60%;display:grid;place-items:center;font-size:29px;text-shadow:0 2px #003143;line-height:1}
 .settings-row>strong{font-size:17px;font-variant-numeric:tabular-nums;min-width:51px;text-align:right}
 .art-modal .energy-display{margin:8px 0 16px;gap:12px;font-size:30px}

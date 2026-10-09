@@ -30,6 +30,8 @@ export async function assertControlsVisible(page,selector='#app button') {
       if(close&&(close.top<header.top||close.right>header.right||close.bottom>header.bottom))out.push('Close button leaves its fixed header socket');
       const body=document.querySelector('.modal-body').getBoundingClientRect(),actions=document.querySelector('.modal-actions').getBoundingClientRect();
       if(body.bottom>actions.top+1)out.push('Dialog content overlaps actions');
+      const panel=document.querySelector('.modal').getBoundingClientRect();
+      for(const node of document.querySelectorAll('.modal-body p,.settings-row')){const r=node.getBoundingClientRect();if(r.left<panel.left+panel.width*.16||r.right>panel.right-panel.width*.16)out.push('Body content overlaps the decorative side rails');}
       for(const label of document.querySelectorAll('.modal .button-label'))if(label.scrollWidth>label.clientWidth+1)out.push('Action text exceeds its button');
       return out;
     });

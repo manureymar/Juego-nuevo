@@ -65,6 +65,7 @@ try{
   assert.equal(await page.evaluate(()=>window.__rpTest.profile.tools.bay),0);
   await page.locator('[data-tool=select]').click();await page.locator('[data-action=modal-action]').first().click();
   assert.equal(await page.locator('[data-action=select-robot]').count(),6);
+  await assertControlsVisible(page);
   await page.locator('[data-action=cancel-selection]').click();
   assert.equal(await page.evaluate(()=>window.__rpTest.profile.tools.select),1);
   await page.locator('[data-tool=shuffle]').click();await page.locator('[data-action=modal-action]').first().click();
