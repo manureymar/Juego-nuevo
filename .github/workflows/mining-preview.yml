@@ -1,0 +1,39 @@
+name: Mining animation preview
+on:
+  push:
+    branches: [main]
+    paths: ['previews/mining/**', '.github/workflows/mining-preview.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: mining-preview
+  cancel-in-progress: true
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: previews/mining
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Validate animation logic
+        run: |
+          node --check previews/mining/app.js
+          node --check previews/mining/renderer.js
+          node --test previews/mining/tests/engine.test.mjs
+      - name: Install browser
+        run: |
+          npm install --no-save --package-lock=false playwright@1.56.1
+          npx playwright install --with-deps chromium
+      - name: Check phone, desktop, user controls and public preview
+        run: node previews/mining/tests/browser.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: mining-animation-checks
+          path: mining-test-results/
+          retention-days: 30

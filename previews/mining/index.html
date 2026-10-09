@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><meta name="theme-color" content="#07101c"><meta name="description" content="Prueba interactiva de la mina automatizada de Robot Pulse."><title>Robot Pulse · Mina</title><link rel="stylesheet" href="styles.css"></head>
+<body>
+<header class="topbar"><a class="brand" href="./" aria-label="Robot Pulse"><span class="brand-mark">ϟ</span><span>ROBOT <b>PULSE</b></span></a><span class="lab">MINING LAB <i>01</i></span><span class="connection"><i></i> PRUEBA INTERACTIVA</span></header>
+<main>
+<section class="intro"><div><p class="eyebrow">BASE MINERA / SECTOR NEÓN</p><h1>De la roca <span>al vagón.</span></h1></div><p class="lead">Una pequeña fábrica que nunca se detiene.<br>Observa cada pieza del proceso en movimiento.</p></section>
+<div class="workspace">
+<section class="scene-panel" aria-label="Mina animada">
+<div class="scene-top"><div class="live"><i></i><span id="running-label">EN MARCHA</span></div><div class="views" role="group" aria-label="Vista de la mina"><button data-view="detail" aria-pressed="true">Detalle</button><button data-view="map" aria-pressed="false">Mapa completo</button></div></div>
+<div class="canvas-wrap"><canvas id="mine" aria-label="Taladro, cinta y brazo automatizado que cargan oro en un vagón">Tu navegador necesita compatibilidad con Canvas para mostrar la mina.</canvas><div id="loading" class="loading"><div class="loader"></div><p>Preparando la mina…</p></div><div id="error" hidden>No se pudieron cargar los recursos. <button onclick="location.reload()">Reintentar</button></div><div class="scene-caption"><span id="phase-label">Preparando los sistemas</span><span class="scene-tag">2D · LIVE</span></div></div>
+<div class="transport"><button id="pause" class="icon-button" aria-label="Pausar animación"><span id="pause-icon">Ⅱ</span></button><button id="reset" class="text-button"><span>↺</span> Reiniciar</button><div class="speed" role="group" aria-label="Velocidad de reproducción"><button data-speed=".5" aria-pressed="false">½×</button><button data-speed="1" aria-pressed="true">1×</button><button data-speed="2" aria-pressed="false">2×</button></div><span id="clock">00:00</span></div>
+</section>
+<aside>
+<section class="cargo-panel"><div class="panel-heading"><span class="eyebrow">CARGA DEL VAGÓN</span><span class="serial">RP—06</span></div><div class="cargo-number"><span id="cargo">0</span><span>/ 6 <small>piezas de mineral</small></span></div><div id="slots" class="slots" aria-label="Capacidad del vagón"></div><div class="cargo-status"><span id="cart-status">Estacionado en carga</span><span id="fill-percent">0%</span></div><button class="collect" id="collect" disabled><span>Enviar vagón</span><span id="collect-value">+0 ◈</span></button><p class="micro">Sale automáticamente al llenarse. También puedes enviarlo con una carga parcial.</p><div class="balance"><span><i>◈</i><span>Monedas recogidas<small>Saldo de demostración</small></span></span><strong id="coins">0</strong></div></section>
+<section class="process-panel"><h2>Un ciclo continuo</h2><ol><li data-step="drill"><b>01</b><div><strong>Perforar</strong><span>El taladro gira contra la pared.</span></div><i></i></li><li data-step="belt"><b>02</b><div><strong>Transportar</strong><span>El mineral avanza por la cinta.</span></div><i></i></li><li data-step="arm"><b>03</b><div><strong>Cargar</strong><span>La pinza recoge y deposita.</span></div><i></i></li><li data-step="cart"><b>04</b><div><strong>Recoger</strong><span>El vagón entrega y regresa.</span></div><i></i></li></ol></section>
+<button id="assets-open" class="assets-button"><span>▦</span> Ver las 14 piezas <span>↗</span></button>
+</aside>
+</div>
+<footer><span><i></i> Prueba visual independiente · Robot Pulse</span><span>El juego instalado permanece separado de esta prueba.</span></footer>
+</main>
+<dialog id="assets-dialog"><div class="dialog-heading"><div><p class="eyebrow">RECURSOS DE LA ANIMACIÓN</p><h2>14 piezas. Un solo mundo.</h2></div><button id="assets-close" aria-label="Cerrar recursos">×</button></div><p class="asset-note">Un fondo fijo, seis fotogramas del taladro y siete recortes para la cinta, el brazo, el oro y el vagón.</p><div id="asset-grid"></div></dialog>
+<script type="module" src="app.js"></script>
+</body></html>
