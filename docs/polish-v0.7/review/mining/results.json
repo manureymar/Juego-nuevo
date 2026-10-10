@@ -1,0 +1,9 @@
+{
+  "passed": false,
+  "checks": [
+    "Existing winners receive the animated English card; tap opens an empty cave with one enabled building and four grayscale locks",
+    "Real touch drag: red invalid zone rejects; pointer cancellation and Escape cancel; green cave snaps and installs once; animation produces collectible coins"
+  ],
+  "errors": [],
+  "error": "TimeoutError: page.waitForFunction: Timeout 15000ms exceeded."
+}
