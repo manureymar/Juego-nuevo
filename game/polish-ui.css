@@ -1,0 +1,113 @@
+/* 0.7: focused corrections using the existing illustrated controls. */
+.hud-background{display:none}
+.ui-hud .ui-energy{background:none;border:0;border-radius:0;box-shadow:none;padding:0 3%;gap:2%}
+.energy-frame{--slice-x:3.2cqw;--slice-y:2cqw;inset:-.4cqw -.2cqw}
+.ui-energy .hud-battery,.ui-energy .ui-energy-label{z-index:1}
+.ui-energy .ui-energy-label{font-size:3.8cqw}
+.ui-hud .ui-currency{overflow:visible}
+.currency-frame{left:12%;right:6%;top:12%;bottom:12%;--slice-x:3cqw;--slice-y:1.4cqw}
+.pulse-coin{position:relative;display:inline-block;width:1.5em;height:1.5em;vertical-align:middle;flex:none;pointer-events:none}
+.pulse-coin>.art-sprite{inset:0;overflow:visible}
+.pulse-coin>svg{position:absolute;inset:5% 2% 4% 5%;width:93%;height:91%;fill:none;stroke:#fff3ad;stroke-width:7;stroke-linejoin:round;stroke-linecap:round;filter:drop-shadow(1px 2px 1px #a9650c)}
+.ui-hud .hud-coin{position:absolute;left:0;top:0;width:25%;height:100%}
+.hud-add{position:absolute;right:0;top:1%;width:25%;height:98%}
+.ui-hud .ui-coin-number{left:24%;right:24%;top:8%;height:78%;font-size:4.1cqw;z-index:1}
+.leader-logo-cover{position:absolute;left:0;top:0;width:887px;height:278px;background:url('assets/ui-v3/home-clean.png') 0 0/887px 1774px no-repeat;pointer-events:none}
+.shop-title{top:160px}
+.shop-section-title{top:271px}
+.shop-products{top:365px;height:683px}
+.shop-reward{top:1060px}
+.master-title{top:220px}
+.home-screen .unlock-cube span{font-size:23px}
+
+/* The mine is a doorway within the scene, separate from the locked feature tiles. */
+.menu-scene .mine-portal{left:607px;top:975px;width:265px;height:330px;overflow:visible;border:0;border-radius:0;background:none;box-shadow:none;z-index:1;filter:drop-shadow(0 8px 9px #020812)}
+.mine-portal>img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;pointer-events:none}
+.mine-portal>span:last-child{position:absolute;left:33%;right:24%;top:22%;bottom:auto;height:10%;display:grid;place-items:center;font-size:25px;line-height:1;transform:rotate(-9deg);color:#e2faff;text-shadow:0 2px #082e4f;text-transform:uppercase}
+.home-screen .campaign-hero{z-index:2}
+.mine-portal:focus-visible{outline:4px solid #b3ffff;outline-offset:3px;border-radius:20px}
+
+/* Keep wide action shapes, reduce height and leave the decorative rails clear. */
+.modal.art-modal,.modal.art-modal.settings{width:440px;max-width:none;padding:0 63px 52px}
+.modal-header{height:126px;margin-inline:-63px}
+.art-modal h2,.art-modal.settings h2{left:65px;right:78px;top:49px;height:64px;font-size:30px;line-height:1.02;margin:0;transform:none;text-wrap:balance}
+.art-modal.no-close h2{left:65px;right:65px}
+.modal-sliced>.gp-sprite.mirror{transform:scaleX(-1)}
+.art-modal .modal-body{padding-inline:12px}
+.art-modal .modal-actions{margin-top:16px;gap:11px}
+.art-modal .art-button,.art-modal .modal-actions>.art-button{min-height:51px;padding:12px 23px;font-size:16px;line-height:1.15}
+.art-modal .art-button>.gp-sliced{--slice-x:28px;--slice-y:16px}
+.art-modal .button-label{min-height:23px;line-height:1.2}
+.art-modal .settings-row{min-height:72px;padding:12px 0}
+.art-modal .modal-body p{margin:8px 0 14px}
+.art-modal .result-grid{gap:5px}
+.art-modal .result-grid>div{padding:10px 4px}
+.art-modal .result-grid b{font-size:20px;white-space:nowrap}
+.art-modal .result-grid .pulse-coin{width:21px;height:21px}
+.art-modal .skin-button{min-height:44px;padding:9px 8px;font-size:11px}
+.art-modal .skin-button>.gp-sliced{--slice-x:14px;--slice-y:12px}
+.art-modal .modal-symbol>.pulse-coin{width:80px;height:80px}
+
+/* Mining uses the same illustrated plaques and buttons as the puzzle. */
+.mining-heading{left:24px;right:24px;top:151px;height:100px;border:0;background:none}
+.mining-title-art{left:105px;right:105px;--slice-x:52px;--slice-y:27px}
+.mining-heading h1{position:relative;font-size:40px;letter-spacing:0}
+.mining-heading .mining-back,.mining-heading #mine-focus{width:94px;height:94px;top:0;border:0;border-radius:0;background:none;box-shadow:none;padding:0;color:#d4fbff}
+.mining-back>span:last-child,.mine-focus-label{position:relative;display:grid;place-items:center;width:100%;height:100%;line-height:1;padding-bottom:4px}
+.mining-heading #mine-focus{font-size:42px}
+.mining-map{top:260px}
+.mining-status{left:160px;right:38px;top:1305px;height:84px;padding:0 42px;background:none;border:0;border-radius:0;box-shadow:none;font-size:27px}
+.mining-status>.gp-sliced{--slice-x:37px;--slice-y:24px}
+.mining-status-label{position:relative;line-height:1.2}
+.mining-scene.mine-built .mining-status{top:270px;left:245px;right:245px;height:49px;padding:0 20px;font-size:21px;background:none;border:0}
+.mining-scene.mine-built .mining-status>.gp-sliced{--slice-x:20px;--slice-y:13px}
+.mining-scene.placing .mining-status>.gp-sliced{filter:hue-rotate(135deg) saturate(.9)}
+.mining-scene.placement-valid .mining-status>.gp-sliced{filter:hue-rotate(320deg)}
+.mining-yield{left:25px;right:25px;top:1288px;height:139px;padding:17px 31px;border:0;border-radius:0;box-shadow:none;background:none;gap:15px}
+.yield-frame{--slice-x:47px;--slice-y:31px}
+.gold-balance{position:relative;display:flex;align-items:center;gap:16px;min-width:0}
+.gold-balance>span:last-child{display:flex;flex-direction:column;gap:3px}
+.mining-yield small{font-size:22px;line-height:1.1;color:#c8e8f4;white-space:nowrap}
+.mining-yield b{font-size:39px;line-height:1}
+.mining-yield #mining-rate{font-size:19px;color:#76dbe9}
+.ore-symbol{font-size:55px;color:#ffc93c;text-shadow:2px 3px #9f5914,-2px -2px #ffe9a3;filter:drop-shadow(0 2px 7px #d18b2750)}
+.mining-yield .mining-collect{position:relative;width:322px;min-height:94px;height:94px;flex:none;padding:15px 20px;border:0;border-radius:0;background:none;box-shadow:none;font-size:25px;white-space:normal}
+.mining-collect>.gp-sliced{--slice-x:36px;--slice-y:26px}
+.mining-collect .button-label{flex-direction:column;gap:2px}
+.collect-label{font-size:24px;text-transform:uppercase;line-height:1}
+.collect-amount{display:flex;align-items:center;gap:8px;height:37px}
+.collect-amount .pulse-coin{width:35px;height:35px}
+.mining-yield .collect-amount b{font-size:31px;color:#06233b}
+.mining-collect:disabled{opacity:.65;filter:saturate(.45)}
+.construction-tray{left:0;right:0;top:1438px;height:336px;gap:7px;padding:72px 16px 12px;border:0;background:linear-gradient(180deg,#03132300 0,#0b243c 30px,#031124 100%);box-shadow:0 -7px 24px #04112255}
+.tray-heading{position:absolute;left:205px;right:205px;top:4px;height:63px;display:grid;place-items:center}
+.tray-heading>.gp-sliced{--slice-x:32px;--slice-y:18px}
+.tray-heading>span:last-child{position:relative;font-size:25px;line-height:1;text-transform:uppercase;color:#d8f7ff}
+.construction-tray .build-option{height:251px;border:0;border-radius:0;background:none;box-shadow:none;overflow:visible;isolation:isolate}
+.build-card-edge{position:absolute;inset:0;pointer-events:none;z-index:-1}
+.build-option.available .build-card-edge{filter:drop-shadow(0 0 8px #34d9ff80)}
+.build-option .building-art,.mine-catalog-art{position:absolute;left:11px;right:11px;top:14px;height:137px;width:calc(100% - 22px);object-fit:contain;pointer-events:none}
+.build-option.locked .building-art{filter:grayscale(1) brightness(.64)}
+.build-name{left:10px;right:10px;top:170px;font-size:22px}
+html[lang=es] .build-name{font-size:19px}
+.build-lock{top:69px;width:46px;height:52px;padding:8px;border-radius:0;clip-path:polygon(15% 0,85% 0,100% 15%,100% 85%,85% 100%,15% 100%,0 85%,0 15%);border:2px solid #94c4d7;background:#071b2aee}
+.build-badge{right:14px;top:14px;width:34px;height:34px;font-size:25px}
+.build-option small{top:211px;font-size:18px}
+.build-option.installed{opacity:1}
+.mining-guide{left:18px;top:1323px;width:138px;height:187px;inset:1323px auto auto 18px;z-index:8;filter:drop-shadow(0 0 9px #3adbff80)}
+.mine-guide-arrow{width:100%;height:100%;animation:guide-point 1.5s ease-in-out infinite}
+.mining-scene .mine-cancel{left:269px;right:110px;top:1385px;height:51px;font-size:22px;border:0;border-radius:0;background:none;padding:9px 23px}
+.mine-cancel>.gp-sliced{--slice-x:25px;--slice-y:14px}
+@keyframes guide-point{0%,100%{transform:translateY(-7px)}50%{transform:translateY(7px)}}
+
+/* First-card digitization: discrete image reveal, scan edge and small data sparks. */
+.mining-card-button img{animation:card-digitize 1.15s steps(12,end) both}
+.card-digital-grid{position:absolute;inset:0;background:repeating-linear-gradient(0deg,#49ebff55 0 1px,transparent 1px 7px),repeating-linear-gradient(90deg,#44dcff44 0 1px,transparent 1px 15px);mix-blend-mode:screen;animation:card-grid 1.4s ease-out both;pointer-events:none}
+.card-scan{position:absolute;left:0;right:0;top:0;height:4%;background:linear-gradient(transparent,#caffffbb,#fff9ce,transparent);box-shadow:0 0 20px #4ff8ff;animation:card-scan 1.2s ease-in-out both;mix-blend-mode:screen;pointer-events:none}
+.card-sparks{position:absolute;inset:0;pointer-events:none}
+.card-sparks i{position:absolute;left:var(--x);top:var(--y);width:4px;height:7px;background:#b8ffff;box-shadow:0 0 7px #44eaff;animation:card-data 1.25s calc(var(--i)*.027s) both}
+@keyframes card-digitize{0%{clip-path:inset(0 0 100%);filter:brightness(1.9) saturate(.4)}75%{filter:brightness(1.3) saturate(.8)}100%{clip-path:inset(0);filter:none}}
+@keyframes card-grid{0%{opacity:.9}80%{opacity:.3}100%{opacity:0}}
+@keyframes card-scan{0%{top:0;opacity:0}10%{opacity:1}90%{opacity:1}100%{top:100%;opacity:0}}
+@keyframes card-data{0%{opacity:0;transform:translateY(30px)}30%{opacity:1}100%{opacity:0;transform:translateY(-35px)}}
+@media(prefers-reduced-motion:reduce){.mine-guide-arrow{animation:none}.mining-card-button img{animation:none}.card-digital-grid,.card-scan,.card-sparks{display:none}}

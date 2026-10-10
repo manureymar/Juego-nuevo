@@ -13,8 +13,8 @@ try{
  page=await context.newPage();page.setDefaultTimeout(15000);
  page.on('pageerror',e=>errors.push(e.message));page.on('response',r=>{if(r.status()>=400)errors.push(`${r.status()} ${r.url()}`);});
  await page.goto('http://127.0.0.1:4173/?test=1');await page.locator('[data-action=enter]').click();
- await page.locator('[data-action=mining]').click();assert.equal(await page.locator('.mining-scene').count(),0);
- await page.locator('[data-action=close-modal]').click();
+ assert.equal(await page.locator('[data-action=mining]').count(),0,'Portal appears only after its card is earned');
+ assert.equal(await page.locator('.campaign-unlock.unlock-cube').count(),1);
  // Simulate the existing v0.5 save on a real user's phone: victory already earned, no mining fields yet.
  await page.evaluate(()=>{const p=JSON.parse(localStorage.getItem('robot-pulse-v1'));p.wins=1;delete p.mining;p.tutorialSeen=true;Object.assign(window.__rpTest.profile,p);localStorage.setItem('robot-pulse-v1',JSON.stringify(p));});
  await page.reload();await page.locator('[data-action=enter]').click();
@@ -51,18 +51,19 @@ try{
  await page.setViewportSize({width:390,height:844});await settleArt(page);
  await dragStart(await world(265,433));assert.equal(await page.locator('.mining-scene').getAttribute('data-placement'),'valid');
  await page.screenshot({path:'test-results/mining/04-valid-green.png'});await touch('touchEnd');
- await page.waitForFunction(()=>window.__rpTest.profile.mining.built);await page.waitForTimeout(1400);
+ await page.waitForFunction(()=>window.__rpTest.profile.mining.built);await page.waitForTimeout(2500);
  assert.equal(await page.locator('#mine-build').isDisabled(),true);assert.equal(await page.locator('.mining-guide').isVisible(),false);
  await assertControlsVisible(page);await page.screenshot({path:'test-results/mining/05-built.png'});
  const frame=await page.locator('#mine-canvas').evaluate(c=>c.toDataURL());await page.waitForTimeout(600);
  assert.notEqual(await page.locator('#mine-canvas').evaluate(c=>c.toDataURL()),frame);
+ await page.evaluate(async()=>{const {ORE_MS}=await import('/src/mining-state.js');window.__rpTest.profile.mining.producedAt-=ORE_MS;});
  await page.waitForFunction(()=>window.__rpTest.profile.mining.storedGold>0);
  const before=await page.evaluate(()=>window.__rpTest.profile.coins);await page.locator('[data-action=collect-mining]').tap();
  assert.ok(await page.evaluate(()=>window.__rpTest.profile.coins)>before);
  assert.equal(await page.evaluate(()=>window.__rpTest.mining.model.cart),'parked');
  checks.push('Real touch drag: red invalid zone rejects; pointer cancellation and Escape cancel; green cave snaps and installs once; animation produces collectible coins');
  await page.locator('[data-action=home]').click();
- await page.evaluate(()=>{const p=JSON.parse(localStorage.getItem('robot-pulse-v1'));p.mining.producedAt-=60000;Object.assign(window.__rpTest.profile,p);localStorage.setItem('robot-pulse-v1',JSON.stringify(p));});
+ await page.evaluate(()=>{const p=JSON.parse(localStorage.getItem('robot-pulse-v1'));p.mining.producedAt-=15*60000;Object.assign(window.__rpTest.profile,p);localStorage.setItem('robot-pulse-v1',JSON.stringify(p));});
  await page.reload();await page.locator('[data-action=enter]').click();assert.equal(await page.locator('.mining-card-scrim').count(),0);
  await page.locator('[data-action=mining]').click();await page.locator('.mining-scene[data-loaded=true]').waitFor();
  await page.waitForFunction(()=>window.__rpTest.mining.model.cargo.length===6);

@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {defaultProfile,sanitizeProfile,winRun,loseRun,SaveStore} from '../game/src/profile.js';
-import {claimMiningCard,buildMine,accrueGold,collectGold,ORE_MS,MAX_GOLD} from '../game/src/mining-state.js';
+import {claimMiningCard,buildMine,accrueGold,collectGold,ORE_MS,MAX_GOLD,STORAGE_GOLD} from '../game/src/mining-state.js';
 import {Mine,CAPACITY} from '../game/src/mining/engine.js';
 const time=100000;
 function unlocked(){const p=defaultProfile(time);winRun(p,'first',{score:1000,stars:3},time);return p;}
@@ -45,7 +45,12 @@ test('collection pays once, preserves a full wagon and resumes after the storage
  assert.equal(accrueGold(p,time+ORE_MS*9),0);p.coins=9999997;
  assert.equal(collectGold(p,time+ORE_MS*9),0);p.coins=0;
  assert.equal(collectGold(p,time+ORE_MS*9),9999995);
- assert.equal(accrueGold(p,time+ORE_MS*10),1);
+ assert.equal(accrueGold(p,time+ORE_MS*10),0); // Legacy balances above capacity remain intact.
+ p.mining.storedGold=STORAGE_GOLD-1;assert.equal(accrueGold(p,time+ORE_MS*11),1);
+ assert.equal(accrueGold(p,time+ORE_MS*1000),0);
+ assert.equal(p.mining.storedGold,STORAGE_GOLD);
+ p.coins=0;assert.equal(collectGold(p,time+ORE_MS*1000),STORAGE_GOLD*5);
+ assert.equal(accrueGold(p,time+ORE_MS*1001),1);
  assert.ok(p.mining.storedGold<=MAX_GOLD);assert.ok(p.mining.totalGold<=MAX_GOLD);
 });
 test('built base, consumed card and uncollected gold survive the actual save store',()=>{
@@ -58,4 +63,14 @@ test('approved wagon stays parked and full while the arm keeps delivering indefi
  const gold=mine.gold,ids=mine.cargo.map(x=>x.id);mine.update(40);
  assert.equal(mine.cart,'parked');assert.deepEqual(mine.cargo.map(x=>x.id),ids);assert.ok(mine.gold>gold);
  assert.ok(mine.events.some(e=>e.type==='load'));
+});
+
+test('new storage cap preserves earlier balances and discards overflow without back-paying it',()=>{
+ const p=installed();p.mining.totalGold=500;p.mining.storedGold=500;
+ const migrated=sanitizeProfile(p,time);assert.equal(migrated.mining.storedGold,500);
+ assert.equal(accrueGold(migrated,time+ORE_MS*1000),0);
+ assert.equal(collectGold(migrated,time+ORE_MS*1000),2500);
+ assert.equal(accrueGold(migrated,time+ORE_MS*1000+ORE_MS-1),0);
+ assert.equal(accrueGold(migrated,time+ORE_MS*1001),1);
+ const fresh=installed();assert.equal(accrueGold(fresh,time+ORE_MS*10000),STORAGE_GOLD);
 });

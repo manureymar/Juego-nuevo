@@ -1,4 +1,5 @@
-import {MiningController,miningView,buildingArt} from './mining-view.js';
+import {pulseCoin} from './ui-pieces.js';
+import {MiningController,miningView} from './mining-view.js';
 import {accrueGold,claimMiningCard,collectGold} from './mining-state.js';
 import { GameEngine } from './engine.js';
 import { COLORS } from './level.js';
@@ -26,7 +27,7 @@ let rankingTab = 'monthly', rankingRegion = 'global', lastSaved = 0, toastTimer 
 const escapeHTML = text => String(text).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const fmt = number => new Intl.NumberFormat(profile.language === 'es' ? 'es-ES' : 'en-US').format(number);
 const skinColor = () => SKINS.find(s => s.id === profile.skin)?.color || '#2edbff';
-const icon=(name,cls='')=>{const alias={globe:'language',reload:'shuffle',help:'select',check:'star'};return name==='battery'||GAME_ART['icon-'+(alias[name]||name)]?gameIcon(name):legacyIcon(name,cls);};
+const icon=(name,cls='')=>{if(name==='coin')return pulseCoin('game-icon '+cls);const alias={globe:'language',reload:'shuffle',help:'select',check:'star'};return name==='battery'||GAME_ART['icon-'+(alias[name]||name)]?gameIcon(name):legacyIcon(name,cls);};
 const button = (action,label,cls='secondary',extra='') => {
   const themed=/(^|\s)(primary|secondary|danger-button|skin-button)(\s|$)/.test(cls);
   const frame=cls.includes('primary')?'button-primary':cls.includes('danger')?'button-danger':'button-secondary';
@@ -71,8 +72,8 @@ function hud() {
   const coins=profile.coins<100000?fmt(profile.coins):new Intl.NumberFormat(profile.language,{notation:'compact',maximumFractionDigits:1}).format(profile.coins);
   const recharge=energyCountdown(profile);
   return `<header class="hud ui-hud"><span class="hud-background" aria-hidden="true"></span>
-    ${button('energy',`<span class="hud-battery">${sprite('battery-base')}<b class="ui-energy-number">${profile.energy}</b></span><span class="ui-energy-label" data-energy-timer>${recharge}</span>`,'ui-energy',`aria-label="${t('energy')} ${profile.energy} / 5"`)}
-    ${button('coins',`${menuArt('currency')}<b class="ui-coin-number">${coins}</b>`,'ui-currency',`aria-label="${t('coins')}: ${profile.coins}"`)}
+    ${button('energy',`${sprite('section-plaque','energy-frame')}<span class="hud-battery">${sprite('battery-base')}<b class="ui-energy-number">${profile.energy}</b></span><span class="ui-energy-label" data-energy-timer>${recharge}</span>`,'ui-energy',`aria-label="${t('energy')} ${profile.energy} / 5"`)}
+    ${button('coins',`${sprite('section-plaque','currency-frame')}${pulseCoin('hud-coin')}<b class="ui-coin-number">${coins}</b><span class="hud-add">${art('add')}</span>`,'ui-currency',`aria-label="${t('coins')}: ${profile.coins}"`)}
     ${button('settings',menuArt('settings'),'ui-settings',`aria-label="${t('settings')}"`)}
   </header>`;
 }
@@ -126,14 +127,14 @@ function render() {
 }
 
 function homeView() {
-  const unlocks=[['cannon',20],['shield',25],['coins',30]];
+  const unlocks=[['cube',null],['cannon',20],['shield',25],['coins',30]];
   return `<section class="menu-scene home-screen" data-scene-width="887" data-scene-height="1774" aria-label="${t('home')}">
     <img class="scene-layer" src="assets/ui-v3/home-clean.png" alt="" aria-hidden="true">
     ${hud()}
     <h1 class="home-title scene-title metal-text">${t('campaign')}</h1><p class="home-sector">${t('sector')}</p>
-    ${button('mining',`${buildingArt('mine')}<span>${profile.mining.unlocked?t('mining'):t('level')+' 1 · 🔒'}</span>`,'mining-entry '+(profile.mining.unlocked?'available':'locked'),`aria-label="${profile.mining.unlocked?t('miningBase'):t('miningUnlock')}"`)}
+    ${profile.mining.unlocked?button('mining',`<img src="assets/polish/mine-portal.png" alt="" draggable="false"><span>${t('mine')}</span>`,'mining-entry mine-portal available',`aria-label="${t('miningBase')}"`):''}
     <div class="campaign-controls">${[3,2,1].map(n=>button(n===1?'start':'locked',`<span>${n}</span>`,'campaign-node node-'+n,`aria-label="${t('level')} ${n}${n>1?' '+t('locked'):''}"`)).join('')}
-    ${unlocks.map(([name,n])=>button('locked',`<span>${t('levelAbbr')} ${n}</span>`,'campaign-unlock unlock-'+name,`aria-label="${t('nextUnlock')}: ${t('level')} ${n}"`)).join('')}</div>
+    ${unlocks.map(([name,n])=>button('locked',`<span>${n?t('levelAbbr')+' '+n:t('soonShort')}</span>`,'campaign-unlock unlock-'+name,`aria-label="${t('nextUnlock')}${n?': '+t('level')+' '+n:''}"`)).join('')}</div>
     <div class="campaign-hero" role="img" aria-label="${t(profile.skin)} Robot Pulse">${pilotArt(profile.skin,'hero-image')}</div>
     <p class="campaign-level">${t('level')} 1</p>
     ${button('start',`<span>${profile.session?t('continue'):profile.wins?t('replayShort'):t('play')}</span>`,'play-button campaign-play',`aria-label="${profile.session?t('fullRun'):t('play')+' '+t('level')+' 1'}"`)}
@@ -143,7 +144,6 @@ function homeView() {
 
 function shopView() {
   return `<section class="shop-screen" aria-label="${t('shop')}">
-    <div class="shop-logo" role="img" aria-label="Robot Pulse">${art('logo')}</div>
     <div class="shop-title">${art('shop-header')}<h1 class="metal-text">${t('shop')}</h1></div>
     <div class="shop-section-title">${art('section-bar')}<h2>${t('packs')}</h2></div>
     <div class="shop-products">${PACKS.map((p,i)=>button('pack',`${art('product-card')}<span class="product-image">${art('pack-'+p.coins)}</span><strong class="product-amount">${fmt(p.coins)}</strong><span class="product-price">${art('buy-button')}<span>${p.price}</span></span>`,'shop-product',`data-pack="${i}" aria-label="${t('testPurchase')}: ${fmt(p.coins)} ${t('coins')}, ${p.price}"`)).join('')}</div>
@@ -171,7 +171,7 @@ function leaderboardView() {
   const row=(r,personal=false)=>button('rank-pilot',`<b class="leader-rank">${r.rank}</b><span class="leader-avatar">${pilotArt(r.skin)}</span><strong class="leader-name">${escapeHTML(r.name)}</strong><span class="leader-score ${String(r.score).length>5?'long-score':''}">${fmt(r.score)}</span>`,personal?'leader-row personal-row':'leader-row',`data-rank="${r.rank}" aria-label="${r.rank}. ${escapeHTML(r.name)}, ${fmt(r.score)} ${t('score')}"`);
   return `<section class="menu-scene leaderboard-screen" data-scene-width="887" data-scene-height="1774" aria-label="${t('leaderboard')}">
     <img class="scene-layer" src="assets/ui-v3/leaderboard-layer.png" alt="" aria-hidden="true">
-    ${hud()}<div class="scene-brand" role="img" aria-label="Robot Pulse"></div>
+    <div class="leader-logo-cover" aria-hidden="true"></div>${hud()}
     <h1 class="leader-title scene-title metal-text">${t('leaderboard')}</h1>
     <div class="leader-tabs" role="group" aria-label="${t('rankingPeriod')}">${['monthly','master'].map((k,i)=>button('rank-tab',`${menuArt('tab-'+selected(k,rankingTab),((i===0&&rankingTab!==k)||(i===1&&rankingTab===k))?'mirror':'')}<span>${t(k)}</span>`,'leader-tab',`data-tab="${k}" aria-pressed="${rankingTab===k}"`)).join('')}</div>
     <div class="leader-regions" role="group" aria-label="${t('rankingRegion')}">${['global','country'].map((k,i)=>button('rank-region',`${menuArt('region-'+selected(k,rankingRegion),((i===0&&rankingRegion!==k)||(i===1&&rankingRegion===k))?'mirror':'')}<span>${t(k)}</span>`,'leader-region',`data-region="${k}" aria-pressed="${rankingRegion===k}"`)).join('')}</div>
@@ -187,7 +187,7 @@ function leaderboardView() {
 function masterView(){
   const months=historyMonths(historyPage,profile.language);
   return `<section class="menu-scene master-screen" data-scene-width="887" data-scene-height="1774">
-    ${hud()}<div class="master-logo">${art('logo')}</div><h1 class="master-title metal-text">${t('leaderboard')}</h1>
+    ${hud()}<h1 class="master-title metal-text">${t('leaderboard')}</h1>
     <div class="leader-tabs" role="group" aria-label="${t('rankingPeriod')}">${['monthly','master'].map(k=>button('rank-tab',menuArt('tab-'+(k===rankingTab?'active':'idle'), 'mirror')+`<span>${t(k)}</span>`,'leader-tab',`data-tab="${k}" aria-pressed="${rankingTab===k}"`)).join('')}</div>
     <div class="history-heading">${button('history-page',icon('back'),'history-prev',`data-delta="1" aria-label="${t('older')}" ${historyPage===11?'disabled':''}`)}<h2>${t('pastChampions')}</h2>${button('history-page',icon('back'),'history-next',`data-delta="-1" aria-label="${t('newer')}" ${historyPage===0?'disabled':''}`)}</div>
     <div class="history-months">${months.map(m=>`<article class="history-month"><h3>${m.label}</h3><div class="history-podium">${m.pilots.map((pilot,i)=>`<div class="history-pilot history-place-${i+1}"><span class="history-base">${menuArt('podium-'+['gold','silver','bronze'][i])}</span><span class="history-character">${pilotArt(pilot.skin)}</span><b>${i+1}</b><strong>${pilot.name}</strong><span class="history-score">${fmt(pilot.score)}</span></div>`).join('')}</div></article>`).join('')}</div>
@@ -297,7 +297,7 @@ function finishRun() {
 function showMiningCard(){
   closeModal();miningController?.setBlocked(true);
   modal={actions:[],options:{closable:false},autoPause:false,previous:document.activeElement};
-  modalRoot.innerHTML=`<section class="mining-card-scrim" role="dialog" aria-modal="true" aria-labelledby="mining-card-title"><div class="card-aura" aria-hidden="true"></div><h2 id="mining-card-title" class="mining-card-title">${t('newZone')}</h2><button class="mining-card-button" data-action="claim-mining" aria-label="${t('tapMiningCard')}"><img src="assets/mining/card-${profile.language}.png" alt="${t('miningBase')} — ${t('miningGoldInfo')}"><span class="reward-sheen" aria-hidden="true"></span></button><p class="mining-card-hint">${t('tapMiningCard')}</p></section>`;
+  modalRoot.innerHTML=`<section class="mining-card-scrim" role="dialog" aria-modal="true" aria-labelledby="mining-card-title"><div class="card-aura" aria-hidden="true"></div><h2 id="mining-card-title" class="mining-card-title">${t('newZone')}</h2><button class="mining-card-button" data-action="claim-mining" aria-label="${t('tapMiningCard')}"><img src="assets/mining/card-${profile.language}.png" alt="${t('miningBase')} — ${t('miningGoldInfo')}"><span class="card-digital-grid" aria-hidden="true"></span><span class="card-scan" aria-hidden="true"></span><span class="card-sparks" aria-hidden="true">${Array.from({length:18},(_,i)=>`<i style="--i:${i};--x:${(i*37)%100}%;--y:${(i*53)%100}%"></i>`).join('')}</span><span class="reward-sheen" aria-hidden="true"></span></button><p class="mining-card-hint">${t('tapMiningCard')}</p></section>`;
   root.inert=true;gameAudio.setScreen('mining');requestAnimationFrame(()=>modalRoot.querySelector('button')?.focus());
 }
 
@@ -340,7 +340,7 @@ function openModal(title,body,actions,options={}) {
   if(autoPause)engine.pause();
   modal={actions,options,autoPause,previous:document.activeElement};
   const frame=options.result==='win'?'modal-reward':'modal-info';
-  modalRoot.innerHTML=`<div class="modal-scrim"><section class="modal art-modal ${options.result||''} ${options.kind||''}" role="dialog" aria-modal="true" aria-labelledby="dialog-title">${sprite(frame,'modal-frame')}<header class="modal-header">${options.closable!==false?button('close-modal',icon('close'),'modal-close',`aria-label="${t('close')}"`):''}<h2 id="dialog-title">${escapeHTML(title)}</h2></header><div class="modal-body">${body}</div><div class="modal-actions">${actions.map((a,i)=>button('modal-action',escapeHTML(a.label),a.primary?'primary':a.danger?'danger-button':'secondary',`data-index="${i}" ${a.disabled?'disabled':''}`)).join('')}</div></section></div>`;
+  modalRoot.innerHTML=`<div class="modal-scrim"><section class="modal art-modal ${options.result||''} ${options.kind||''} ${options.closable===false?'no-close':''}" role="dialog" aria-modal="true" aria-labelledby="dialog-title">${sprite(frame,'modal-frame',{noClose:options.closable===false})}<header class="modal-header">${options.closable!==false?button('close-modal',icon('close'),'modal-close',`aria-label="${t('close')}"`):''}<h2 id="dialog-title">${escapeHTML(title)}</h2></header><div class="modal-body">${body}</div><div class="modal-actions">${actions.map((a,i)=>button('modal-action',escapeHTML(a.label),a.primary?'primary':a.danger?'danger-button':'secondary',`data-index="${i}" ${a.disabled?'disabled':''}`)).join('')}</div></section></div>`;
   root.inert=true;
   requestAnimationFrame(()=>{fitModal();modalRoot.querySelector('.modal-actions button:not(:disabled)')?.focus();});
 }

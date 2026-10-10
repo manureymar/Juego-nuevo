@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import {settleArt,assertControlsVisible} from './layout.mjs';
 import { mkdirSync, writeFileSync } from 'node:fs';
 import { spawn } from 'node:child_process';
-const { chromium } = await import(process.env.CODEX_PRIMARY_RUNTIME_NODE_MODULES ? `${process.env.CODEX_PRIMARY_RUNTIME_NODE_MODULES}/playwright/index.mjs` : 'playwright');
+import {chromium} from 'playwright';
 mkdirSync('test-results',{recursive:true});
 const server=spawn(process.execPath,['scripts/serve.mjs'],{stdio:['ignore','pipe','inherit']});
 await new Promise((resolve,reject)=>{server.stdout.once('data',resolve);server.once('error',reject);});
@@ -26,6 +26,9 @@ try{
   await settleArt(page);await assertControlsVisible(page);
   await page.waitForFunction(()=>!document.querySelector('#menu-music').paused&&document.querySelector('#menu-music').currentTime>0);
   assert.equal(await page.locator('.home-screen .scene-brand,.ui-avatar').count(),0);
+  assert.equal(await page.locator('#menu-music').evaluate(a=>a.volume),.34*.75);
+  assert.equal(await page.locator('.mine-portal').count(),0);
+  assert.equal(await page.locator('.campaign-unlock').count(),4);
   await page.screenshot({path:'test-results/02-home.png'});
   await page.locator('.bottom-nav [data-action="shop"]').click();
   await page.locator('[data-action="pack"]').first().click();

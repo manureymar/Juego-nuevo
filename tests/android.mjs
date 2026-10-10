@@ -129,7 +129,8 @@ try{
     const a=new AudioContext();const bytes=await (await fetch('assets/audio/button-tap.wav')).arrayBuffer();
     const data=await a.decodeAudioData(bytes);await a.close();return data.duration;
   });
-  assert.ok(wav>.1&&wav<.15);
+  assert.ok(Math.abs(wav-.291655)<.001,'The supplied button WAV is packaged unchanged');
+  assert.equal(await page.locator('#menu-music').evaluate(a=>a.volume),.34*.75);
   await page.locator('#menu-music').evaluate(a=>{a.currentTime=a.duration-.3;});
   await until(()=>page.locator('#menu-music').evaluate(a=>a.currentTime<2&&!a.paused));
   adb('shell','input','keyevent','KEYCODE_HOME');
@@ -187,9 +188,10 @@ try{
   await nativeTap(page,'[data-action=claim-mining]');await page.locator('.mining-scene[data-loaded=true]').waitFor();
   await capture('15-empty-mine');assert.equal(await page.locator('.build-option.locked').count(),4);
   await nativeDrag(page,'#mine-build','#mine-target');
-  await page.waitForFunction(()=>JSON.parse(localStorage.getItem('robot-pulse-v1')).mining.built);await delay(1500);
+  await page.waitForFunction(()=>JSON.parse(localStorage.getItem('robot-pulse-v1')).mining.built);await delay(2500);
   assert.equal(await page.locator('#mine-build').isDisabled(),true);await capture('16-built-mine');
-  await page.locator('[data-action=collect-mining]:not([disabled])').waitFor();
+  // Let the installed APK produce its first real minute of gold; no test hook.
+  await page.locator('[data-action=collect-mining]:not([disabled])').waitFor({timeout:75000});
   const coinsBefore=await page.evaluate(()=>JSON.parse(localStorage.getItem('robot-pulse-v1')).coins);
   await nativeTap(page,'[data-action=collect-mining]');
   await page.waitForFunction(n=>JSON.parse(localStorage.getItem('robot-pulse-v1')).coins>n,coinsBefore);

@@ -1,4 +1,6 @@
-export const ORE_MS=4000,ORE_VALUE=5,MAX_GOLD=9999999;
+// First-mine tuning: 300 coins/hour, two hours of storage. Existing saved gold
+// above the new production capacity is retained and remains fully collectible.
+export const ORE_MS=60000,ORE_VALUE=5,STORAGE_GOLD=120,MAX_GOLD=9999999;
 export function miningState(raw,wins,now=Date.now()){
  const unlocked=wins>0,built=unlocked&&raw?.built===true;
  const integer=n=>Number.isFinite(n)?Math.max(0,Math.min(MAX_GOLD,Math.floor(n))):0;
@@ -26,7 +28,7 @@ export function accrueGold(profile,now=Date.now()){
  const m=profile.mining;if(!m?.built||!Number.isFinite(now)||now<m.producedAt)return 0;
  const units=Math.floor((now-m.producedAt)/ORE_MS);if(!units)return 0;
  m.producedAt+=units*ORE_MS;
- const added=Math.min(units,MAX_GOLD-m.storedGold);
+ const added=Math.max(0,Math.min(units,STORAGE_GOLD-m.storedGold));
  m.totalGold=Math.min(MAX_GOLD,m.totalGold+added);m.storedGold+=added;return added;
 }
 export function collectGold(profile,now=Date.now()){

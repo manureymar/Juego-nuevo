@@ -1,4 +1,4 @@
-node_modules/
+node_modules
 .work/
 android/.gradle/
 android/local.properties

@@ -26,3 +26,7 @@ for(const name of ['background-built','background-empty','parts','drill','card-e
 if(!html.includes('mining-ui.css')||!statSync('game/mining-ui.css').size)throw Error('Mining stylesheet missing');
 // Preserve the approved mining motion verbatim, including irregular dust and fixed wagon.
 for(const name of ['engine','renderer','particles'])if(!readFileSync(`game/src/mining/${name}.js`).equals(readFileSync(`previews/mining/${name}.js`)))throw Error('Approved mining animation changed: '+name);
+
+for(const name of ['mine-portal','mine-preview'])if(!statSync(`game/assets/polish/${name}.png`).size)throw Error('Missing polish asset '+name);
+if(!html.includes('polish-ui.css'))throw Error('Polish stylesheet missing');
+if(!readFileSync('game/assets/audio/button-tap.wav').equals(readFileSync('art/audio/2026-10-10-button-tap/game-ball-tap-2073.wav')))throw Error('Owner button sound must be packaged unchanged');

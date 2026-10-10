@@ -8,7 +8,7 @@ export class GameAudio {
     this.music.id = 'menu-music';
     this.music.loop = true;
     this.music.preload = 'auto';
-    this.music.volume = .34;
+    this.music.volume = .34 * .75; // Exactly 25% below the previous mix.
     this.music.setAttribute('aria-hidden', 'true');
     document.body.append(this.music);
     this.taps = Array.from({length: 4}, () => {

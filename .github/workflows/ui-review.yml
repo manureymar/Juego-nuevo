@@ -1,0 +1,66 @@
+name: Robot Pulse UI review
+on:
+  push:
+    branches: ['polish/**']
+    paths: ['game/**', 'tests/**', 'scripts/**', 'art/audio/**', '.github/workflows/ui-review.yml']
+permissions:
+  contents: write
+concurrency:
+  group: robot-pulse-ui-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: |
+          npm run check
+          npm test
+          npm install --no-save --package-lock=false playwright@1.56.1
+          npx playwright install --with-deps chromium
+      - name: Dialog geometry and screenshots
+        id: dialogs
+        continue-on-error: true
+        run: node tests/dialogs.mjs
+      - name: Mining gestures and screenshots
+        id: mining
+        continue-on-error: true
+        run: node tests/mining-browser.mjs
+      - name: Complete playable journey
+        id: game
+        continue-on-error: true
+        run: npm run test:browser
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: polish-ui-review
+          path: test-results/
+          retention-days: 30
+      - name: Keep review evidence on the work branch
+        if: always()
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import shutil
+          out=Path('docs/polish-v0.7/review');out.mkdir(parents=True,exist_ok=True)
+          root=Path('test-results')
+          for p in root.rglob('*'):
+              if p.suffix not in ('.png','.json'): continue
+              if p.suffix=='.png' and p.parent.name=='dialogs' and not ('en-390' in p.name or 'es-360' in p.name or p.name=='failure.png'): continue
+              q=out/p.relative_to(root);q.parent.mkdir(parents=True,exist_ok=True);shutil.copyfile(p,q)
+          PY
+          git fetch origin "$GITHUB_REF_NAME"
+          test "$(git rev-parse origin/$GITHUB_REF_NAME)" = "$GITHUB_SHA" || exit 0
+          git config user.name 'Robot Pulse visual checks'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add docs/polish-v0.7/review
+          git diff --cached --quiet && exit 0
+          git commit -m 'test: retain visual review evidence [skip ci]'
+          git push origin HEAD:"$GITHUB_REF_NAME"
+      - name: Require every journey to pass
+        if: steps.dialogs.outcome != 'success' || steps.mining.outcome != 'success' || steps.game.outcome != 'success'
+        run: exit 1
