@@ -1,5 +1,5 @@
 {
-  "passed": true,
+  "passed": false,
   "checks": [
     "Splash, all three menus, test purchase, daily supply and ranking filters",
     "Two visible queue rows, extra bay, shuffle, rear selection, cancellation without spending, tool inventory persisted",
@@ -10,5 +10,6 @@
     "Home and Leaderboard fit three phone sizes in EN/ES; all filters, profile rows, locked levels and battery values 0–5 work; player can take first place",
     "Gameplay and illustrated dialogs fit EN/ES phone layouts without scroll"
   ],
-  "errors": []
+  "errors": [],
+  "error": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\n0 !== 1\n"
 }
