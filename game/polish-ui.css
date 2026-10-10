@@ -64,7 +64,7 @@
 .mining-scene.placing .mining-status>.gp-sliced{filter:hue-rotate(135deg) saturate(.9)}
 .mining-scene.placement-valid .mining-status>.gp-sliced{filter:hue-rotate(320deg)}
 .mining-yield{left:25px;right:25px;top:1288px;height:139px;padding:17px 31px;border:0;border-radius:0;box-shadow:none;background:none;gap:15px}
-.yield-frame{--slice-x:47px;--slice-y:31px}
+.mining-yield>.yield-frame{display:grid;gap:0;--slice-x:47px;--slice-y:31px}
 .gold-balance{position:relative;display:flex;align-items:center;gap:16px;min-width:0}
 .gold-balance>span:last-child{display:flex;flex-direction:column;gap:3px}
 .mining-yield small{font-size:22px;line-height:1.1;color:#c8e8f4;white-space:nowrap}

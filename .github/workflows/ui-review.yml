@@ -46,7 +46,9 @@ jobs:
           python3 - <<'PY'
           from pathlib import Path
           import shutil
-          out=Path('docs/polish-v0.7/review');out.mkdir(parents=True,exist_ok=True)
+          out=Path('docs/polish-v0.7/review')
+          if out.exists(): shutil.rmtree(out)
+          out.mkdir(parents=True,exist_ok=True)
           root=Path('test-results')
           for p in root.rglob('*'):
               if p.suffix not in ('.png','.json'): continue

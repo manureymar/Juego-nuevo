@@ -18,7 +18,10 @@ try{
  // Simulate the existing v0.5 save on a real user's phone: victory already earned, no mining fields yet.
  await page.evaluate(()=>{const p=JSON.parse(localStorage.getItem('robot-pulse-v1'));p.wins=1;delete p.mining;p.tutorialSeen=true;Object.assign(window.__rpTest.profile,p);localStorage.setItem('robot-pulse-v1',JSON.stringify(p));});
  await page.reload();await page.locator('[data-action=enter]').click();
- await page.locator('.mining-card-scrim').waitFor();await settleArt(page);await page.waitForTimeout(1200);
+ await page.locator('.mining-card-scrim').waitFor();await settleArt(page);
+ assert.equal(await page.locator('.mining-card-button img').evaluate(e=>getComputedStyle(e).animationName),'card-digitize');
+ await page.waitForTimeout(220);await page.screenshot({path:'test-results/mining/card-digitizing.png'});
+ await page.waitForTimeout(1200);
  await assertControlsVisible(page,'.mining-card-scrim button');
  assert.equal(await page.locator('.mining-card-button img').getAttribute('src'),'assets/mining/card-en.png');
  assert.equal(await page.locator('.reward-sheen').evaluate(e=>getComputedStyle(e).animationName),'reward-sheen');
@@ -51,8 +54,13 @@ try{
  await page.setViewportSize({width:390,height:844});await settleArt(page);
  await dragStart(await world(265,433));assert.equal(await page.locator('.mining-scene').getAttribute('data-placement'),'valid');
  await page.screenshot({path:'test-results/mining/04-valid-green.png'});await touch('touchEnd');
- await page.waitForFunction(()=>window.__rpTest.profile.mining.built);await page.waitForTimeout(2500);
+ await page.waitForFunction(()=>window.__rpTest.profile.mining.built);await page.waitForTimeout(500);
+ await page.screenshot({path:'test-results/mining/assembly-energy.png'});
+ const assembling=await page.locator('#mine-canvas').evaluate(c=>c.toDataURL());
+ await page.waitForTimeout(500);assert.notEqual(await page.locator('#mine-canvas').evaluate(c=>c.toDataURL()),assembling);
+ await page.waitForTimeout(1500);
  assert.equal(await page.locator('#mine-build').isDisabled(),true);assert.equal(await page.locator('.mining-guide').isVisible(),false);
+ assert.equal(await page.locator('.yield-frame').evaluate(e=>getComputedStyle(e).display),'grid','The nine-slice collection frame must retain its grid');
  await assertControlsVisible(page);await page.screenshot({path:'test-results/mining/05-built.png'});
  const frame=await page.locator('#mine-canvas').evaluate(c=>c.toDataURL());await page.waitForTimeout(600);
  assert.notEqual(await page.locator('#mine-canvas').evaluate(c=>c.toDataURL()),frame);
@@ -66,7 +74,7 @@ try{
  await page.evaluate(()=>{const p=JSON.parse(localStorage.getItem('robot-pulse-v1'));p.mining.producedAt-=15*60000;Object.assign(window.__rpTest.profile,p);localStorage.setItem('robot-pulse-v1',JSON.stringify(p));});
  await page.reload();await page.locator('[data-action=enter]').click();assert.equal(await page.locator('.mining-card-scrim').count(),0);
  await page.locator('[data-action=mining]').click();await page.locator('.mining-scene[data-loaded=true]').waitFor();
- await page.waitForFunction(()=>window.__rpTest.mining.model.cargo.length===6);
+ await page.waitForFunction(()=>window.__rpTest.mining.model.cargo.length===6,null,{timeout:30000});
  assert.ok(await page.evaluate(()=>window.__rpTest.profile.mining.storedGold)>=15);
  await page.locator('#mine-focus').tap();await page.waitForTimeout(1000);await page.screenshot({path:'test-results/mining/06-full-wagon-closeup.png'});
  assert.equal(await page.evaluate(()=>window.__rpTest.mining.model.cart),'parked');
@@ -87,6 +95,9 @@ try{
  await page.reload();await page.locator('[data-action=enter]').click();await page.locator('.mining-card-scrim').waitFor();await settleArt(page);await page.waitForTimeout(950);
  assert.equal(await page.locator('.mining-card-button img').getAttribute('src'),'assets/mining/card-es.png');
  await assertControlsVisible(page,'.mining-card-scrim button');await page.screenshot({path:'test-results/mining/card-es.png'});
+ await page.emulateMedia({reducedMotion:'reduce'});
+ assert.equal(await page.locator('.mining-card-button img').evaluate(e=>getComputedStyle(e).animationName),'none');
+ checks.push('First card uses digitization; construction has changing energy frames; reduced-motion preference disables card effects');
  assert.deepEqual(errors,[]);const video=page.video();await context.close();await video.saveAs('test-results/mining/mining-flow.webm');
  writeFileSync('test-results/mining/results.json',JSON.stringify({passed:true,checks,errors},null,2));console.log('Mining flow passed:',checks);
 }catch(e){await page?.screenshot({path:'test-results/mining/failure.png'}).catch(()=>{});writeFileSync('test-results/mining/results.json',JSON.stringify({passed:false,checks,errors,error:String(e)},null,2));throw e;}

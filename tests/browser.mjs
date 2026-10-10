@@ -11,6 +11,7 @@ const errors=[],checks=[];
 try{
   browser=await chromium.launch({headless:true,args:['--no-sandbox']});
   page=await browser.newPage({viewport:{width:390,height:844},deviceScaleFactor:1,hasTouch:true,isMobile:true});
+  await page.addInitScript(()=>{const play=HTMLMediaElement.prototype.play;window.__buttonSounds=0;HTMLMediaElement.prototype.play=function(){if(this.src.endsWith('/button-tap.wav'))window.__buttonSounds++;return play.call(this);};});
   page.on('pageerror',error=>errors.push(error.message));
   page.on('response',r=>{if(r.status()>=400)errors.push(`HTTP ${r.status()}: ${r.url()}`);});
   await page.goto('http://127.0.0.1:4173/?test=1');
@@ -29,6 +30,7 @@ try{
   assert.equal(await page.locator('#menu-music').evaluate(a=>a.volume),.34*.75);
   assert.equal(await page.locator('.mine-portal').count(),0);
   assert.equal(await page.locator('.campaign-unlock').count(),4);
+  assert.equal(await page.evaluate(()=>window.__buttonSounds),1,'Entering HOME plays the supplied button sound once');
   await page.screenshot({path:'test-results/02-home.png'});
   await page.locator('.bottom-nav [data-action="shop"]').click();
   await page.locator('[data-action="pack"]').first().click();
@@ -221,6 +223,27 @@ try{
     await page.locator('[data-action=modal-action]').nth(2).click();await page.locator('[data-action=modal-action]').nth(1).click();
   }
   checks.push('Gameplay and illustrated dialogs fit EN/ES phone layouts without scroll');
+  // Replay after the mining card was claimed to inspect the normal victory frame.
+  await page.locator('.play-button').click();
+  for(let turn=0;turn<140;turn++){
+    const state=await page.evaluate(()=>{
+      const g=window.__rpTest.engine,e=g.exposedCounts();
+      const options=[...g.waiting.map((r,i)=>({r,i,w:true})),...g.queues.map((q,i)=>({r:q[0],i,w:false}))].filter(c=>c.r);
+      options.sort((a,b)=>(e[b.r.color]||0)-(e[a.r.color]||0)||Number(b.w)-Number(a.w));
+      return {status:g.status,active:g.active.length,choice:options[0]&&{i:options[0].i,w:options[0].w}};
+    });
+    if(state.status==='won')break;assert.notEqual(state.status,'lost');
+    if(!state.active&&state.choice){const c=state.choice;await page.locator(c.w?`[data-action=launch-waiting][data-slot="${c.i}"]`:`[data-action=launch-queue][data-column="${c.i}"]`).click();}
+    await page.evaluate(()=>window.__rpTest.advance(10));
+  }
+  assert.equal(await page.evaluate(()=>window.__rpTest.engine.status),'won');
+  assert.equal(await page.locator('.modal.win.no-close .modal-frame .mirror').count(),1);
+  assert.equal(await page.locator('.modal.win .modal-close').count(),0);
+  for(const size of [{width:360,height:640},{width:390,height:844}]){
+    await page.setViewportSize(size);await settleArt(page);await assertControlsVisible(page,'.modal button');
+    await page.screenshot({path:`test-results/victory-es-${size.width}.png`});
+  }
+  checks.push('Replayed victory uses a complete frame without an empty X socket; title and buttons fit small phones');
   assert.deepEqual(errors,[]);
   writeFileSync('test-results/browser-results.json',JSON.stringify({passed:true,checks,errors},null,2));
   console.log(`Browser checks passed: ${checks.length} groups; phone screenshots captured.`);
