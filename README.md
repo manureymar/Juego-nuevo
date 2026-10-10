@@ -14,6 +14,8 @@ APK 0.6.0 disponible (93,7 MB): compilación, firma, instalación y recorrido de
 
 ## Qué incluye
 
+**Continuidad para otro chat:** [traspaso completo](docs/traspaso/Robot-Pulse-Traspaso.md) · [documento Word](docs/traspaso/Robot-Pulse-Traspaso.docx) · [inventario de archivos](docs/traspaso/INVENTARIO-REPOSITORIO.txt). Incluye concepto, decisiones visuales, jugabilidad, minería, mapa del código, historial, estado 0.6.0 y el flujo de entrega de cada APK.
+
 - Apertura con el fondo de batalla, el logo original y el botón PLAY/JUGAR, sin textos adicionales.
 - HOME: arte de campaña integrado, robot ilustrado, nivel 1 y continuación de la partida guardada; sin scroll.
 - SHOP: arte integrado, seis paquetes y panel de monedas gratis, sin scroll y con navegación inferior visible. Compras de prueba con confirmación, sin cobros reales. Recarga desde la batería.
