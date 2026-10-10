@@ -1,0 +1,18 @@
+{
+  "passed": true,
+  "checks": [
+    "APK installed and opened; music autoplays before any touch; only title and Play over background",
+    "Shop fits native WebView with enlarged Android font setting; all six packs, rewards and navigation respond",
+    "Button WAV decodes; menu song loops, pauses in background and resumes on return",
+    "Installed APK: six visible queue robots, extra waiting bay, native launch, rendered shots and pause work offline",
+    "Illustrated Home and Leaderboard fit native display; battery number, native navigation, ranking filters, profile rows and locked levels respond in EN/ES",
+    "Spanish buttons and Shop; English brand remains artwork; music setting and Android Back work",
+    "Installed APK offline: upgrade card, Spanish mine assets, native finger drag into cave, construction, production, collection, closeup, saved mine after reload and Android Back"
+  ],
+  "errors": [],
+  "viewport": {
+    "width": 412,
+    "height": 863,
+    "dpr": 2.625
+  }
+}

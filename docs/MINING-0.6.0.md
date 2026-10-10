@@ -30,3 +30,5 @@ Economía inicial de prueba: una unidad de oro cada 4 segundos, 5 monedas por un
 ## Verificación
 
 Pruebas deterministas: desbloqueo, migración de partidas, validación de ubicación, producción offline, recogida única, guardado y vagón fijo. Recorrido de navegador: victoria real del primer nivel, carta, arrastre táctil válido e inválido, cancelación, producción, recogida, recarga de página y pantallas EN/ES. El flujo Android instala el APK offline y prueba la construcción con un gesto táctil del emulador. Los resultados de cada ejecución están en los artefactos de GitHub Actions; el APK se publica solo después de superar esas comprobaciones.
+
+Resultado final del 10 de octubre de 2026: 28 pruebas deterministas, 88 casos de ventanas y recorrido web aprobados; APK instalado y recorrido de minería completo aprobado en Android sin conexión. [Capturas y pruebas de la entrega](mining-v0.6/README.md).

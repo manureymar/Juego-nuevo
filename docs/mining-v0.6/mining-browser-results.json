@@ -1,0 +1,9 @@
+{
+  "passed": true,
+  "checks": [
+    "Existing winners receive the animated English card; tap opens an empty cave with one enabled building and four grayscale locks",
+    "Real touch drag: red invalid zone rejects; pointer cancellation and Escape cancel; green cave snaps and installs once; animation produces collectible coins",
+    "Built mine and consumed card survive reload; elapsed offline time produces gold; full wagon remains parked; modal pauses motion; English and Spanish fit three phone sizes"
+  ],
+  "errors": []
+}

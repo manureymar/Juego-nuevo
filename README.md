@@ -4,13 +4,13 @@ Primera versión jugable de Robot Pulse: un puzle original de robots lanzadores,
 
 ## Probar en Android
 
-- [Descargar RobotPulse-0.5.0.apk](https://github.com/manureymar/Juego-nuevo/raw/refs/heads/main/downloads/RobotPulse-0.5.0.apk)
+- [Descargar RobotPulse-0.6.0.apk](https://github.com/manureymar/Juego-nuevo/raw/refs/heads/main/downloads/RobotPulse-0.6.0.apk)
 - [Estado de la compilación y pruebas](https://github.com/manureymar/Juego-nuevo/actions/workflows/android.yml)
 - [Instrucciones de instalación](docs/ANDROID.md)
 
-APK 0.5.0 disponible (75,4 MB): compilación, firma e instalación en emulador Android verificadas el 9 de octubre de 2026. Es una versión de prueba firmada para instalación directa, no una publicación en Google Play. Compatible con Android 8.0 o posterior.
+APK 0.6.0 disponible (93,7 MB): compilación, firma, instalación y recorrido de minería en emulador Android verificados el 10 de octubre de 2026. Es una versión de prueba firmada para instalación directa, no una publicación en Google Play. Compatible con Android 8.0 o posterior.
 
-[Capturas reales de las pantallas y del nivel](docs/screenshots-v0.5/README.md) · [Informe de verificación](docs/VERIFICATION.md)
+[Minería: capturas reales y verificación 0.6.0](docs/mining-v0.6/README.md) · [Pantallas y nivel anteriores](docs/screenshots-v0.5/README.md)
 
 ## Qué incluye
 
@@ -22,6 +22,7 @@ APK 0.5.0 disponible (75,4 MB): compilación, firma e instalación en emulador A
 - Disparos automáticos solo al primer bloque expuesto de su color. Relanzamiento de robots que vuelven con munición.
 - Seis robots visibles en tres columnas y dos filas, con plataformas, avance animado y ojos expresivos y herramientas funcionales: bandeja extra, selección de robot y mezcla de colas.
 - Victoria, premio, puntuación, estrellas, pausa, derrota, reinicio y continuidad al cerrar y abrir.
+- MINERÍA: carta animada al ganar el nivel 1, base vacía y construcción por arrastre con encaje verde/rojo. Conserva la animación web aprobada del taladro, polvo, chispas, estera y brazo. El vagón permanece fijo, se llena y la producción continúa en segundo plano o con la app cerrada. Recogida de monedas, zoom y guardado. Energía, camiones, combustible y almacén quedan bloqueados en gris.
 - Batería con celda cian sencilla y número grande, compartida por las pantallas. Cinco cargas: cada derrota o abandono consume una; ganar no consume. Cuenta regresiva MM:SS actualizada cada segundo y regeneración de prueba cada 30 minutos y recarga por 120 monedas.
 - Interfaz en inglés y español; título ROBOT PULSE siempre en inglés. Música aportada por el propietario, efecto de botón original y controles separados de música y efectos.
 
@@ -63,6 +64,8 @@ Las pruebas de navegador requieren Playwright (el flujo de GitHub instala una ve
 Por instrucción del propietario, **este repositorio es el único destino permanente** del código, arte, recursos y documentación del juego. Los avances se guardan con su historial de cambios. No se utiliza otro repositorio ni servicio como destino alternativo del proyecto.
 
 ## Referencias visuales
+
+- [Minería, carta y construcción: integración 0.6.0](docs/MINING-0.6.0.md).
 
 - [Nivel, herramientas y ventanas: integración 0.5.0](docs/UI-0.5.0.md).
 
