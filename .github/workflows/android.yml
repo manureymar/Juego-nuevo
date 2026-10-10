@@ -36,6 +36,7 @@ jobs:
         run: |
           node tests/dialogs.mjs
           npm run test:browser
+          node tests/mining-browser.mjs
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -88,14 +89,14 @@ jobs:
           "$ANDROID_HOME/build-tools/35.0.0/apksigner" verify --verbose --print-certs android/app/build/outputs/apk/debug/app-debug.apk
           "$ANDROID_HOME/build-tools/35.0.0/aapt" dump badging android/app/build/outputs/apk/debug/app-debug.apk > test-results/apk-info.txt
           mkdir -p downloads
-          cp android/app/build/outputs/apk/debug/app-debug.apk downloads/RobotPulse-0.5.0.apk
+          cp android/app/build/outputs/apk/debug/app-debug.apk downloads/RobotPulse-0.6.0.apk
           cd downloads
-          sha256sum RobotPulse-0.5.0.apk > SHA256SUMS.txt
+          sha256sum RobotPulse-0.6.0.apk > SHA256SUMS.txt
       - uses: actions/upload-artifact@v4
         with:
-          name: RobotPulse-Android-0.5.0
+          name: RobotPulse-Android-0.6.0
           path: |
-            downloads/RobotPulse-0.5.0.apk
+            downloads/RobotPulse-0.6.0.apk
             downloads/SHA256SUMS.txt
             test-results/apk-info.txt
           retention-days: 90
@@ -108,7 +109,7 @@ jobs:
           fi
           git config user.name 'Robot Pulse build'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add downloads/RobotPulse-0.5.0.apk downloads/SHA256SUMS.txt android/preview-signing.keystore
+          git add downloads/RobotPulse-0.6.0.apk downloads/SHA256SUMS.txt android/preview-signing.keystore
           git diff --cached --quiet && exit 0
           git commit -m 'build: save tested Android preview APK [skip ci]'
           git push origin HEAD:main

@@ -110,11 +110,16 @@ try{
     await page.evaluate(()=>window.__rpTest.advance(10));
   }
   assert.equal(await page.evaluate(()=>window.__rpTest.engine.status),'won');
-  await page.locator('.modal.win').waitFor();
+  await page.locator('.mining-card-scrim').waitFor();
   assert.equal(await page.evaluate(()=>window.__rpTest.profile.energy),5);
   assert.equal(await page.evaluate(()=>window.__rpTest.profile.coins),1340);
-  await page.screenshot({path:'test-results/06-victory.png'});
-  await page.locator('[data-action="modal-action"]').first().click();
+  await settleArt(page);await page.waitForTimeout(950);
+  await assertControlsVisible(page,'.mining-card-scrim button');
+  await page.screenshot({path:'test-results/06-victory-mining-card.png'});
+  await page.locator('[data-action=claim-mining]').click();
+  await page.locator('.mining-scene[data-loaded=true]').waitFor();
+  assert.equal(await page.evaluate(()=>window.__rpTest.profile.mining.built),false);
+  await page.locator('[data-action=home]').click();
   await page.locator('.bottom-nav [data-action="leaderboard"]').click();
   assert.ok(await page.evaluate(()=>window.__rpTest.profile.bestScore)>0);
   assert.ok(await page.evaluate(()=>window.__rpTest.profile.monthlyScore)>0);

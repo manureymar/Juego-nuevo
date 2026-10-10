@@ -1,3 +1,5 @@
+import {MiningController,miningView,buildingArt} from './mining-view.js';
+import {accrueGold,claimMiningCard,collectGold} from './mining-state.js';
 import { GameEngine } from './engine.js';
 import { COLORS } from './level.js';
 import { SaveStore, SKINS, PACKS, MAX_ENERGY, RECHARGE_MS, energyCountdown, refreshEnergy, TOOL_PACKS, buyTools, useTool, winRun, loseRun, refillEnergy, buySkin, claimDaily, localDate } from './profile.js';
@@ -19,7 +21,7 @@ const profile = store.load();
 const gameAudio = new GameAudio(profile);
 let t = translator(profile.language);
 let screen = 'splash', engine = null, renderer = null, runId = '', modal = null;
-let selectingRobot=false, historyPage=0;
+let selectingRobot=false, historyPage=0, miningController=null;
 let rankingTab = 'monthly', rankingRegion = 'global', lastSaved = 0, toastTimer = 0, audio = null, lastShot = 0;
 const escapeHTML = text => String(text).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const fmt = number => new Intl.NumberFormat(profile.language === 'es' ? 'es-ES' : 'en-US').format(number);
@@ -94,6 +96,8 @@ function pageHeading(title,sub='') { return `<div class="page-heading"><p class=
 
 function render() {
   renderer?.stop();renderer=null;
+  miningController?.stop();miningController=null;
+  accrueGold(profile);
   t=translator(profile.language);document.documentElement.lang=profile.language;
   root.dataset.screen=screen;
   gameAudio.setScreen(screen);
@@ -109,6 +113,10 @@ function render() {
     root.innerHTML=`<div class="menu-backdrop">${screen==='home'?homeView():leaderboardView()}</div>`;
     fitScenes();return;
   }
+  if(screen==='mining'){
+    root.innerHTML=`<div class="menu-backdrop">${miningView({t,profile,hud,button})}</div>`;
+    fitScenes();miningController=new MiningController(root.querySelector('.mining-scene'),{profile,t,save,sound,toast});return;
+  }
   root.innerHTML=gameView();
   fitScenes();
   if(screen==='game'){
@@ -118,11 +126,12 @@ function render() {
 }
 
 function homeView() {
-  const unlocks=[['cube',15],['cannon',20],['shield',25],['coins',30]];
+  const unlocks=[['cannon',20],['shield',25],['coins',30]];
   return `<section class="menu-scene home-screen" data-scene-width="887" data-scene-height="1774" aria-label="${t('home')}">
     <img class="scene-layer" src="assets/ui-v3/home-clean.png" alt="" aria-hidden="true">
     ${hud()}
     <h1 class="home-title scene-title metal-text">${t('campaign')}</h1><p class="home-sector">${t('sector')}</p>
+    ${button('mining',`${buildingArt('mine')}<span>${profile.mining.unlocked?t('mining'):t('level')+' 1 · 🔒'}</span>`,'mining-entry '+(profile.mining.unlocked?'available':'locked'),`aria-label="${profile.mining.unlocked?t('miningBase'):t('miningUnlock')}"`)}
     <div class="campaign-controls">${[3,2,1].map(n=>button(n===1?'start':'locked',`<span>${n}</span>`,'campaign-node node-'+n,`aria-label="${t('level')} ${n}${n>1?' '+t('locked'):''}"`)).join('')}
     ${unlocks.map(([name,n])=>button('locked',`<span>${t('levelAbbr')} ${n}</span>`,'campaign-unlock unlock-'+name,`aria-label="${t('nextUnlock')}: ${t('level')} ${n}"`)).join('')}</div>
     <div class="campaign-hero" role="img" aria-label="${t(profile.skin)} Robot Pulse">${pilotArt(profile.skin,'hero-image')}</div>
@@ -252,6 +261,7 @@ function processEvents(events) {
 function navigate(page) {
   closeModal();screen=page;render();
   if(page!=='splash')save();
+  if(page==='home'&&profile.mining.unlocked&&!profile.mining.rewardSeen)showMiningCard();
 }
 
 function startLevel() {
@@ -275,12 +285,20 @@ function finishRun() {
   renderer?.stop();
   if(engine.status==='won'){
     const result=engine.result(),newBest=result.score>profile.bestScore,reward=winRun(profile,runId,result);save();sound('win');
+    if(profile.mining.unlocked&&!profile.mining.rewardSeen){showMiningCard();return;}
     openModal(t('victory'),`<div class="result-trophy">${icon('trophy')}</div><div class="result-stars">${[1,2,3].map(n=>`<span class="${n<=result.stars?'earned':'unearned'}">${icon('star')}</span>`).join('')}</div><p>${t('victoryBody')}</p>${newBest?`<span class="new-best">${t('newBest')}</span>`:''}<div class="result-grid"><div><small>${t('score')}</small><b>${fmt(result.score)}</b></div><div><small>${t('time')}</small><b>${result.seconds}s</b></div><div><small>${t('reward')}</small><b class="gold-text">+${reward} ${icon('coin')}</b></div></div>`,[{label:t('continue'),primary:true,run:()=>navigate('home')},{label:t('resultReplay'),run:startLevel},{label:t('bonusSoon'),run:()=>openModal(t('bonusSoon'),`<div class="modal-symbol">${icon('play')}</div><p>${t('bonusUnavailable')}</p>`,[{label:t('toHome'),primary:true,run:()=>navigate('home')}])}],{closable:false,result:'win'});
   }else{
     loseRun(profile,runId);save();sound('loss');
     const why=engine.reason==='parking_full'?'parkingFull':engine.reason==='no_ammo'?'noAmmo':'abandoned';
     openModal(t('defeat'),`<div class="modal-symbol danger-symbol">${icon('battery')}</div><p>${t(why)}</p><p class="energy-used">${t('energyUsed')} · ${profile.energy}/5</p>`,[{label:t('tryAgain'),primary:true,run:startLevel},{label:t('toHome'),run:()=>navigate('home')}],{closable:false,result:'loss'});
   }
+}
+
+function showMiningCard(){
+  closeModal();miningController?.setBlocked(true);
+  modal={actions:[],options:{closable:false},autoPause:false,previous:document.activeElement};
+  modalRoot.innerHTML=`<section class="mining-card-scrim" role="dialog" aria-modal="true" aria-labelledby="mining-card-title"><div class="card-aura" aria-hidden="true"></div><h2 id="mining-card-title" class="mining-card-title">${t('newZone')}</h2><button class="mining-card-button" data-action="claim-mining" aria-label="${t('tapMiningCard')}"><img src="assets/mining/card-${profile.language}.png" alt="${t('miningBase')} — ${t('miningGoldInfo')}"><span class="reward-sheen" aria-hidden="true"></span></button><p class="mining-card-hint">${t('tapMiningCard')}</p></section>`;
+  root.inert=true;gameAudio.setScreen('mining');requestAnimationFrame(()=>modalRoot.querySelector('button')?.focus());
 }
 
 function showPause() {
@@ -317,6 +335,7 @@ function showEnergy() {
 
 function openModal(title,body,actions,options={}) {
   if(modal)closeModal();
+  miningController?.setBlocked(true);
   const autoPause=screen==='game'&&engine?.isRunning;
   if(autoPause)engine.pause();
   modal={actions,options,autoPause,previous:document.activeElement};
@@ -328,7 +347,7 @@ function openModal(title,body,actions,options={}) {
 
 function closeModal() {
   if(!modal)return;
-  const old=modal;modal=null;modalRoot.innerHTML='';root.inert=false;
+  const old=modal;modal=null;modalRoot.innerHTML='';root.inert=false;miningController?.setBlocked(false);
   old.options.onClose?.();if(old.autoPause&&!selectingRobot)engine?.resume();
   if(old.previous?.isConnected)old.previous.focus?.();
 }
@@ -376,6 +395,11 @@ function handleAction(target) {
   sound('tap');
   switch(action){
     case 'enter':navigate('home');break;
+    case 'mining':if(!profile.mining.unlocked)openModal(t('miningBase'),`<p>${t('miningUnlock')}</p>`,[{label:t('gotIt'),primary:true}]);else if(!profile.mining.rewardSeen)showMiningCard();else navigate('mining');break;
+    case 'claim-mining':if(claimMiningCard(profile)){save();sound('claim');navigate('mining');}break;
+    case 'mining-locked':openModal(t('tool_future'),`<p>${t('futureBuilding')}</p>`,[{label:t('gotIt'),primary:true}]);break;
+    case 'collect-mining':{const amount=collectGold(profile);if(amount){save();sound('claim');miningController?.updateUI();document.querySelector('.ui-coin-number').textContent=profile.coins<100000?fmt(profile.coins):new Intl.NumberFormat(profile.language,{notation:'compact',maximumFractionDigits:1}).format(profile.coins);toast('+'+fmt(amount)+' '+t('coins'));}break;}
+
     case 'home':case 'shop':case 'leaderboard':navigate(action);break;
     case 'coins':if(screen==='game'){const wasRunning=engine?.isRunning;if(wasRunning)engine.pause();openModal(t('coins'),`<div class="modal-symbol">${icon('coin')}</div><p>${fmt(profile.coins)} ${t('coins')}</p><p>${t('insufficient')}</p>`,[{label:t('gotIt'),primary:true}],{onClose:()=>{if(wasRunning)engine?.resume();}});}else navigate('shop');break;
     case 'profile':if(screen==='game')showSettings();else showProfile();break;
@@ -434,12 +458,13 @@ document.addEventListener('keydown',event=>{
 document.addEventListener('visibilitychange',()=>{
   if(document.hidden&&screen==='game'&&engine?.isRunning){showPause();persistSession(true);}
 });
-window.addEventListener('pagehide',()=>persistSession(true));
-window.robotPulseBack=()=>{if(selectingRobot){selectingRobot=false;engine?.resume();renderGameControls();return true;}if(modal){if(modal.options.closable!==false)closeModal();}else if(screen==='game')showPause();else if(screen!=='splash')navigate('splash');else return false;return true;};
+window.addEventListener('pagehide',()=>{accrueGold(profile);save();persistSession(true);});
+window.robotPulseBack=()=>{if(selectingRobot){selectingRobot=false;engine?.resume();renderGameControls();return true;}if(modal){if(modal.options.closable!==false)closeModal();}else if(screen==='game')showPause();else if(screen==='mining')navigate('home');else if(screen!=='splash')navigate('splash');else return false;return true;};
 document.addEventListener('robotpulse:pause',()=>{if(screen==='game'&&engine?.isRunning){showPause();persistSession(true);}});
 setInterval(()=>{
+  const goldAdded=accrueGold(profile);if(goldAdded)save();
   const previous=profile.energy;refreshEnergy(profile);
-  if(previous!==profile.energy){save();if(screen!=='game'&&!modal)render();}
+  if(previous!==profile.energy){save();if(screen!=='game'&&screen!=='mining'&&!modal)render();}
   document.querySelectorAll('.ui-energy-number,.modal-battery>b,.settings-battery>b').forEach(el=>el.textContent=profile.energy);
   document.querySelectorAll('[data-energy-timer]').forEach(el=>el.textContent=energyCountdown(profile));
   const period=document.querySelector('.leader-period span');
@@ -449,6 +474,6 @@ setInterval(()=>{
 
 // Explicit local test mode; never enabled by the installed Android app.
 if(location.hostname==='127.0.0.1'&&new URLSearchParams(location.search).has('test')){
-  window.__rpTest={get engine(){return engine;},get profile(){return profile;},advance(seconds){for(let i=0;i<seconds*60;i++)engine?.tick(1/60);if(engine)processEvents(engine.drainEvents());},save:()=>persistSession(true)};
+  window.__rpTest={get engine(){return engine;},get profile(){return profile;},get mining(){return miningController;},advance(seconds){for(let i=0;i<seconds*60;i++)engine?.tick(1/60);if(engine)processEvents(engine.drainEvents());},save:()=>persistSession(true)};
 }
 render();

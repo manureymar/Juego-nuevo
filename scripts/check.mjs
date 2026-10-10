@@ -21,3 +21,8 @@ for(const [name,a] of Object.entries(GAME_ART)){
  const [x,y,w,h]=a.rect,[sw,sh]=a.sourceSize;
  if(x<0||y<0||w<=0||h<=0||x+w>sw||y+h>sh)throw Error('Gameplay sprite outside atlas '+name);
 }
+
+for(const name of ['background-built','background-empty','parts','drill','card-en','card-es','buildings'])if(!statSync(`game/assets/mining/${name}.png`).size)throw Error('Missing mining asset '+name);
+if(!html.includes('mining-ui.css')||!statSync('game/mining-ui.css').size)throw Error('Mining stylesheet missing');
+// Preserve the approved mining motion verbatim, including irregular dust and fixed wagon.
+for(const name of ['engine','renderer','particles'])if(!readFileSync(`game/src/mining/${name}.js`).equals(readFileSync(`previews/mining/${name}.js`)))throw Error('Approved mining animation changed: '+name);

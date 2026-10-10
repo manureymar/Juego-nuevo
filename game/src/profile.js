@@ -1,3 +1,4 @@
+import {miningState,unlockMining} from './mining-state.js';
 import { monthKey } from './ranking.js';
 export const SAVE_KEY = 'robot-pulse-v1';
 export const MAX_ENERGY = 5;
@@ -19,7 +20,7 @@ export const SKINS = [
 ];
 
 export function defaultProfile(now = Date.now()) {
-  return { version: 1, tools:{bay:1,select:1,shuffle:1}, coins: 200, energy: 5, energyAt: now, bestScore: 0, monthlyKey: monthKey(now), monthlyScore: 0, bestStars: 0, wins: 0, language: 'en', sound: true, music: true, skin: 'cyan', ownedSkins: ['cyan'], dailyClaim: '', rewardedRuns: [], lostRuns: [], session: null, tutorialSeen: false };
+  return { mining:miningState(null,0,now), version: 1, tools:{bay:1,select:1,shuffle:1}, coins: 200, energy: 5, energyAt: now, bestScore: 0, monthlyKey: monthKey(now), monthlyScore: 0, bestStars: 0, wins: 0, language: 'en', sound: true, music: true, skin: 'cyan', ownedSkins: ['cyan'], dailyClaim: '', rewardedRuns: [], lostRuns: [], session: null, tutorialSeen: false };
 }
 
 const bounded = (v, max, fallback = 0) => Number.isFinite(v) ? Math.max(0, Math.min(max, Math.floor(v))) : fallback;
@@ -35,6 +36,7 @@ export function sanitizeProfile(raw, now = Date.now()) {
   p.monthlyScore = raw.monthlyKey === p.monthlyKey ? bounded(raw.monthlyScore, 1000000) : 0;
   p.bestStars = bounded(raw.bestStars, 3);
   p.wins = bounded(raw.wins, 1000000);
+  p.mining=miningState(raw.mining,p.wins,now);
   p.language = raw.language === 'es' ? 'es' : 'en';
   p.sound = raw.sound !== false;
   p.music = raw.music !== false;
@@ -70,6 +72,7 @@ export function winRun(p, id, result, now = Date.now()) {
   const reward = p.wins ? 10 : 40;
   p.coins += reward;
   p.wins++;
+  unlockMining(p);
   p.bestScore = Math.max(p.bestScore, result.score);
   if (p.monthlyKey !== monthKey(now)) { p.monthlyKey = monthKey(now); p.monthlyScore = 0; }
   p.monthlyScore = Math.max(p.monthlyScore || 0, result.score);

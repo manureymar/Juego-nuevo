@@ -48,6 +48,12 @@ async function nativeTap(page,selector) {
   const point=await page.locator(selector).evaluate(el=>{const r=el.getBoundingClientRect();return {x:r.x+r.width/2,y:r.y+r.height/2,width:innerWidth,height:innerHeight};});
   adb('shell','input','tap',String(Math.round(b[0]+point.x*(b[2]-b[0])/point.width)),String(Math.round(b[1]+point.y*(b[3]-b[1])/point.height)));
 }
+async function nativeDrag(page,fromSelector,toSelector){
+ await dismissFullscreenTip();const b=bounds(nativeWindow().match(/<node\b[^>]*class="android.webkit.WebView"[^>]*>/)?.[0]);assert.ok(b);
+ const point=async selector=>page.locator(selector).evaluate(el=>{const r=el.getBoundingClientRect();return {x:(r.x+r.width/2)/innerWidth,y:(r.y+r.height/2)/innerHeight};});
+ const from=await point(fromSelector),to=await point(toSelector),x=p=>String(Math.round(b[0]+p.x*(b[2]-b[0]))),y=p=>String(Math.round(b[1]+p.y*(b[3]-b[1])));
+ adb('shell','input','swipe',x(from),y(from),x(to),y(to),'1200');
+}
 let device;
 try{
   // The entire installed-app test runs offline, including audio and artwork.
@@ -164,6 +170,25 @@ try{
   await capture('05-opening-es');
   console.log("Completed native stage",checks.length+1);
   checks.push('Spanish buttons and Shop; English brand remains artwork; music setting and Android Back work');
+  // Upgrade an existing v0.5 winning save; first-level victory itself is exercised in Chromium.
+  await page.evaluate(()=>{const p=JSON.parse(localStorage.getItem('robot-pulse-v1'));p.wins=1;delete p.mining;p.session=null;localStorage.setItem('robot-pulse-v1',JSON.stringify(p));});
+  await page.reload();await nativeTap(page,'[data-action=enter]');
+  await page.locator('.mining-card-scrim').waitFor();await settleArt(page);await delay(1000);
+  await assertControlsVisible(page,'.mining-card-scrim button');
+  writeFileSync('test-results/android/14-mining-card.png',execFileSync('adb',['exec-out','screencap','-p'],{maxBuffer:20*1024*1024}));
+  await nativeTap(page,'[data-action=claim-mining]');await page.locator('.mining-scene[data-loaded=true]').waitFor();
+  await capture('15-empty-mine');assert.equal(await page.locator('.build-option.locked').count(),4);
+  await nativeDrag(page,'#mine-build','#mine-target');
+  await page.waitForFunction(()=>JSON.parse(localStorage.getItem('robot-pulse-v1')).mining.built);await delay(1500);
+  assert.equal(await page.locator('#mine-build').isDisabled(),true);await capture('16-built-mine');
+  await page.locator('[data-action=collect-mining]:not([disabled])').waitFor();await nativeTap(page,'[data-action=collect-mining]');
+  await nativeTap(page,'#mine-focus');await capture('17-mining-closeup');
+  // Reload the installed WebView, retaining only its persistent save, then verify the constructed scene.
+  await page.reload();await nativeTap(page,'[data-action=enter]');
+  assert.equal(await page.locator('.mining-card-scrim').count(),0);await nativeTap(page,'[data-action=mining]');
+  await page.locator('.mining-scene[data-loaded=true].mine-built').waitFor();await capture('18-mine-restored');
+  adb('shell','input','keyevent','KEYCODE_BACK');await page.locator('.home-screen').waitFor();
+  checks.push('Installed APK offline: upgrade card, Spanish mine assets, native finger drag into cave, construction, production, collection, closeup, saved mine after reload and Android Back');
   assert.deepEqual(errors,[]);
   writeFileSync('test-results/android/results.json',JSON.stringify({passed:true,checks,errors,viewport:await page.evaluate(()=>({width:innerWidth,height:innerHeight,dpr:devicePixelRatio}))},null,2));
   console.log('Installed Android APK checks passed:',checks);
