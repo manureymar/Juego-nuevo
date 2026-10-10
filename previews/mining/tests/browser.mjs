@@ -30,12 +30,18 @@ try{
   await page.evaluate(()=>minePreview.step(32));const later=await page.evaluate(()=>minePreview.snapshot());
   assert.deepEqual(later.cargo,full.cargo);assert.equal(later.cart,'parked');assert.ok(later.gold>full.gold);assert.equal(later.goldValue,later.gold*5);
   assert.equal(await page.locator('#gold').textContent(),String(later.gold));assert.equal(await page.locator('#coins').textContent(),String(later.goldValue));
+  if(width===390){
+   for(const [label,time] of [['intense',.5],['medium',4.5],['quiet',10.5]]){
+    await page.evaluate(t=>{minePreview.reset();minePreview.step(t);},time);
+    await page.screenshot({path:`${out}/particles-${label}.png`,fullPage:true});
+   }
+  }
   await page.locator('[data-view=map]').click();assert.equal((await page.evaluate(()=>minePreview.snapshot())).view,'map');await page.screenshot({path:`${out}/map-${width}.png`,fullPage:true});
   await page.locator('#assets-open').click();assert.equal(await page.locator('.asset-tile').count(),14);assert.equal(await page.locator('#assets-close').isVisible(),true);await page.screenshot({path:`${out}/assets-${width}.png`});await page.locator('#assets-close').click();
-  checks.push(`${width}x${height}: assets, no overflow, pause/resume, speed, reset, fixed full wagon (pixel comparison), continuing gold accumulation, contact particles, map and 14-piece gallery`);await context.close();
+  checks.push(`${width}x${height}: assets, no overflow, pause/resume, speed, reset, fixed full wagon (pixel comparison), continuing gold accumulation, irregular contact particles, map and 14-piece gallery`);await context.close();
  }
  const videoContext=await browser.newContext({viewport:{width:1100,height:900},recordVideo:{dir:out,size:{width:1100,height:900}}});const p=await videoContext.newPage();await p.goto('http://127.0.0.1:4174/');await p.waitForSelector('body[data-ready=true]');await p.locator('[data-speed="2"]').click();await p.waitForTimeout(17000);await videoContext.close();
  // Verify the publicly reachable preview document and all local assets from the exact commit.
- if(process.env.GITHUB_SHA){const url=`https://raw.githack.com/manureymar/Juego-nuevo/${process.env.GITHUB_SHA}/previews/mining/index.html`;const response=await fetch(url);assert.equal(response.status,200);assert.match(response.headers.get('content-type'),/text\/html/);const html=await response.text();assert.match(html,/De la roca/);for(const file of ['app.js','styles.css','assets/background.png','assets/parts.png','assets/drill.png']){const res=await fetch(new URL(file,url));assert.equal(res.status,200,file);await res.arrayBuffer();}checks.push('Public preview URL and all source assets respond successfully');writeFileSync(`${out}/url.txt`,url+'\n');}
+ if(process.env.GITHUB_SHA){const url=`https://raw.githack.com/manureymar/Juego-nuevo/${process.env.GITHUB_SHA}/previews/mining/index.html`;const response=await fetch(url);assert.equal(response.status,200);assert.match(response.headers.get('content-type'),/text\/html/);const html=await response.text();assert.match(html,/De la roca/);for(const file of ['app.js','styles.css','particles.js','assets/background.png','assets/parts.png','assets/drill.png']){const res=await fetch(new URL(file,url));assert.equal(res.status,200,file);await res.arrayBuffer();}checks.push('Public preview URL and all source assets respond successfully');writeFileSync(`${out}/url.txt`,url+'\n');}
  assert.deepEqual(errors,[]);writeFileSync(`${out}/results.json`,JSON.stringify({passed:true,errors,checks},null,2));console.log(checks);
 }catch(e){writeFileSync(`${out}/results.json`,JSON.stringify({passed:false,errors,error:String(e),checks},null,2));throw e;}finally{await browser?.close();server.kill();}

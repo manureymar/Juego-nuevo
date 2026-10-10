@@ -1,4 +1,6 @@
 import {beltPoint} from './engine.js';
+import {drillingParticles,pressure} from './particles.js';
+export {drillingParticles,particlePosition} from './particles.js';
 export const ASSETS={background:'assets/background.png',parts:'assets/parts.png',drill:'assets/drill.png'};
 export const PARTS={
  upper:[10,170,458,195],fore:[500,175,450,174],palm:[1020,88,268,335],jaw:[1488,88,212,335],
@@ -6,34 +8,6 @@ export const PARTS={
 };
 const FRAMES=[[29,210,473,183],[534,210,473,183],[1037,210,474,183],[29,690,473,183],[534,690,473,183],[1037,690,474,183]];
 const BASE={x:229,y:502};
-// Bounded emitters use simulation time, so pause and replay include the entire effect.
-const noise=n=>{const v=Math.sin(n*127.1+311.7)*43758.5453;return v-Math.floor(v);};
-export function particlePosition(age,vx,vy,gravity){
- return {x:417+vx*age,y:382+vy*age+.5*gravity*age*age};
-}
-export function drillingParticles(time){
- const particles=[];
- for(let i=0;i<94;i++){
-  const kind=i<48?'spark':i<72?'dust':'grit';
-  const cycle=kind==='spark'?1.7:kind==='dust'?3.2:1.6;
-  const elapsed=time+noise(i+1)*cycle,age=elapsed%cycle,turn=Math.floor(elapsed/cycle);
-  const a=noise(i+turn*97),b=noise(i*3+turn*131+17);
-  const life=kind==='dust'?2.5:kind==='spark'?1.18+a*.25:1.35;
-  if(age>life)continue;
-  const vx=kind==='spark'?-(18+a*52):kind==='dust'?-(15+a*18):-(8+a*31);
-  const vy=kind==='spark'?-70+b*80:kind==='dust'?-8+b*12:-28+b*37;
-  const gravity=kind==='dust'?36:190;
-  const pos=particlePosition(age,vx,vy,gravity),progress=age/life;
-  if(pos.y>496)continue;
-  const fadeIn=Math.min(1,age/.07),fadeOut=Math.min(1,(1-progress)/(kind==='dust'?.55:.35));
-  const trail=kind==='spark'?Array.from({length:4},(_,j)=>particlePosition(Math.max(0,age-j*.026),vx,vy,gravity)):[];
-  particles.push({kind,...pos,age,vx,vy,gravity,trail,
-   alpha:fadeIn*fadeOut*(kind==='dust'?.74:kind==='spark'?.98:.85),
-   size:kind==='dust'?7+progress*22:kind==='grit'?1+a*1.1:1.1+a*.65,
-   angle:a*6.28+age*(a-.5)*9});
- }
- return particles;
-}
 export function ik(end){const dx=end.x-BASE.x,dy=end.y-BASE.y;const L=110,d=Math.min(219.9,Math.max(.1,Math.hypot(dx,dy)));const angle=Math.atan2(dy,dx)+Math.acos(d/(2*L));return {x:BASE.x+L*Math.cos(angle),y:BASE.y+L*Math.sin(angle)};}
 export class Renderer {
  constructor(canvas,images){this.canvas=canvas;this.ctx=canvas.getContext('2d');this.images=images;this.view='detail';this.drawCount=0;}
@@ -54,29 +28,38 @@ export class Renderer {
  }
  contact(time){
   const c=this.ctx,particles=drillingParticles(time);
-  // Soft layered dust is darker than the lit rock, keeping it visible on a phone.
+  // Asymmetric overlapping lobes roll and expand rather than forming identical circles.
   for(const p of particles.filter(p=>p.kind==='dust')){
-   c.save();c.translate(p.x,p.y);c.rotate(-.25);c.scale(1,.78);c.globalAlpha=p.alpha;
-   const cloud=c.createRadialGradient(-p.size*.2,-p.size*.15,0,0,0,p.size);
-   cloud.addColorStop(0,'#e2d5c2ef');cloud.addColorStop(.3,'#b5a58ed0');cloud.addColorStop(.65,'#85796b88');cloud.addColorStop(1,'#85796b00');
-   c.fillStyle=cloud;c.beginPath();c.arc(0,0,p.size,0,Math.PI*2);c.fill();c.restore();
+   c.save();c.translate(p.x,p.y);c.rotate(p.rotation);c.scale(1,p.stretch);c.globalAlpha=p.alpha;
+   for(const lobe of p.lobes){
+    const x=lobe.x*p.size,y=lobe.y*p.size,r=p.size*lobe.size;
+    const cloud=c.createRadialGradient(x-r*.15,y-r*.2,0,x,y,r);
+    cloud.addColorStop(0,'#c5bdacce');cloud.addColorStop(.35,'#9e9488a0');cloud.addColorStop(.72,'#72685c40');cloud.addColorStop(1,'#72685c00');
+    c.fillStyle=cloud;c.beginPath();c.arc(x,y,r,0,Math.PI*2);c.fill();
+   }
+   c.restore();
   }
-  c.save();const flash=c.createRadialGradient(417,382,1,417,382,14);
+  c.save();const flash=c.createRadialGradient(417,382,1,417,382,12);
   flash.addColorStop(0,'#fff6d8bb');flash.addColorStop(.3,'#ffc24b66');flash.addColorStop(1,'#ff900000');
-  c.globalAlpha=.55+.25*Math.sin(time*29)**2;c.fillStyle=flash;c.fillRect(403,368,28,28);c.restore();
+  c.globalAlpha=.15+pressure(time)*.45+Math.min(.25,particles.filter(p=>p.kind==='spark'&&p.age<.1).length*.035);
+  c.fillStyle=flash;c.fillRect(405,370,24,24);c.restore();
   for(const p of particles.filter(p=>p.kind!=='dust')){
    c.save();c.globalAlpha=p.alpha;
    if(p.kind==='spark'){
-    // Tails follow previous ballistic positions; the arc bends down under gravity.
-    c.lineCap='round';c.lineJoin='round';c.beginPath();
-    p.trail.forEach((point,i)=>i?c.lineTo(point.x,point.y):c.moveTo(point.x,point.y));
-    c.strokeStyle='#bf501966';c.lineWidth=p.size*3;c.stroke();
-    c.strokeStyle='#ffae34';c.lineWidth=p.size*2;c.stroke();
-    c.strokeStyle='#fff5cc';c.lineWidth=p.size*.8;c.stroke();
-    c.fillStyle='#fffce4';c.beginPath();c.arc(p.x,p.y,p.size*.8,0,Math.PI*2);c.fill();
+    // Short, tapered exposures mix bright flecks and fading embers instead of uniform rods.
+    c.lineCap='round';
+    for(let i=p.trail.length-1;i>0;i--){
+     const a=p.trail[i],b=p.trail[i-1],weight=1-i/(p.trail.length+1);
+     c.globalAlpha=p.alpha*weight;c.beginPath();c.moveTo(a.x,a.y);c.lineTo(b.x,b.y);
+     c.strokeStyle=p.progress>.55?'#dc682c':'#ffb644';c.lineWidth=p.size*(1+weight);c.stroke();
+     c.strokeStyle=p.hot>.45?'#fff7cf':'#ffd475';c.lineWidth=p.size*.55*weight;c.stroke();
+    }
+    c.globalAlpha=p.alpha;c.fillStyle=p.progress>.65?'#f08b37':p.hot>.4?'#fff7d3':'#ffd16f';
+    c.beginPath();c.arc(p.x,p.y,Math.max(.38,p.size*.8),0,Math.PI*2);c.fill();
    }else{
-    c.translate(p.x,p.y);c.rotate(p.angle);c.fillStyle='#554336';c.fillRect(-p.size,-p.size,p.size*2,p.size*1.5);
-    c.fillStyle='#e1b375';c.fillRect(-p.size,-p.size,p.size*1.4,p.size*.65);
+    c.translate(p.x,p.y);c.rotate(p.rotation);c.fillStyle='#635044';
+    c.beginPath();c.moveTo(-p.size,-p.size*.45);c.lineTo(p.size*.5,-p.size);c.lineTo(p.size,p.size*.6);c.lineTo(-p.size*.55,p.size*.7);c.closePath();c.fill();
+    c.fillStyle='#d3b086';c.fillRect(-p.size*.5,-p.size*.5,p.size,p.size*.4);
    }
    c.restore();
   }

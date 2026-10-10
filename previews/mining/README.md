@@ -16,7 +16,7 @@ Abre `http://localhost:4174`. No se requieren paquetes para ejecutar la prueba. 
 
 ## Comportamiento
 
-- Taladro fijo contra una pared que permanece intacta. Seis fases de la hélice en bucle, sin rotar la máquina completa. Chispas con estelas curvas, una nube de polvo suave y pequeñas motas se dibujan con código en el contacto. Los emisores admiten hasta 94 partículas, con velocidades iniciales y caída por gravedad. El efecto tiene contraste para verse en el teléfono, usa el reloj de simulación y se congela al pausar.
+- Taladro fijo contra una pared que permanece intacta. Seis fases de la hélice en bucle, sin rotar la máquina completa. Chispas con estelas curvas, una nube de polvo suave y pequeñas motas se dibujan con código en el contacto. La emisión alterna momentos suaves, medios e intensos con ráfagas irregulares. Cada fragmento tiene dirección, velocidad, tamaño, resistencia al aire y duración propios; cae por gravedad y puede rebotar una vez perdiendo energía. El polvo fino deriva con corrientes suaves y el más pesado se asienta; las nubes tienen cuatro lóbulos desiguales. El límite es de 180 partículas y la memoria conserva solo emisiones recientes. El efecto tiene contraste para verse en el teléfono, usa el reloj de simulación y se congela al pausar.
 - Cinta con textura móvil y piedras independientes. Las partículas pequeñas se limitan al contacto del taladro; no caen piedras grandes desde la pared.
 - Brazo de dos eslabones conectado por cinemática inversa; palma y dedos de pinza separados. La piedra permanece unida a la pinza durante el traslado.
 - Único vagón estacionado permanentemente, con seis etapas de llenado visual. La pila llega al borde y mantiene exactamente su tamaño y posición. La pinza sigue depositando mineral después del llenado.
@@ -33,6 +33,7 @@ Abre `http://localhost:4174`. No se requieren paquetes para ejecutar la prueba. 
 - `assets/parts.png`: brazo, antebrazo, palma, dedo, oro, textura de cinta y vagón vacío.
 - `engine.js`: estados y economía de demostración, independiente del render.
 - `renderer.js`: recortes, articulaciones, perspectiva, trayectoria y dibujo.
+- `particles.js`: ráfagas, física con resistencia al aire, deriva del polvo y caché acotada.
 - `app.js`: controles web y carga de imágenes.
 - `ASSET-PROMPTS.md`: instrucciones originales de generación.
 
