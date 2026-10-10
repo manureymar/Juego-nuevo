@@ -24,7 +24,7 @@ try{
    const renderer=new Renderer(canvas,images),m=new Mine();m.update(32);renderer.cart(m);const first=canvas.toDataURL();
    m.update(32);renderer.ctx.clearRect(0,0,610,676);renderer.cart(m);const later=canvas.toDataURL();
    const contact=document.createElement('canvas');contact.width=80;contact.height=100;const fx=new Renderer(contact,images);
-   fx.ctx.translate(-370,-365);fx.drill({time:2});const a=contact.toDataURL();fx.ctx.clearRect(370,365,80,100);fx.drill({time:2.1});
+   fx.ctx.translate(-370,-365);fx.contact(2);const a=contact.toDataURL();fx.ctx.clearRect(370,365,80,100);fx.contact(2.1);
    return {fixed:first===later,contactMoves:a!==contact.toDataURL()};
   });assert.ok(renderChecks.fixed,'full wagon pixels remain identical');assert.ok(renderChecks.contactMoves,'drill contact animates');
   await page.evaluate(()=>minePreview.step(32));const later=await page.evaluate(()=>minePreview.snapshot());

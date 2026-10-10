@@ -16,7 +16,7 @@ Abre `http://localhost:4174`. No se requieren paquetes para ejecutar la prueba. 
 
 ## Comportamiento
 
-- Taladro fijo contra una pared que permanece intacta. Seis fases de la hélice en bucle, sin rotar la máquina completa. Chispas, polvo y pequeñas motas se dibujan con código en el contacto; usan el reloj de simulación y se congelan al pausar.
+- Taladro fijo contra una pared que permanece intacta. Seis fases de la hélice en bucle, sin rotar la máquina completa. Chispas con estelas curvas, una nube de polvo suave y pequeñas motas se dibujan con código en el contacto. Los emisores admiten hasta 94 partículas, con velocidades iniciales y caída por gravedad. El efecto tiene contraste para verse en el teléfono, usa el reloj de simulación y se congela al pausar.
 - Cinta con textura móvil y piedras independientes. Las partículas pequeñas se limitan al contacto del taladro; no caen piedras grandes desde la pared.
 - Brazo de dos eslabones conectado por cinemática inversa; palma y dedos de pinza separados. La piedra permanece unida a la pinza durante el traslado.
 - Único vagón estacionado permanentemente, con seis etapas de llenado visual. La pila llega al borde y mantiene exactamente su tamaño y posición. La pinza sigue depositando mineral después del llenado.

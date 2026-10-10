@@ -1,7 +1,7 @@
 import {test} from 'node:test';
 import assert from 'node:assert/strict';
 import {Mine,CAPACITY,VALUE} from '../engine.js';
-import {ik,drillingParticles} from '../renderer.js';
+import {ik,drillingParticles,particlePosition} from '../renderer.js';
 
 test('Each pickup is loaded once; continuous production keeps belt and arm valid',()=>{
  const m=new Mine(),picked=new Set(),loaded=new Set();let cursor=0;
@@ -35,13 +35,20 @@ test('Gold is credited at deposit, not while the gripper holds it',()=>{
  assert.equal(m.gold,gold+1);assert.equal(m.holding,null);m.update(.3);assert.equal(m.gold,gold+1);
 });
 
-test('Contact particles stay small and local, animate with time and freeze on the same clock',()=>{
- const kinds=new Set();let maxY=382;
- for(let t=0;t<10;t+=.05){const particles=drillingParticles(t);assert.ok(particles.length<=26);
+test('Visible contact particles are bounded, deterministic and fall with gravity',()=>{
+ const kinds=new Set();let maxY=382,minCount=Infinity;
+ for(let t=0;t<10;t+=.05){const particles=drillingParticles(t);assert.ok(particles.length<=94);minCount=Math.min(minCount,particles.length);
   assert.deepEqual(particles,drillingParticles(t));
-  for(const p of particles){kinds.add(p.kind);assert.ok(p.x>=380&&p.x<=417);assert.ok(p.y>370&&p.y<453);assert.ok(p.alpha>=0&&p.alpha<=1);assert.ok(p.size<=4.2);maxY=Math.max(maxY,p.y);}
+  for(const p of particles){
+   kinds.add(p.kind);assert.ok(p.x>=315&&p.x<=417);assert.ok(p.y>365&&p.y<=496);assert.ok(p.alpha>=0&&p.alpha<=1);assert.ok(p.size<=29);maxY=Math.max(maxY,p.y);
+   if(p.kind==='spark'){
+    const step=.02,a=particlePosition(p.age-step,p.vx,p.vy,p.gravity),b=particlePosition(p.age,p.vx,p.vy,p.gravity),c=particlePosition(p.age+step,p.vx,p.vy,p.gravity);
+    assert.ok(Math.abs((c.y-2*b.y+a.y)/(step*step)-p.gravity)<.00001,'downward acceleration is gravity');
+    assert.deepEqual(p.trail[0],b);
+   }
+  }
  }
- assert.equal(kinds.size,3);assert.ok(maxY>430);assert.notDeepEqual(drillingParticles(2),drillingParticles(2.1));
+ assert.equal(kinds.size,3);assert.ok(minCount>45);assert.ok(maxY>485);assert.notDeepEqual(drillingParticles(2),drillingParticles(2.1));
 });
 
 test('Reset clears gold, fill stages and animation state',()=>{
