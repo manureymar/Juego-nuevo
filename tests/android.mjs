@@ -97,12 +97,22 @@ try{
   const restartApp=async()=>{
     // Exercise the real Android cold-start lifecycle. DevTools reload caused
     // the host QEMU graphics process to core-dump in run 38072785547.
+    const saved=()=>page.evaluate(()=>{const p=JSON.parse(localStorage.getItem('robot-pulse-v1'));return {wins:p.wins,coins:p.coins,built:!!p.mining?.built};});
+    const expected=await saved();
+    adb('shell','input','keyevent','KEYCODE_HOME');
+    await until(()=>page.evaluate(()=>document.hidden));
+    // Chromium batches localStorage commits with a five-second default delay.
+    // Allow that disk write after backgrounding before forcibly killing it.
+    // https://chromium.googlesource.com/chromium/src/+/refs/heads/main/components/services/storage/dom_storage/local_storage_impl.cc
+    await delay(6000);
     adb('shell','am','force-stop',pkg);
     await until(()=>device.webViews().every(view=>view.pkg()!==pkg));
     adb('shell','am','start','-W','-n',pkg+'/com.manureymar.robotpulse.MainActivity');
     await attachPage();
     webViewBounds=null;
     await page.locator('[data-action=enter]').waitFor();
+    assert.deepEqual(await saved(),expected,'Cold start must restore the saved wins, coins and constructed mine');
+    await settleArt(page);
     // The DOM can be ready before Android exposes its new native window.
     // Require fresh, valid WebView bounds before issuing the first ADB tap.
     await until(()=>nativeBounds());
