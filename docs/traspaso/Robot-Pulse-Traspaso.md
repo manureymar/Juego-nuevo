@@ -1,8 +1,10 @@
 # Traspaso completo de Robot Pulse
 
+**Actualización posterior al traspaso: 0.7.0, 10 de octubre de 2026.** La entrega vigente es [RobotPulse-0.7.0.apk](https://github.com/manureymar/Juego-nuevo/raw/refs/heads/main/downloads/RobotPulse-0.7.0.apk). Leer primero las [19 correcciones de diseño, minería y sonido](../UI-0.7.0.md) y las [capturas y pruebas finales de navegador y Android](../polish-v0.7/README.md). Incluye portal independiente en HOME, ventanas ajustadas, digitalización de carta, montaje con energía, WAV de botones del propietario y música un 25% más baja. La firma y el guardado se conservan. El contenido original siguiente documenta la base histórica 0.6.0; sus cifras económicas y referencias de versión quedan sustituidas por la actualización 0.7.0.
+
 Documento de continuidad para el propietario y el siguiente chat de desarrollo. Estado verificado el 10 de octubre de 2026, UTC. Reúne el concepto, las decisiones del propietario, el funcionamiento implementado, los recursos, los archivos, las pruebas y el proceso de entrega.
 
-**Punto de partida:** Robot Pulse ya es una aplicación Android jugable con un primer nivel, tres menús y minería integrada. La entrega vigente es **0.6.0**. Continuar sobre este proyecto y sus recursos aprobados. La revisión del propietario en su teléfono sigue siendo parte del proceso después de cada entrega.
+**Punto de partida del traspaso original:** Robot Pulse ya es una aplicación Android jugable con un primer nivel, tres menús y minería integrada. La base descrita es **0.6.0**. Continuar sobre este proyecto y sus recursos aprobados. La revisión del propietario en su teléfono sigue siendo parte del proceso después de cada entrega.
 
 ## 1 Inicio rápido para el siguiente chat
 
@@ -16,7 +18,7 @@ Documento de continuidad para el propietario y el siguiente chat de desarrollo. 
 
 **URL de clonación:** https://github.com/manureymar/Juego-nuevo.git
 
-**APK vigente:** https://github.com/manureymar/Juego-nuevo/raw/refs/heads/main/downloads/RobotPulse-0.6.0.apk
+**APK histórico 0.6.0:** https://github.com/manureymar/Juego-nuevo/raw/refs/heads/main/downloads/RobotPulse-0.6.0.apk
 
 **Compilación y pruebas:** https://github.com/manureymar/Juego-nuevo/actions/workflows/android.yml
 

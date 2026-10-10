@@ -8,9 +8,9 @@ Primera versión jugable de Robot Pulse: un puzle original de robots lanzadores,
 - [Estado de la compilación y pruebas](https://github.com/manureymar/Juego-nuevo/actions/workflows/android.yml)
 - [Instrucciones de instalación](docs/ANDROID.md)
 
-Versión 0.7.0: ajustes de interfaz y minería, nuevo sonido de botones y música un 25% más baja. El APK se publica cuando termina la compilación y las pruebas de navegador y Android. Es una versión de prueba firmada para instalación directa, no una publicación en Google Play. Compatible con Android 8.0 o posterior.
+Versión 0.7.0 publicada: ajustes de interfaz y minería, nuevo sonido de botones y música un 25% más baja. Superó las pruebas de navegador, instalación y recorrido en Android sin conexión. Es una versión de prueba firmada para instalación directa, no una publicación en Google Play. Compatible con Android 8.0 o posterior.
 
-[Cambios de diseño y sonido 0.7.0](docs/UI-0.7.0.md). Se conserva la firma y el progreso al actualizar desde 0.5.0 o 0.6.0.
+[Cambios de diseño y sonido 0.7.0](docs/UI-0.7.0.md) · [Capturas reales y verificación 0.7.0](docs/polish-v0.7/README.md). Se conserva la firma y el progreso al actualizar desde 0.5.0 o 0.6.0.
 
 [Minería: capturas reales y verificación 0.6.0](docs/mining-v0.6/README.md) · [Pantallas y nivel anteriores](docs/screenshots-v0.5/README.md)
 
