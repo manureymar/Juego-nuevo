@@ -1,33 +1,33 @@
-# Robot Pulse visual and audio corrections 0.7.0
+# Robot Pulse: correcciones visuales y de sonido 0.7.0
 
-This version addresses the owner's screenshots and recording of 0.6.0. It keeps the approved puzzle, robot, opening and running mine animation, and changes the controls and transitions identified in that review.
+Actualización basada en las capturas y el vídeo del propietario sobre la versión 0.6.0. Conserva el puzle, el robot, la apertura y la animación de funcionamiento de la mina aprobados.
 
-## Requested corrections
+## Lista de correcciones
 
-1. Illustrated battery housing shared by the menus and the puzzle, with a live recharge countdown.
-2. One gold coin with the pulse emblem for balances, rewards and collection.
-3. Restore the original angular locked feature tile at the upper left of HOME.
-4. Add a separate illustrated mine doorway beside the robot, available after the mining card is earned. Its name is translated by code.
-5. Reduce dialog action height while retaining wide shapes and legible text.
-6. Keep every action inside the frame's decorative rails and footer.
-7. Center dialog titles and increase their design size from 24 to 30 pixels.
-8. Remove the mismatched patch behind the in-game HUD.
-9. Remove the additional Robot Pulse logos from SHOP and both LEADERBOARD views.
-10. Recompose the victory frame's upper right corner without an unused close-button socket.
-11. Replace the rectangular dragged scene fragment with an isolated transparent mining sprite.
-12. Point a compact metal/cyan tutorial arrow at the mine's catalogue icon.
-13. Reuse illustrated product frames in the construction catalogue.
-14. Use matching illustrated plaques for the mining header, state and instructions.
-15. Assemble the mine with phased components, climbing energy circuits and particles instead of a flat wipe.
-16. Show stored gold separately from the coin payout, using a matching collection button.
-17. Initial economy adjustment: one gold per minute, five coins per gold, storage for 120 gold (two hours, 600 coins). Previously stored gold above this capacity remains collectible at its original five-coin value. Overflow time is not banked for an immediate second payout after collection.
-18. Package the owner's `game-ball-tap-2073.wav` unchanged for button taps. Music gain changes from 0.34 to 0.255, exactly 25 percent lower.
-19. Digitize the first earned mining card with a discrete reveal, scan edge and small data particles before its existing diagonal sheen. Respect reduced motion.
+1. Marco ilustrado de batería compartido por los menús y la partida, con cuenta atrás real de recarga.
+2. Moneda dorada con emblema de pulso coherente en saldos, premios y recogida.
+3. Restauración de la casilla bloqueada original de la esquina superior izquierda de HOME.
+4. Portal de mina independiente junto al robot, disponible al ganar su carta, con rótulo traducido.
+5. Botones de ventanas de menor altura que conservan su forma ancha.
+6. Márgenes interiores que separan las acciones de los laterales y del pie del marco.
+7. Títulos centrados y ampliados de 24 a 30 píxeles de diseño, un 25%.
+8. Eliminación del parche de fondo que desentonaba detrás de los indicadores de la partida.
+9. Retirada del logotipo adicional de Robot Pulse en SHOP y en las dos vistas de LEADERBOARD.
+10. Esquina superior derecha del marco de victoria recompuesta sin el hueco de una X inexistente.
+11. Vista previa de mina aislada y transparente al arrastrar, sin el rectángulo de escenario recortado.
+12. Flecha compacta de metal y luz cian que señala el icono de mina del catálogo.
+13. Marcos de producto ilustrados en las cartas del catálogo de construcción.
+14. Placas ilustradas coherentes para la cabecera, instrucciones y estado de la mina.
+15. Montaje por componentes con anillos de energía ascendentes y partículas, sustituyendo el barrido plano.
+16. Oro almacenado separado de las monedas a recibir, con botón de recogida del mismo estilo.
+17. Ajuste inicial de economía: un oro por minuto, cinco monedas por oro y capacidad de 120 de oro (dos horas, 600 monedas). El oro guardado anteriormente por encima del nuevo límite sigue siendo cobrable. El tiempo sobrante con el almacén lleno no permite cobrar otra acumulación instantánea.
+18. Archivo del propietario `game-ball-tap-2073.wav` incorporado sin modificación para los botones. La música pasa de 0,34 a 0,255, exactamente un 25% menos.
+19. Digitalización de la primera carta de minería: revelado por pasos, borde de escaneo y partículas antes del brillo diagonal existente. Respeta la preferencia de movimiento reducido.
 
-## Compatibility
+## Compatibilidad
 
-Package, preview signing certificate, profile key and first-level revision are preserved. The three approved mining animation modules remain byte-identical to their preview copies. Wagon filling remains visual and independent of the slower economy. No real purchases, advertisements, online ranking or new playable levels are introduced.
+Se conservan el identificador Android, el certificado de vista previa, la clave del perfil y la revisión del primer nivel. Los tres módulos de la animación aprobada de minería siguen siendo idénticos a los de su demostración. El llenado visual del vagón mantiene su ritmo, independientemente de la producción económica más lenta. Las compras continúan siendo simuladas; no se añaden cobros, anuncios, clasificación en línea ni niveles jugables nuevos.
 
-## Verification
+## Verificación
 
-Deterministic tests include legacy balances, capped storage, repeat collection and resumed production. Browser checks cover English and Spanish dialogs, touch drag/cancel, card claiming, collection, offline restoration and actual first-level victory. The Android release workflow checks the installed APK offline, including the supplied sound, reduced music volume, real elapsed production, native gestures and the existing signature. Final evidence and build identifiers are recorded after the release checks complete.
+Las pruebas de lógica incluyen saldos anteriores, capacidad limitada, cobros repetidos y reanudación de la producción. La revisión de navegador cubre ventanas en inglés y español, arrastre táctil, cancelación, carta, montaje, recogida, progreso sin conexión y victoria real del nivel. El flujo Android comprueba el APK instalado sin conexión, sonido, volumen, producción por tiempo real, gestos nativos y conservación del certificado. Las capturas y los identificadores de las comprobaciones finales se registran en `docs/polish-v0.7/`.
