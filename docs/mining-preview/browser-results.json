@@ -2,9 +2,9 @@
   "passed": true,
   "errors": [],
   "checks": [
-    "1440x1050: assets, no overflow, pause/resume, speed, reset, partial delivery, full delivery, map and 14-piece gallery",
-    "390x844: assets, no overflow, pause/resume, speed, reset, partial delivery, full delivery, map and 14-piece gallery",
-    "360x640: assets, no overflow, pause/resume, speed, reset, partial delivery, full delivery, map and 14-piece gallery",
+    "1440x1050: assets, no overflow, pause/resume, speed, reset, fixed full wagon (pixel comparison), continuing gold accumulation, contact particles, map and 14-piece gallery",
+    "390x844: assets, no overflow, pause/resume, speed, reset, fixed full wagon (pixel comparison), continuing gold accumulation, contact particles, map and 14-piece gallery",
+    "360x640: assets, no overflow, pause/resume, speed, reset, fixed full wagon (pixel comparison), continuing gold accumulation, contact particles, map and 14-piece gallery",
     "Public preview URL and all source assets respond successfully"
   ]
 }

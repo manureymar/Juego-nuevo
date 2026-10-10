@@ -1,34 +1,36 @@
 # Robot Pulse — prueba de animación minera
 
-[ABRIR LA PRUEBA WEB](https://raw.githack.com/manureymar/Juego-nuevo/4c35459f871303d4b14065f4cc33e9c9f1f2edf0/previews/mining/index.html)
+[ABRIR LA PRUEBA WEB](https://raw.githack.com/manureymar/Juego-nuevo/35d0191e27cd19e45d20ff42e89a77ecfa98577f/previews/mining/index.html)
 
-[Código y recursos](../../previews/mining/) · [Flujo de comprobación](https://github.com/manureymar/Juego-nuevo/actions/runs/38006566783)
+[Código y recursos](../../previews/mining/) · [Flujo de comprobación](https://github.com/manureymar/Juego-nuevo/actions/runs/38007695196)
 
-Esta entrega es una prueba web independiente. La aplicación Android 0.5.0 y el primer nivel no se modificaron. La interfaz de revisión muestra el detalle de la mina y permite alternar al mapa completo. Los recursos y todo el código están en este mismo repositorio.
+Revisión del 10 de octubre de 2026: chispas, polvo y partículas pequeñas junto a la punta del taladro; vagón estacionado, pila visual limitada y oro acumulado independiente. Se conserva el resto de la escena y sus recursos. La prueba sigue separada de la aplicación Android.
 
 ## Uso
 
-La animación comienza al terminar de cargar las imágenes. Puedes pausarla, reiniciarla, cambiar entre ½×, 1× y 2×, alternar detalle/mapa, enviar un vagón parcialmente lleno o abrir la galería de las 14 piezas. El vagón sale automáticamente al llegar a seis piedras; cada entrega acredita cinco monedas de demostración por piedra. La prueba no comparte saldo ni partidas con la aplicación.
+La animación empieza al cargar las imágenes. Puedes pausarla, reiniciarla, cambiar entre ½×, 1× y 2×, alternar detalle/mapa o abrir la galería de las 14 piezas.
 
-El taladro gira contra una pared fija. Las piedras aparecen sobre la cinta; la pinza las recoge, mantiene la piedra unida durante el traslado y la deposita en el vagón. El vagón entrega y regresa vacío. No se simula erosión ni caída de piedras.
+El taladro gira contra la pared fija. Las chispas, motas y polvo se dibujan con código junto al punto de contacto, sin modificar la pared. Las piedras aparecen sobre la cinta y la pinza las deposita en el vagón.
 
-El enlace utiliza los archivos del commit `4c35459f871303d4b14065f4cc33e9c9f1f2edf0`. El servicio de previsualización puede pedir confirmar el destino la primera vez que se abre una página HTML.
+El vagón permanece inmóvil y se llena hasta el borde en seis etapas visuales. Una vez lleno, la pila conserva exactamente su tamaño y posición, pero la pinza sigue cargando. Cada depósito aumenta el contador de oro una sola vez. El valor en monedas es una estimación de prueba (cinco por unidad), no una recogida ni un saldo ya convertido.
+
+El enlace utiliza los archivos del commit `35d0191e27cd19e45d20ff42e89a77ecfa98577f`. El servicio de previsualización puede pedir confirmar el destino la primera vez que se abre una página HTML.
 
 ## Verificación
 
-- Cuatro pruebas de lógica: identidad y conservación de piedras, capacidad, articulaciones conectadas, entrega única, recogida parcial y reinicio.
-- Recorrido en Chromium a 1440 × 1050, 390 × 844 y 360 × 640: pausa/reanudación, velocidad, reinicio, recogida parcial y completa, mapa y galería.
+- Cinco pruebas de lógica: identidad de piedras y articulaciones, producción continua con pila limitada y vagón fijo, crédito al depositar, partículas pequeñas sincronizadas con el reloj y reinicio.
+- Recorrido en Chromium a 1440 × 1050, 390 × 844 y 360 × 640: controles, pausa de toda la escena, llenado, crecimiento posterior del oro, mapa y galería.
+- Comparación de píxeles del vagón lleno antes y después de continuar produciendo: idénticos.
 - Enlace público y recursos HTML, CSS, JavaScript y PNG comprobados.
-- Registros y capturas de la ejecución final se adjuntan en esta carpeta.
 
-La ruta del vagón es provisional para demostrar su desplazamiento. La logística entre futuros edificios, acumulación offline, guardado y economía definitiva quedan para la integración posterior.
+La futura recogida mediante camiones, conversión definitiva, guardado y acumulación offline quedan para la integración posterior. La pestaña oculta pausa esta prueba.
 
 ## Capturas reales
 
-![Prueba de escritorio](desktop.png)
+![Vagón lleno en escritorio](desktop.png)
 
 | Teléfono | Galería de recursos |
 | --- | --- |
-| ![Prueba móvil](mobile.png) | ![Recursos](assets.png) |
+| ![Vagón lleno en móvil](mobile.png) | ![Recursos](assets.png) |
 
-[Resultados del navegador](browser-results.json). Las capturas están pausadas para facilitar su comparación; la página comienza animada.
+[Resultados del navegador](browser-results.json). Las capturas están pausadas; la página comienza animada.
