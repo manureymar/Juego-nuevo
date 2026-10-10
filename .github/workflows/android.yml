@@ -74,8 +74,17 @@ jobs:
           arch: x86_64
           profile: pixel_7
           disable-animations: true
-          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          # Android documents disabling Vulkan for Chromium rendering issues in
+          # the emulator. Keep the APK and every animation test unchanged.
+          # https://developer.android.com/studio/run/emulator-troubleshooting
+          emulator-options: -no-window -gpu swiftshader -feature -Vulkan -no-snapshot -noaudio -no-boot-anim -camera-back none
           script: node tests/android.mjs
+      - name: Retain emulator diagnostics
+        if: always()
+        run: |
+          mkdir -p test-results/android
+          free -m > test-results/android/runner-memory.txt
+          sudo dmesg | tail -150 > test-results/android/runner-kernel.txt
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -84,6 +93,7 @@ jobs:
           retention-days: 30
       - name: Verify APK signature and package
         run: |
+          set -o pipefail
           "$ANDROID_HOME/build-tools/35.0.0/apksigner" verify --verbose --print-certs android/app/build/outputs/apk/debug/app-debug.apk | tee test-results/apk-signature.txt
           grep -q 'Signer #1 certificate SHA-256 digest: 7cd69261b62da3dfd299116a44f25466866f183ff802fa88630ac2dc0b8c5856' test-results/apk-signature.txt
           "$ANDROID_HOME/build-tools/35.0.0/aapt" dump badging android/app/build/outputs/apk/debug/app-debug.apk > test-results/apk-info.txt

@@ -182,19 +182,23 @@ try{
   // Upgrade an existing v0.5 winning save; first-level victory itself is exercised in Chromium.
   await page.evaluate(()=>{const p=JSON.parse(localStorage.getItem('robot-pulse-v1'));p.wins=1;delete p.mining;p.session=null;localStorage.setItem('robot-pulse-v1',JSON.stringify(p));});
   await page.reload();await nativeTap(page,'[data-action=enter]');
+  console.log('Native mining: waiting for the first card');
   await page.locator('.mining-card-scrim').waitFor();await settleArt(page);await delay(1000);
   await assertControlsVisible(page,'.mining-card-scrim button');
   writeFileSync('test-results/android/14-mining-card.png',execFileSync('adb',['exec-out','screencap','-p'],{maxBuffer:20*1024*1024}));
+  console.log('Native mining: card rendered; opening the base');
   await nativeTap(page,'[data-action=claim-mining]');await page.locator('.mining-scene[data-loaded=true]').waitFor();
   await capture('15-empty-mine');assert.equal(await page.locator('.build-option.locked').count(),4);
   await nativeDrag(page,'#mine-build','#mine-target');
   await page.waitForFunction(()=>JSON.parse(localStorage.getItem('robot-pulse-v1')).mining.built);await delay(2500);
   assert.equal(await page.locator('#mine-build').isDisabled(),true);await capture('16-built-mine');
+  console.log('Native mining: construction passed; waiting for one minute of production');
   // Let the installed APK produce its first real minute of gold; no test hook.
   await page.locator('[data-action=collect-mining]:not([disabled])').waitFor({timeout:75000});
   const coinsBefore=await page.evaluate(()=>JSON.parse(localStorage.getItem('robot-pulse-v1')).coins);
   await nativeTap(page,'[data-action=collect-mining]');
   await page.waitForFunction(n=>JSON.parse(localStorage.getItem('robot-pulse-v1')).coins>n,coinsBefore);
+  console.log('Native mining: real gold production and collection passed');
   await nativeTap(page,'#mine-focus');await capture('17-mining-closeup');
   // Reload the installed WebView, retaining only its persistent save, then verify the constructed scene.
   await page.reload();await nativeTap(page,'[data-action=enter]');
