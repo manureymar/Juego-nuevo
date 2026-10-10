@@ -106,16 +106,18 @@ html[lang=es] .build-name{font-size:19px}
 /* First-card digitization: discrete image reveal, scan edge and small data sparks. */
 .mining-card-button{filter:none;box-shadow:0 12px 30px #0008;isolation:isolate;contain:paint}
 .reward-sheen{inset:0;transform:none;mix-blend-mode:normal;background:linear-gradient(135deg,transparent 43%,#fffad926 47%,#ffffff8c 50%,#fff0c526 53%,transparent 57%);background-size:300% 300%;background-position:100% 100%}
-.mining-card-button img{animation:card-digitize 1.15s steps(12,end) both}
+.card-reveal{position:absolute;inset:0;height:100%;overflow:hidden;animation:card-digitize 1.15s steps(12,end) both}
+.card-reveal img{width:100%;height:auto;aspect-ratio:2/3;object-fit:contain}
 .card-digital-grid{position:absolute;inset:0;background:repeating-linear-gradient(0deg,#49ebff55 0 1px,transparent 1px 7px),repeating-linear-gradient(90deg,#44dcff44 0 1px,transparent 1px 15px);animation:card-grid 1.4s ease-out both;pointer-events:none}
 .card-scan{position:absolute;left:0;right:0;top:0;height:4%;background:linear-gradient(transparent,#caffffbb,#fff9ce,transparent);box-shadow:0 0 20px #4ff8ff;animation:card-scan 1.2s ease-in-out both;pointer-events:none}
 .card-sparks{position:absolute;inset:0;pointer-events:none}
 .card-sparks i{position:absolute;left:var(--x);top:var(--y);width:4px;height:7px;background:#b8ffff;box-shadow:0 0 7px #44eaff;animation:card-data 1.25s calc(var(--i)*.027s) both}
-@keyframes card-digitize{0%{clip-path:inset(0 0 99.9%)}100%{clip-path:inset(0)}}
+@keyframes card-digitize{0%{height:.1%}100%{height:100%}}
+@keyframes reward-arrive{0%{opacity:0;transform:translateY(24px) scale(.93)}70%{opacity:1;transform:translateY(-3px) scale(1.01)}100%{opacity:1;transform:translateY(0) scale(1)}}
 /* Keep the sheen's paint surface inside the card on Android, avoiding the
    oversized buffers of the previous 4x4 translucent layer and nested filters. */
 @keyframes reward-sheen{0%,15%{background-position:100% 100%}55%,100%{background-position:0% 0%}}
 @keyframes card-grid{0%{opacity:.9}80%{opacity:.3}100%{opacity:0}}
 @keyframes card-scan{0%{top:0;opacity:0}10%{opacity:1}90%{opacity:1}100%{top:100%;opacity:0}}
 @keyframes card-data{0%{opacity:0;transform:translateY(30px)}30%{opacity:1}100%{opacity:0;transform:translateY(-35px)}}
-@media(prefers-reduced-motion:reduce){.mine-guide-arrow{animation:none}.mining-card-button img{animation:none}.card-digital-grid,.card-scan,.card-sparks{display:none}}
+@media(prefers-reduced-motion:reduce){.mine-guide-arrow{animation:none}.card-reveal{animation:none}.card-digital-grid,.card-scan,.card-sparks{display:none}}

@@ -19,7 +19,7 @@ try{
  await page.evaluate(()=>{const p=JSON.parse(localStorage.getItem('robot-pulse-v1'));p.wins=1;delete p.mining;p.tutorialSeen=true;Object.assign(window.__rpTest.profile,p);localStorage.setItem('robot-pulse-v1',JSON.stringify(p));});
  await page.reload();await page.locator('[data-action=enter]').click();
  await page.locator('.mining-card-scrim').waitFor();await settleArt(page);
- assert.equal(await page.locator('.mining-card-button img').evaluate(e=>getComputedStyle(e).animationName),'card-digitize');
+ assert.equal(await page.locator('.card-reveal').evaluate(e=>getComputedStyle(e).animationName),'card-digitize');
  await page.waitForTimeout(220);await page.screenshot({path:'test-results/mining/card-digitizing.png'});
  await page.waitForTimeout(1200);
  await assertControlsVisible(page,'.mining-card-scrim button');
@@ -97,7 +97,7 @@ try{
  assert.equal(await page.locator('.mining-card-button img').getAttribute('src'),'assets/mining/card-es.png');
  await assertControlsVisible(page,'.mining-card-scrim button');await page.screenshot({path:'test-results/mining/card-es.png'});
  await page.emulateMedia({reducedMotion:'reduce'});
- assert.equal(await page.locator('.mining-card-button img').evaluate(e=>getComputedStyle(e).animationName),'none');
+ assert.equal(await page.locator('.card-reveal').evaluate(e=>getComputedStyle(e).animationName),'none');
  checks.push('First card uses digitization; construction has changing energy frames; reduced-motion preference disables card effects');
  assert.deepEqual(errors,[]);const video=page.video();await context.close();await video.saveAs('test-results/mining/mining-flow.webm');
  writeFileSync('test-results/mining/results.json',JSON.stringify({passed:true,checks,errors},null,2));console.log('Mining flow passed:',checks);
