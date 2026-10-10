@@ -33,6 +33,9 @@
 .art-modal h2,.art-modal.settings h2{left:65px;right:78px;top:49px;height:64px;font-size:30px;line-height:1.02;margin:0;transform:none;text-wrap:balance}
 .art-modal.no-close h2{left:65px;right:65px}
 .modal-sliced>.gp-sprite.mirror{transform:scaleX(-1)}
+.modal-center-symmetric{display:grid;grid-template-columns:1fr 1fr}
+.modal-center-symmetric>.gp-sprite{position:relative;inset:auto}
+.modal-center-symmetric>.mirror{transform:scaleX(-1)}
 .art-modal .modal-body{padding-inline:12px}
 .art-modal .modal-actions{margin-top:16px;gap:11px}
 .art-modal .art-button,.art-modal .modal-actions>.art-button{min-height:51px;padding:12px 23px;font-size:16px;line-height:1.15}

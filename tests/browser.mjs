@@ -238,7 +238,7 @@ try{
   }
   assert.equal(await page.evaluate(()=>window.__rpTest.engine.status),'won');
   await page.locator('.modal.win.no-close').waitFor();
-  assert.equal(await page.locator('.modal.win.no-close .modal-frame .mirror').count(),1);
+  assert.equal(await page.locator('.modal.win.no-close .modal-frame .mirror').count(),2);
   assert.equal(await page.locator('.modal.win .modal-close').count(),0);
   for(const size of [{width:360,height:640},{width:390,height:844}]){
     await page.setViewportSize(size);await settleArt(page);await assertControlsVisible(page,'.modal button');

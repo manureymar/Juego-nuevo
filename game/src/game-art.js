@@ -17,7 +17,12 @@ export function sprite(name,cls='',{noClose=false}={}){
   if(name.startsWith('modal-')){
     const [x,y,w,h]=a.rect,dx=90,top=190,bottom=100;
     const xs=[x,x+dx,x+w-dx],ys=[y,y+top,y+h-bottom],ws=[dx,w-2*dx,dx],hs=[top,h-top-bottom,bottom];
-    return `<span class="modal-sliced ${cls}" aria-hidden="true">${ys.flatMap((yy,j)=>xs.map((xx,i)=>region(a,[noClose&&j===0&&i===2?x:xx,yy,ws[i],hs[j]],noClose&&j===0&&i===2?'mirror':''))).join('')}</span>`;
+    return `<span class="modal-sliced ${cls}" aria-hidden="true">${ys.flatMap((yy,j)=>xs.map((xx,i)=>{
+      // The baked close socket extends into the center tile. Rebuild the entire
+      // header from its clean left half, not only its outer corner.
+      if(noClose&&j===0&&i===1){const half=[xx,yy,ws[i]/2,hs[j]];return `<span class="gp-sprite modal-center-symmetric">${region(a,half)}${region(a,half,'mirror')}</span>`;}
+      return region(a,[noClose&&j===0&&i===2?x:xx,yy,ws[i],hs[j]],noClose&&j===0&&i===2?'mirror':'');
+    })).join('')}</span>`;
   }
   if(['button-primary','button-secondary','button-danger','button-selected','level-plaque','section-plaque'].includes(name)){
     const [x,y,w,h]=a.rect,dx=Math.round(Math.min(w*.22,h*.48)),dy=Math.round(h*.34);
