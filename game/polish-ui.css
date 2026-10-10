@@ -21,7 +21,7 @@
 .home-screen .unlock-cube span{font-size:23px}
 
 /* The mine is a doorway within the scene, separate from the locked feature tiles. */
-.menu-scene .mine-portal{left:607px;top:975px;width:265px;height:330px;overflow:visible;border:0;border-radius:0;background:none;box-shadow:none;z-index:1;filter:drop-shadow(0 8px 9px #020812)}
+.menu-scene .mine-portal{left:607px;top:975px;width:265px;height:330px;overflow:visible;border:0;border-radius:0;background:none;box-shadow:none;z-index:1;filter:none}
 .mine-portal>img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;pointer-events:none}
 .mine-portal>span:last-child{position:absolute;left:33%;right:24%;top:22%;bottom:auto;height:10%;display:grid;place-items:center;font-size:25px;line-height:1;transform:rotate(-9deg);color:#e2faff;text-shadow:0 2px #082e4f;text-transform:uppercase}
 .home-screen .campaign-hero{z-index:2}
@@ -104,6 +104,8 @@ html[lang=es] .build-name{font-size:19px}
 @keyframes guide-point{0%,100%{transform:translateY(-7px)}50%{transform:translateY(7px)}}
 
 /* First-card digitization: discrete image reveal, scan edge and small data sparks. */
+.mining-card-scrim{backdrop-filter:none;background:radial-gradient(ellipse at center,#123247,#020915 75%)}
+.card-aura{background:radial-gradient(ellipse,#3be5ef24 0%,#d9af3c18 35%,transparent 69%);mask-image:none;animation:card-halo 6s ease-in-out infinite}
 .mining-card-button{filter:none;box-shadow:0 12px 30px #0008;isolation:isolate;contain:paint}
 .reward-sheen{inset:0;transform:none;mix-blend-mode:normal;background:linear-gradient(135deg,transparent 43%,#fffad926 47%,#ffffff8c 50%,#fff0c526 53%,transparent 57%);background-size:300% 300%;background-position:100% 100%}
 .card-reveal{position:absolute;inset:0;height:100%;overflow:hidden;animation:card-digitize 1.15s steps(12,end) both}
@@ -117,7 +119,8 @@ html[lang=es] .build-name{font-size:19px}
 /* Keep the sheen's paint surface inside the card on Android, avoiding the
    oversized buffers of the previous 4x4 translucent layer and nested filters. */
 @keyframes reward-sheen{0%,15%{background-position:100% 100%}55%,100%{background-position:0% 0%}}
+@keyframes card-halo{0%,100%{opacity:.6}50%{opacity:1}}
 @keyframes card-grid{0%{opacity:.9}80%{opacity:.3}100%{opacity:0}}
 @keyframes card-scan{0%{top:0;opacity:0}10%{opacity:1}90%{opacity:1}100%{top:100%;opacity:0}}
 @keyframes card-data{0%{opacity:0;transform:translateY(30px)}30%{opacity:1}100%{opacity:0;transform:translateY(-35px)}}
-@media(prefers-reduced-motion:reduce){.mine-guide-arrow{animation:none}.card-reveal{animation:none}.card-digital-grid,.card-scan,.card-sparks{display:none}}
+@media(prefers-reduced-motion:reduce){.mine-guide-arrow,.card-aura{animation:none}.card-reveal{animation:none}.card-digital-grid,.card-scan,.card-sparks{display:none}}

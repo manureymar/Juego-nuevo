@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
-import {execFileSync} from 'node:child_process';
-import {mkdirSync,writeFileSync} from 'node:fs';
+import {execFileSync,spawn} from 'node:child_process';
+import {mkdirSync,writeFileSync,openSync,closeSync} from 'node:fs';
 import {_android as android} from 'playwright';
 import {settleArt,assertControlsVisible} from './layout.mjs';
 
@@ -62,8 +62,11 @@ async function nativeDrag(page,fromSelector,toSelector){
  const from=await point(fromSelector),to=await point(toSelector),x=p=>String(Math.round(b[0]+p.x*(b[2]-b[0]))),y=p=>String(Math.round(b[1]+p.y*(b[3]-b[1])));
  adb('shell','input','swipe',x(from),y(from),x(to),y(to),'1200');
 }
-let device;
+let device,logcat;
 try{
+  const logFd=openSync('test-results/android/live-logcat.txt','w');
+  logcat=spawn('adb',['logcat','-v','threadtime','*:W'],{stdio:['ignore',logFd,logFd]});
+  closeSync(logFd);
   // The entire installed-app test runs offline, including audio and artwork.
   adb('shell','svc','wifi','disable');
   adb('shell','svc','data','disable');
@@ -183,7 +186,9 @@ try{
   await page.evaluate(()=>{const p=JSON.parse(localStorage.getItem('robot-pulse-v1'));p.wins=1;delete p.mining;p.session=null;localStorage.setItem('robot-pulse-v1',JSON.stringify(p));});
   await page.reload();await nativeTap(page,'[data-action=enter]');
   console.log('Native mining: waiting for the first card');
-  await page.locator('.mining-card-scrim').waitFor();await settleArt(page);await delay(1000);
+  await page.locator('.mining-card-scrim').waitFor();
+  console.log('Native mining: composition',JSON.stringify(await page.evaluate(()=>({reduced:matchMedia('(prefers-reduced-motion: reduce)').matches,visible:document.visibilityState,images:[...document.querySelectorAll('#app img,#modal-root img')].map(i=>({src:i.getAttribute('src'),complete:i.complete,w:i.naturalWidth,h:i.naturalHeight}))}))));
+  await settleArt(page);await delay(1000);
   await assertControlsVisible(page,'.mining-card-scrim button');
   writeFileSync('test-results/android/14-mining-card.png',execFileSync('adb',['exec-out','screencap','-p'],{maxBuffer:20*1024*1024}));
   console.log('Native mining: card rendered; opening the base');
@@ -215,4 +220,4 @@ try{
   try{writeFileSync('test-results/android/failure.png',execFileSync('adb',['exec-out','screencap','-p'],{maxBuffer:20*1024*1024}));}catch{}
   try{writeFileSync('test-results/android/logcat.txt',adb('logcat','-d','-t','5000'));}catch{}
   throw error;
-}finally{await device?.close();}
+}finally{logcat?.kill();await device?.close();}
