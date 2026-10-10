@@ -99,8 +99,11 @@ try{
     // the host QEMU graphics process to core-dump in run 38072785547.
     const saved=()=>page.evaluate(()=>{const p=JSON.parse(localStorage.getItem('robot-pulse-v1'));return {wins:p.wins,coins:p.coins,built:!!p.mining?.built};});
     const expected=await saved();
+    // MainActivity communicates onPause explicitly; this WebView does not
+    // change document.hidden when the Android activity is backgrounded.
+    await page.evaluate(()=>{window.__androidPauseObserved=false;document.addEventListener('robotpulse:pause',()=>{window.__androidPauseObserved=true;},{once:true});});
     adb('shell','input','keyevent','KEYCODE_HOME');
-    await until(()=>page.evaluate(()=>document.hidden));
+    await until(()=>page.evaluate(()=>window.__androidPauseObserved));
     // Chromium batches localStorage commits with a five-second default delay.
     // Allow that disk write after backgrounding before forcibly killing it.
     // https://chromium.googlesource.com/chromium/src/+/refs/heads/main/components/services/storage/dom_storage/local_storage_impl.cc
