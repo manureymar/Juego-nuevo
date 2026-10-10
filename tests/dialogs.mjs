@@ -19,7 +19,11 @@ try{
   const close=()=>page.locator('[data-action=close-modal]').click();
   const modal=async(selector,name)=>{await page.locator(selector).click();await capture(name);await close();};
   await capture('home');assert.equal(await page.locator('.ui-avatar,.home-screen .scene-brand').count(),0);
-  await modal('[data-action=settings]','settings');await modal('[data-action=energy]','energy');await modal('.campaign-node.node-2','locked-level');
+  await page.locator('[data-action=settings]').click();
+  assert.equal(await page.locator('.settings-row').count(),3);
+  assert.equal(await page.locator('.settings-battery').count(),0);
+  await capture('settings');await close();
+  await modal('[data-action=energy]','energy');await modal('.campaign-node.node-2','locked-level');
   await page.locator('.bottom-nav [data-action=shop]').click();
   for(let i=0;i<6;i++)await modal(`[data-pack="${i}"]`,`purchase-${i}`);
   await modal('[data-action=rewards]','daily-reward');

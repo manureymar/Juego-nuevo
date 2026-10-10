@@ -41,6 +41,11 @@
 .art-modal .art-button,.art-modal .modal-actions>.art-button{min-height:51px;padding:12px 23px;font-size:16px;line-height:1.15}
 .art-modal .art-button>.gp-sliced{--slice-x:28px;--slice-y:16px}
 .art-modal .button-label{min-height:23px;line-height:1.2}
+/* 0.7.1: inset dialog actions by 35% horizontally, retaining their height. */
+.art-modal .modal-actions>.art-button,.art-modal .modal-body>.art-button{width:65%;height:51px;min-height:51px;margin-inline:auto;padding-block:8px;flex-shrink:0}
+.art-modal .modal-actions>.art-button .button-label,.art-modal .modal-body>.art-button .button-label{width:100%;min-width:0;line-height:1.05;text-wrap:balance}
+.art-modal .modal-body>[data-action=refill]{font-size:14px}
+.modal.art-modal.settings{min-height:0}
 .art-modal .settings-row{min-height:72px;padding:12px 0}
 .art-modal .modal-body p{margin:8px 0 14px}
 .art-modal .result-grid{gap:5px}

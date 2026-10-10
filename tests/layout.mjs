@@ -35,6 +35,10 @@ export async function assertControlsVisible(page,selector='#app button') {
       for(const action of document.querySelectorAll('.modal-actions>button')){const r=action.getBoundingClientRect();if(r.left<panel.left+panel.width*.135||r.right>panel.right-panel.width*.135||r.bottom>panel.bottom-panel.height*.035)out.push('Action overlaps frame rails or footer');}
       const heading=document.querySelector('#dialog-title');if(heading.scrollHeight>heading.clientHeight+1)out.push('Dialog title exceeds its header');
       for(const label of document.querySelectorAll('.modal .button-label'))if(label.scrollWidth>label.clientWidth+1)out.push('Action text exceeds its button');
+      for(const button of document.querySelectorAll('.modal-actions>.art-button,.modal-body>.art-button')){
+        const r=button.getBoundingClientRect(),label=button.querySelector('.button-label').getBoundingClientRect();
+        if(label.top<r.top+r.height*.12||label.bottom>r.bottom-r.height*.12)out.push('Action text overlaps the top or bottom of its frame');
+      }
       return out;
     });
     assert.deepEqual(failures,[],'Dialog titles, close sockets and action labels must stay aligned');
