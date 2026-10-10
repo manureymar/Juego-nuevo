@@ -458,7 +458,7 @@ document.addEventListener('keydown',event=>{
 document.addEventListener('visibilitychange',()=>{
   if(document.hidden&&screen==='game'&&engine?.isRunning){showPause();persistSession(true);}
 });
-window.addEventListener('pagehide',()=>{accrueGold(profile);save();persistSession(true);});
+window.addEventListener('pagehide',()=>{if(accrueGold(profile))save();persistSession(true);});
 window.robotPulseBack=()=>{if(selectingRobot){selectingRobot=false;engine?.resume();renderGameControls();return true;}if(modal){if(modal.options.closable!==false)closeModal();}else if(screen==='game')showPause();else if(screen==='mining')navigate('home');else if(screen!=='splash')navigate('splash');else return false;return true;};
 document.addEventListener('robotpulse:pause',()=>{if(screen==='game'&&engine?.isRunning){showPause();persistSession(true);}});
 setInterval(()=>{

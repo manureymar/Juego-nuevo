@@ -34,9 +34,9 @@ jobs:
           npx playwright install --with-deps chromium
       - name: Test the mobile game in Chromium
         run: |
+          node tests/mining-browser.mjs
           node tests/dialogs.mjs
           npm run test:browser
-          node tests/mining-browser.mjs
       - uses: actions/upload-artifact@v4
         if: always()
         with:

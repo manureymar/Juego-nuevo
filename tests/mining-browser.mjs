@@ -16,7 +16,7 @@ try{
  await page.locator('[data-action=mining]').click();assert.equal(await page.locator('.mining-scene').count(),0);
  await page.locator('[data-action=close-modal]').click();
  // Simulate the existing v0.5 save on a real user's phone: victory already earned, no mining fields yet.
- await page.evaluate(()=>{const p=JSON.parse(localStorage.getItem('robot-pulse-v1'));p.wins=1;delete p.mining;p.tutorialSeen=true;localStorage.setItem('robot-pulse-v1',JSON.stringify(p));});
+ await page.evaluate(()=>{const p=JSON.parse(localStorage.getItem('robot-pulse-v1'));p.wins=1;delete p.mining;p.tutorialSeen=true;Object.assign(window.__rpTest.profile,p);localStorage.setItem('robot-pulse-v1',JSON.stringify(p));});
  await page.reload();await page.locator('[data-action=enter]').click();
  await page.locator('.mining-card-scrim').waitFor();await settleArt(page);await page.waitForTimeout(1200);
  await assertControlsVisible(page,'.mining-card-scrim button');
@@ -62,7 +62,7 @@ try{
  assert.equal(await page.evaluate(()=>window.__rpTest.mining.model.cart),'parked');
  checks.push('Real touch drag: red invalid zone rejects; pointer cancellation and Escape cancel; green cave snaps and installs once; animation produces collectible coins');
  await page.locator('[data-action=home]').click();
- await page.evaluate(()=>{const p=JSON.parse(localStorage.getItem('robot-pulse-v1'));p.mining.producedAt-=60000;localStorage.setItem('robot-pulse-v1',JSON.stringify(p));});
+ await page.evaluate(()=>{const p=JSON.parse(localStorage.getItem('robot-pulse-v1'));p.mining.producedAt-=60000;Object.assign(window.__rpTest.profile,p);localStorage.setItem('robot-pulse-v1',JSON.stringify(p));});
  await page.reload();await page.locator('[data-action=enter]').click();assert.equal(await page.locator('.mining-card-scrim').count(),0);
  await page.locator('[data-action=mining]').click();await page.locator('.mining-scene[data-loaded=true]').waitFor();
  await page.waitForFunction(()=>window.__rpTest.mining.model.cargo.length===6);
@@ -82,7 +82,7 @@ try{
  }
  checks.push('Built mine and consumed card survive reload; elapsed offline time produces gold; full wagon remains parked; modal pauses motion; English and Spanish fit three phone sizes');
  // A pending Spanish card must also survive an app close before it was claimed.
- await page.locator('[data-action=home]').click();await page.evaluate(()=>{const p=JSON.parse(localStorage.getItem('robot-pulse-v1'));p.mining={rewardSeen:false};localStorage.setItem('robot-pulse-v1',JSON.stringify(p));});
+ await page.locator('[data-action=home]').click();await page.evaluate(()=>{const p=JSON.parse(localStorage.getItem('robot-pulse-v1'));p.mining={rewardSeen:false};Object.assign(window.__rpTest.profile,p);localStorage.setItem('robot-pulse-v1',JSON.stringify(p));});
  await page.reload();await page.locator('[data-action=enter]').click();await page.locator('.mining-card-scrim').waitFor();await settleArt(page);await page.waitForTimeout(950);
  assert.equal(await page.locator('.mining-card-button img').getAttribute('src'),'assets/mining/card-es.png');
  await assertControlsVisible(page,'.mining-card-scrim button');await page.screenshot({path:'test-results/mining/card-es.png'});
