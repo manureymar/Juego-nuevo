@@ -16,8 +16,17 @@ async function until(fn,seconds=30){
   throw new Error('Android condition timed out: '+(last||''));
 }
 function nativeWindow() {
-  adb('shell','uiautomator','dump','/sdcard/robot-pulse-window.xml');
+  const path='/sdcard/robot-pulse-window.xml';
+  adb('shell','rm','-f',path);
+  try{adb('shell','uiautomator','dump',path);}catch(error){
+    // Android 15 UiAutomation can throw Bad file descriptor while tearing down
+    // its Binder after successfully writing the hierarchy (run 38029967166).
+    // Only that completed-dump exit is usable; all other failures still abort.
+    if(error.status!==137||!String(error.stdout).includes(`UI hierchary dumped to: ${path}`))throw error;
+    console.log('UiAutomation exited during teardown; validating its fresh completed hierarchy');
+  }
   const xml=adb('shell','cat','/sdcard/robot-pulse-window.xml');
+  assert.ok(xml.startsWith('<?xml')&&xml.trim().endsWith('</hierarchy>'),'Native UI dump must be complete');
   writeFileSync('test-results/android/native-window.xml',xml);
   return xml;
 }
