@@ -25,8 +25,9 @@ try{
  await assertControlsVisible(page,'.mining-card-scrim button');
  assert.equal(await page.locator('.mining-card-button img').getAttribute('src'),'assets/mining/card-en.png');
  assert.equal(await page.locator('.reward-sheen').evaluate(e=>getComputedStyle(e).animationName),'reward-sheen');
- const sheen=await page.locator('.reward-sheen').evaluate(e=>getComputedStyle(e).transform);await page.waitForTimeout(700);
- assert.notEqual(await page.locator('.reward-sheen').evaluate(e=>getComputedStyle(e).transform),sheen);
+ const sheen=await page.locator('.reward-sheen').evaluate(e=>getComputedStyle(e).backgroundPosition);await page.waitForTimeout(700);
+ assert.notEqual(await page.locator('.reward-sheen').evaluate(e=>getComputedStyle(e).backgroundPosition),sheen);
+ assert.equal(await page.locator('.reward-sheen').evaluate(e=>{const r=e.getBoundingClientRect(),p=e.parentElement.getBoundingClientRect();return r.width<=p.width+1&&r.height<=p.height+1;}),true,'The animated sheen stays within one card-sized paint surface');
  await page.screenshot({path:'test-results/mining/01-earned-card.png'});
  await page.locator('[data-action=claim-mining]').tap();await page.locator('.mining-scene[data-loaded=true]').waitFor();
  await settleArt(page);await assertControlsVisible(page);
