@@ -103,6 +103,9 @@ try{
     await attachPage();
     webViewBounds=null;
     await page.locator('[data-action=enter]').waitFor();
+    // The DOM can be ready before Android exposes its new native window.
+    // Require fresh, valid WebView bounds before issuing the first ADB tap.
+    await until(()=>nativeBounds());
   };
   await attachPage();
   const capture=async name=>{
