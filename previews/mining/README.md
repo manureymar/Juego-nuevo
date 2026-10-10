@@ -16,11 +16,11 @@ Abre `http://localhost:4174`. No se requieren paquetes para ejecutar la prueba. 
 
 ## Comportamiento
 
-- Taladro fijo contra una pared que permanece intacta. Seis fases de la hélice en bucle, sin rotar la máquina completa.
-- Cinta con textura móvil y piedras independientes, sin lluvia de partículas ni piedras sueltas en el aire.
+- Taladro fijo contra una pared que permanece intacta. Seis fases de la hélice en bucle, sin rotar la máquina completa. Chispas, polvo y pequeñas motas se dibujan con código en el contacto; usan el reloj de simulación y se congelan al pausar.
+- Cinta con textura móvil y piedras independientes. Las partículas pequeñas se limitan al contacto del taladro; no caen piedras grandes desde la pared.
 - Brazo de dos eslabones conectado por cinemática inversa; palma y dedos de pinza separados. La piedra permanece unida a la pinza durante el traslado.
-- Único vagón con seis posiciones de carga. Sale al llenarse, entrega el mineral y regresa vacío; se puede solicitar antes una entrega parcial.
-- Cada pieza entregada añade cinco monedas de demostración, una sola vez. No hay monetización real, progreso compartido con la app ni acumulación offline en este prototipo.
+- Único vagón estacionado permanentemente, con seis etapas de llenado visual. La pila llega al borde y mantiene exactamente su tamaño y posición. La pinza sigue depositando mineral después del llenado.
+- Cada pieza depositada aumenta una sola vez el total de oro, incluso con el vagón visualmente lleno. Se muestra su valor estimado a cinco monedas por unidad; todavía no hay cobro ni conversión real. No hay monetización real, progreso compartido con la app ni acumulación offline en este prototipo.
 - Pausa/reanudación, reinicio, tres velocidades, detalle/mapa y galería de los 14 recursos.
 - La simulación se detiene al ocultar la pestaña. Sin servicios, permisos, dependencias de ejecución ni fuentes externas.
 
@@ -36,7 +36,7 @@ Abre `http://localhost:4174`. No se requieren paquetes para ejecutar la prueba. 
 - `app.js`: controles web y carga de imágenes.
 - `ASSET-PROMPTS.md`: instrucciones originales de generación.
 
-La trayectoria de entrega del vagón es una demostración visual; no representa todavía una red logística de edificios. Antes de integrar se definirá el destino concreto dentro del mapa y las reglas de producción y capacidad.
+El movimiento del vagón queda reservado a la futura llegada del camión. Esta prueba no simula aún camiones, recogida, guardado ni acumulación offline; solo producción continua durante la animación activa.
 
 ## Comprobar
 

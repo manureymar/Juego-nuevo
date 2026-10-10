@@ -10,11 +10,10 @@ export const mix=(a,b,t)=>({x:lerp(a.x,b.x,t),y:lerp(a.y,b.y,t)});
 export const beltPoint=t=>mix(BELT_START,BELT_END,t);
 export class Mine {
  constructor(){this.reset();}
- reset(){this.time=0;this.nextId=4;this.belt=[{id:1,t:1},{id:2,t:.58},{id:3,t:.16}];this.cargo=[];this.delivered=0;this.coins=0;this.trips=0;this.phase='idle';this.phaseTime=0;this.arm={...REST};this.from={...REST};this.target={...REST};this.holding=null;this.grip=0;this.cart='parked';this.cartTime=0;this.collectRequested=false;this.events=[];}
+ reset(){this.time=0;this.nextId=4;this.belt=[{id:1,t:1},{id:2,t:.58},{id:3,t:.16}];this.cargo=[];this.gold=0;this.phase='idle';this.phaseTime=0;this.arm={...REST};this.from={...REST};this.target={...REST};this.holding=null;this.grip=0;this.cart='parked';this.events=[];}
+ get goldValue(){return this.gold*VALUE;}
  emit(type,id){this.events.push({type,id,time:this.time});if(this.events.length>200)this.events.shift();}
  enter(phase,target,duration){this.phase=phase;this.phaseTime=0;this.from={...this.arm};this.target=target;this.duration=duration;}
- collect(){if(this.cart!=='parked'||(!this.cargo.length&&!this.holding))return false;this.collectRequested=true;return true;}
- dispatch(){this.cart='outbound';this.cartTime=0;this.collectRequested=false;this.emit('depart',this.cargo.length);}
  update(dt){
   if(!Number.isFinite(dt)||dt<0)throw new Error('Invalid dt');
   while(dt>1e-8){const step=Math.min(dt,1/60);this.tick(step);dt-=step;}
@@ -23,14 +22,8 @@ export class Mine {
   this.time+=dt;
   for(let i=0;i<this.belt.length;i++){const limit=i===0?1:this.belt[i-1].t-.29;this.belt[i].t=Math.min(limit,this.belt[i].t+dt*.15);}
   if(this.belt.length<4&&(!this.belt.length||this.belt.at(-1).t>.29)){this.belt.push({id:this.nextId++,t:0});this.emit('spawn',this.nextId-1);}
-  if(this.cart!=='parked'){
-   this.cartTime+=dt;
-   if(this.cart==='outbound'&&this.cartTime>=3.2){const count=this.cargo.length;this.delivered+=count;this.coins+=count*VALUE;this.trips++;this.emit('delivered',count);this.cargo=[];this.cart='returning';this.cartTime=0;}
-   else if(this.cart==='returning'&&this.cartTime>=3.2){this.cart='parked';this.cartTime=0;this.emit('returned');}
-  }
   if(this.phase==='idle'){
-   if(this.cart==='parked'&&(this.cargo.length>=CAPACITY||(this.collectRequested&&this.cargo.length)))this.dispatch();
-   if(this.cart==='parked'&&this.belt[0]?.t>=.999&&this.cargo.length<CAPACITY){const p=beltPoint(1);this.enter('approach',{x:p.x,y:p.y-24},.7);}
+   if(this.belt[0]?.t>=.999){const p=beltPoint(1);this.enter('approach',{x:p.x,y:p.y-24},.7);}
    return;
   }
   this.phaseTime+=dt;const p=Math.min(1,this.phaseTime/this.duration);this.arm=mix(this.from,this.target,ease(p));
@@ -43,9 +36,12 @@ export class Mine {
    case 'lift':this.enter('carry',{x:DROP.x,y:DROP.y-60},1);break;
    case 'carry':this.enter('lower',DROP,.5);break;
    case 'lower':this.enter('release',this.arm,.25);break;
-   case 'release':this.cargo.push(this.holding);this.emit('load',this.holding.id);this.holding=null;this.enter('return',REST,.65);break;
+   case 'release':
+    // Visual capacity is independent of production. A full pile never stops loading.
+    if(this.cargo.length<CAPACITY)this.cargo.push(this.holding);
+    this.gold++;this.emit('load',this.holding.id);this.holding=null;this.enter('return',REST,.65);break;
    case 'return':this.phase='idle';this.grip=0;break;
   }
  }
- snapshot(){return {time:this.time,phase:this.phase,arm:{...this.arm},holding:this.holding?.id??null,grip:this.grip,belt:this.belt.map(x=>({...x})),cargo:this.cargo.map(x=>x.id),coins:this.coins,delivered:this.delivered,trips:this.trips,cart:this.cart,cartTime:this.cartTime};}
+ snapshot(){return {time:this.time,phase:this.phase,arm:{...this.arm},holding:this.holding?.id??null,grip:this.grip,belt:this.belt.map(x=>({...x})),cargo:this.cargo.map(x=>x.id),gold:this.gold,goldValue:this.goldValue,cart:this.cart};}
 }
