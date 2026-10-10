@@ -81,17 +81,20 @@ export class MiningController {
  resize(){if(!this.renderer)return;const rect=this.canvas.getBoundingClientRect(),d=Math.min(devicePixelRatio||1,2);this.canvas.width=Math.max(1,Math.round(rect.width*d));this.canvas.height=Math.max(1,Math.round(rect.height*d));this.draw();}
  draw(){if(!this.renderer)return;const construction=this.buildStarted?Math.min(1,(performance.now()-this.buildStarted)/1200):1;this.renderer.draw(this.model,{built:this.profile.mining.built,placing:this.placing,ghost:this.ghost,construction});}
  updateUI(){if(this.dead)return;const m=this.profile.mining,built=m.built,valid=this.ghost&&validMinePosition(this.ghost.x,this.ghost.y);
+  // Avoid repeated live-region announcements and accessibility-tree updates on Android.
+  const text=(el,value)=>{if(el.textContent!==value)el.textContent=value;};
+  const flag=(el,key,value)=>{if(el[key]!==value)el[key]=value;};
   this.root.classList.toggle('mine-built',built);this.root.classList.toggle('placing',this.placing);this.root.classList.toggle('placement-valid',!!valid);this.root.dataset.placement=this.placing?(valid?'valid':'invalid'):'idle';
-  this.root.querySelector('.mining-status').textContent=built?(this.buildStarted&&performance.now()-this.buildStarted<1200?this.t('buildingMine'):this.t('mineWorking')):this.placing?this.t(valid?'releaseMine':'invalidMine'):this.t('dragMine');
-  this.root.querySelector('.mining-yield').hidden=!built;
+  text(this.root.querySelector('.mining-status'),built?(this.buildStarted&&performance.now()-this.buildStarted<1200?this.t('buildingMine'):this.t('mineWorking')):this.placing?this.t(valid?'releaseMine':'invalidMine'):this.t('dragMine'));
+  flag(this.root.querySelector('.mining-yield'),'hidden',!built);
   const amount=n=>new Intl.NumberFormat(this.profile.language,n>=10000?{notation:'compact',maximumFractionDigits:1}:{}).format(n);
-  this.root.querySelector('#mining-gold').textContent=amount(m.storedGold);
-  this.root.querySelector('#mining-value').textContent='+'+amount(m.storedGold*ORE_VALUE);
-  this.root.querySelector('[data-action=collect-mining]').disabled=!m.storedGold;
-  const source=this.root.querySelector('#mine-build');source.disabled=built;source.classList.toggle('installed',built);source.classList.toggle('available',!built);source.querySelector('.build-badge').textContent=built?'✓':'＋';source.querySelector('small').textContent=this.t(built?'mineInstalled':'mineAvailable');
-  this.root.querySelector('#mine-target').disabled=!this.placing||built;
-  this.root.querySelector('#mine-focus').disabled=!built;this.root.querySelector('#mine-focus').textContent=this.focus?'−':'＋';this.root.querySelector('#mine-focus').setAttribute('aria-label',this.t(this.focus?'mapBase':'focusMine'));
-  this.root.querySelector('#mine-cancel').hidden=!this.placing;this.root.querySelector('#mine-cancel').disabled=!this.placing;
+  text(this.root.querySelector('#mining-gold'),amount(m.storedGold));
+  text(this.root.querySelector('#mining-value'),'+'+amount(m.storedGold*ORE_VALUE));
+  flag(this.root.querySelector('[data-action=collect-mining]'),'disabled',!m.storedGold);
+  const source=this.root.querySelector('#mine-build');flag(source,'disabled',built);source.classList.toggle('installed',built);source.classList.toggle('available',!built);text(source.querySelector('.build-badge'),built?'✓':'＋');text(source.querySelector('small'),this.t(built?'mineInstalled':'mineAvailable'));
+  flag(this.root.querySelector('#mine-target'),'disabled',!this.placing||built);
+  flag(this.root.querySelector('#mine-focus'),'disabled',!built);text(this.root.querySelector('#mine-focus'),this.focus?'−':'＋');this.root.querySelector('#mine-focus').setAttribute('aria-label',this.t(this.focus?'mapBase':'focusMine'));
+  flag(this.root.querySelector('#mine-cancel'),'hidden',!this.placing);flag(this.root.querySelector('#mine-cancel'),'disabled',!this.placing);
  }
  frame(now){if(this.dead)return;const dt=this.previous?Math.min((now-this.previous)/1000,.1):0;this.previous=now;
   if(!document.hidden&&!this.nativePaused&&!this.blocked){

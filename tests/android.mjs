@@ -41,15 +41,23 @@ async function dismissFullscreenTip() {
   }
 }
 
-async function nativeTap(page,selector) {
+let webViewBounds;
+async function nativeBounds(){
+  // This run stays in portrait/fullscreen. Repeated UIAutomator scans of the
+  // continuously animated canvas can block waiting for accessibility to idle.
+  if(webViewBounds)return webViewBounds;
   await dismissFullscreenTip();
   const node=nativeWindow().match(/<node\b[^>]*class="android.webkit.WebView"[^>]*>/)?.[0];
   const b=bounds(node);assert.ok(b,'Native WebView bounds are available');
+  webViewBounds=b;return b;
+}
+async function nativeTap(page,selector) {
+  const b=await nativeBounds();
   const point=await page.locator(selector).evaluate(el=>{const r=el.getBoundingClientRect();return {x:r.x+r.width/2,y:r.y+r.height/2,width:innerWidth,height:innerHeight};});
   adb('shell','input','tap',String(Math.round(b[0]+point.x*(b[2]-b[0])/point.width)),String(Math.round(b[1]+point.y*(b[3]-b[1])/point.height)));
 }
 async function nativeDrag(page,fromSelector,toSelector){
- await dismissFullscreenTip();const b=bounds(nativeWindow().match(/<node\b[^>]*class="android.webkit.WebView"[^>]*>/)?.[0]);assert.ok(b);
+ const b=await nativeBounds();
  const point=async selector=>page.locator(selector).evaluate(el=>{const r=el.getBoundingClientRect();return {x:(r.x+r.width/2)/innerWidth,y:(r.y+r.height/2)/innerHeight};});
  const from=await point(fromSelector),to=await point(toSelector),x=p=>String(Math.round(b[0]+p.x*(b[2]-b[0]))),y=p=>String(Math.round(b[1]+p.y*(b[3]-b[1])));
  adb('shell','input','swipe',x(from),y(from),x(to),y(to),'1200');
@@ -73,7 +81,7 @@ try{
   page.setDefaultTimeout(20000);
   const capture=async name=>{
     await settleArt(page);
-    await dismissFullscreenTip();
+    await nativeBounds();
     await assertControlsVisible(page);
     writeFileSync(`test-results/android/${name}.png`,execFileSync('adb',['exec-out','screencap','-p'],{maxBuffer:20*1024*1024}));
   };
@@ -163,7 +171,7 @@ try{
   await page.locator('[data-action=modal-action]').nth(2).click();await page.locator('[data-action=modal-action]').nth(1).click();
   checks.push('Installed APK: six visible queue robots, extra waiting bay, native launch, rendered shots and pause work offline');
   checks.push('Illustrated Home and Leaderboard fit native display; battery number, native navigation, ranking filters, profile rows and locked levels respond in EN/ES');
-  await dismissFullscreenTip();
+  await nativeBounds();
   adb('shell','input','keyevent','KEYCODE_BACK');
   await page.locator('[data-action=enter]').waitFor();
   assert.equal((await page.locator('#app').innerText()).trim(),'JUGAR');
@@ -181,7 +189,10 @@ try{
   await nativeDrag(page,'#mine-build','#mine-target');
   await page.waitForFunction(()=>JSON.parse(localStorage.getItem('robot-pulse-v1')).mining.built);await delay(1500);
   assert.equal(await page.locator('#mine-build').isDisabled(),true);await capture('16-built-mine');
-  await page.locator('[data-action=collect-mining]:not([disabled])').waitFor();await nativeTap(page,'[data-action=collect-mining]');
+  await page.locator('[data-action=collect-mining]:not([disabled])').waitFor();
+  const coinsBefore=await page.evaluate(()=>JSON.parse(localStorage.getItem('robot-pulse-v1')).coins);
+  await nativeTap(page,'[data-action=collect-mining]');
+  await page.waitForFunction(n=>JSON.parse(localStorage.getItem('robot-pulse-v1')).coins>n,coinsBefore);
   await nativeTap(page,'#mine-focus');await capture('17-mining-closeup');
   // Reload the installed WebView, retaining only its persistent save, then verify the constructed scene.
   await page.reload();await nativeTap(page,'[data-action=enter]');
@@ -189,6 +200,7 @@ try{
   await page.locator('.mining-scene[data-loaded=true].mine-built').waitFor();await capture('18-mine-restored');
   adb('shell','input','keyevent','KEYCODE_BACK');await page.locator('.home-screen').waitFor();
   checks.push('Installed APK offline: upgrade card, Spanish mine assets, native finger drag into cave, construction, production, collection, closeup, saved mine after reload and Android Back');
+  assert.doesNotMatch(adb('logcat','-d','-s','ActivityManager:E'),/ANR in com\.manureymar\.robotpulse/,'Robot Pulse must never become unresponsive');
   assert.deepEqual(errors,[]);
   writeFileSync('test-results/android/results.json',JSON.stringify({passed:true,checks,errors,viewport:await page.evaluate(()=>({width:innerWidth,height:innerHeight,dpr:devicePixelRatio}))},null,2));
   console.log('Installed Android APK checks passed:',checks);
