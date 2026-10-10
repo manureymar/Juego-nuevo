@@ -1,1 +1,1 @@
-e9a58eb4c41c91e703277aab5d25cb11369dd424bab027e90cf2dab64eea608f  RobotPulse-0.6.0.apk
+a8fd476face89f1b2b26e5ec34f59e033d515138d18e25613ebb37124ff23e49  RobotPulse-0.7.0.apk
