@@ -74,15 +74,16 @@ jobs:
           arch: x86_64
           profile: pixel_7
           disable-animations: true
-          # 37.2.12 terminates qemu-system-x86 with a host core dump during
-          # WebView reload (run 38029332033). Pin the official 36.3.10 stable
-          # binary; the Android 15 image and complete APK checks stay the same.
+          # The legacy swiftshader_indirect renderer dumped host QEMU cores
+          # on both 37.2.12 and 36.3.10 (runs 38029332033 and 38075937928).
+          # Pin 37.2.12 and use its supported Mesa software rendering backend.
           # https://developer.android.com/studio/emulator_archive
-          emulator-build: 14472402
+          emulator-build: 16428233
+          # https://developer.android.com/studio/run/emulator-acceleration
           # Android documents disabling Vulkan for Chromium rendering issues in
           # the emulator. Keep the APK and every animation test unchanged.
           # https://developer.android.com/studio/run/emulator-troubleshooting
-          emulator-options: -no-window -gpu swiftshader_indirect -feature -Vulkan -no-snapshot -noaudio -no-boot-anim -camera-back none
+          emulator-options: -no-window -gpu lavapipe -feature -Vulkan -no-snapshot -noaudio -no-boot-anim -camera-back none
           script: node tests/android.mjs
       - name: Retain emulator diagnostics
         if: always()
