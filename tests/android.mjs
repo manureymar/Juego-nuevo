@@ -86,11 +86,25 @@ try{
   adb('shell','am','start','-W','-n',pkg+'/com.manureymar.robotpulse.MainActivity');
   [device]=await android.devices();
   assert.ok(device,'Android device is connected');
-  const webview=await device.webView({pkg});
-  const page=await webview.page();
-  page.on('pageerror',e=>errors.push(e.message));
-  page.on('response',r=>{if(r.status()>=400)errors.push(`HTTP ${r.status()}: ${r.url()}`);});
-  page.setDefaultTimeout(20000);
+  let page;
+  const attachPage=async()=>{
+    const webview=await device.webView({pkg},{timeout:30000});
+    page=await webview.page();
+    page.on('pageerror',e=>errors.push(e.message));
+    page.on('response',r=>{if(r.status()>=400)errors.push(`HTTP ${r.status()}: ${r.url()}`);});
+    page.setDefaultTimeout(20000);
+  };
+  const restartApp=async()=>{
+    // Exercise the real Android cold-start lifecycle. DevTools reload caused
+    // the host QEMU graphics process to core-dump in run 38072785547.
+    adb('shell','am','force-stop',pkg);
+    await until(()=>device.webViews().every(view=>view.pkg()!==pkg));
+    adb('shell','am','start','-W','-n',pkg+'/com.manureymar.robotpulse.MainActivity');
+    await attachPage();
+    webViewBounds=null;
+    await page.locator('[data-action=enter]').waitFor();
+  };
+  await attachPage();
   const capture=async name=>{
     await settleArt(page);
     await nativeBounds();
@@ -193,7 +207,7 @@ try{
   checks.push('Spanish buttons and Shop; English brand remains artwork; music setting and Android Back work');
   // Upgrade an existing v0.5 winning save; first-level victory itself is exercised in Chromium.
   await page.evaluate(()=>{const p=JSON.parse(localStorage.getItem('robot-pulse-v1'));p.wins=1;delete p.mining;p.session=null;localStorage.setItem('robot-pulse-v1',JSON.stringify(p));});
-  await page.reload();await nativeTap(page,'[data-action=enter]');
+  await restartApp();await nativeTap(page,'[data-action=enter]');
   console.log('Native mining: waiting for the first card');
   await page.locator('.mining-card-scrim').waitFor();
   console.log('Native mining: composition',JSON.stringify(await page.evaluate(()=>({reduced:matchMedia('(prefers-reduced-motion: reduce)').matches,visible:document.visibilityState,images:[...document.querySelectorAll('#app img,#modal-root img')].map(i=>({src:i.getAttribute('src'),complete:i.complete,w:i.naturalWidth,h:i.naturalHeight}))}))));
@@ -214,12 +228,12 @@ try{
   await page.waitForFunction(n=>JSON.parse(localStorage.getItem('robot-pulse-v1')).coins>n,coinsBefore);
   console.log('Native mining: real gold production and collection passed');
   await nativeTap(page,'#mine-focus');await capture('17-mining-closeup');
-  // Reload the installed WebView, retaining only its persistent save, then verify the constructed scene.
-  await page.reload();await nativeTap(page,'[data-action=enter]');
+  // Reopen the installed app with only its persistent save, then verify the constructed scene.
+  await restartApp();await nativeTap(page,'[data-action=enter]');
   assert.equal(await page.locator('.mining-card-scrim').count(),0);await nativeTap(page,'[data-action=mining]');
   await page.locator('.mining-scene[data-loaded=true].mine-built').waitFor();await capture('18-mine-restored');
   adb('shell','input','keyevent','KEYCODE_BACK');await page.locator('.home-screen').waitFor();
-  checks.push('Installed APK offline: upgrade card, Spanish mine assets, native finger drag into cave, construction, production, collection, closeup, saved mine after reload and Android Back');
+  checks.push('Installed APK offline: upgrade card, Spanish mine assets, native finger drag into cave, construction, production, collection, closeup, saved mine after app restart and Android Back');
   assert.doesNotMatch(adb('logcat','-d','-s','ActivityManager:E'),/ANR in com\.manureymar\.robotpulse/,'Robot Pulse must never become unresponsive');
   assert.deepEqual(errors,[]);
   writeFileSync('test-results/android/results.json',JSON.stringify({passed:true,checks,errors,viewport:await page.evaluate(()=>({width:innerWidth,height:innerHeight,dpr:devicePixelRatio}))},null,2));
