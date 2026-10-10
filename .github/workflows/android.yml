@@ -74,10 +74,15 @@ jobs:
           arch: x86_64
           profile: pixel_7
           disable-animations: true
+          # 37.2.12 terminates qemu-system-x86 with a host core dump during
+          # WebView reload (run 38029332033). Pin the official 36.3.10 stable
+          # binary; the Android 15 image and complete APK checks stay the same.
+          # https://developer.android.com/studio/emulator_archive
+          emulator-build: 14472402
           # Android documents disabling Vulkan for Chromium rendering issues in
           # the emulator. Keep the APK and every animation test unchanged.
           # https://developer.android.com/studio/run/emulator-troubleshooting
-          emulator-options: -no-window -gpu swiftshader -feature -Vulkan -no-snapshot -noaudio -no-boot-anim -camera-back none
+          emulator-options: -no-window -gpu swiftshader_indirect -feature -Vulkan -no-snapshot -noaudio -no-boot-anim -camera-back none
           script: node tests/android.mjs
       - name: Retain emulator diagnostics
         if: always()
@@ -86,6 +91,7 @@ jobs:
           free -m > test-results/android/runner-memory.txt
           sudo dmesg | tail -150 > test-results/android/runner-kernel.txt
           sudo journalctl --no-pager --since '-20 minutes' | grep -Ei 'qemu|emulator|segfault|core dump|oom-kill|killed process' > test-results/android/emulator-journal.txt || true
+          sudo journalctl --no-pager --since '-20 minutes' -t systemd-coredump > test-results/android/emulator-crash.txt || true
       - uses: actions/upload-artifact@v4
         if: always()
         with:
