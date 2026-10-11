@@ -4,19 +4,19 @@ Primera versión jugable de Robot Pulse: un puzle original de robots lanzadores,
 
 ## Probar en Android
 
-- [Descargar RobotPulse-0.7.1.apk](https://github.com/manureymar/Juego-nuevo/raw/refs/heads/main/downloads/RobotPulse-0.7.1.apk)
+- [Descargar RobotPulse-0.7.2.apk](https://github.com/manureymar/Juego-nuevo/raw/refs/heads/main/downloads/RobotPulse-0.7.2.apk)
 - [Estado de la compilación y pruebas](https://github.com/manureymar/Juego-nuevo/actions/workflows/android.yml)
 - [Instrucciones de instalación](docs/ANDROID.md)
 
-Versión 0.7.1 publicada: botones de las ventanas un 35% más estrechos y centrados, conservando su altura; Settings sin Energy y con Close más arriba. Incluye todos los ajustes anteriores de interfaz, minería y sonido. Superó las pruebas de navegador, instalación y recorrido en Android sin conexión. Es una versión de prueba firmada para instalación directa, no una publicación en Google Play. Compatible con Android 8.0 o posterior.
+Versión 0.7.2 publicada: los botones de las ventanas suben para dejar un margen visible sobre el borde inferior, especialmente Cancelar y Close. Se conservan el ancho reducido un 35%, la altura y la separación del botón amarillo respecto al texto; Settings sigue sin Energy. Incluye todos los ajustes anteriores de interfaz, minería y sonido. Superó las pruebas de navegador, instalación y recorrido en Android sin conexión. Es una versión de prueba firmada para instalación directa, no una publicación en Google Play. Compatible con Android 8.0 o posterior.
 
-[Corrección de ventanas y verificación 0.7.1](docs/dialogs-v0.7.1/README.md) · [Cambios de diseño y sonido 0.7.0](docs/UI-0.7.0.md) · [Capturas reales y verificación 0.7.0](docs/polish-v0.7/README.md). Se conserva la firma y el progreso al actualizar desde 0.5.0, 0.6.0 o 0.7.0.
+[Márgenes de ventanas y verificación 0.7.2](docs/dialogs-v0.7.2/README.md) · [Corrección anterior 0.7.1](docs/dialogs-v0.7.1/README.md) · [Cambios de diseño y sonido 0.7.0](docs/UI-0.7.0.md) · [Capturas reales y verificación 0.7.0](docs/polish-v0.7/README.md). Se conserva la firma y el progreso al actualizar desde 0.5.0, 0.6.0, 0.7.0 o 0.7.1.
 
 [Minería: capturas reales y verificación 0.6.0](docs/mining-v0.6/README.md) · [Pantallas y nivel anteriores](docs/screenshots-v0.5/README.md)
 
 ## Qué incluye
 
-**Continuidad para otro chat:** [traspaso completo](docs/traspaso/Robot-Pulse-Traspaso.md) · [documento Word](docs/traspaso/Robot-Pulse-Traspaso.docx) · [inventario de archivos](docs/traspaso/INVENTARIO-REPOSITORIO.txt). Incluye concepto, decisiones visuales, jugabilidad, minería, mapa del código, historial, base 0.6.0 con las actualizaciones 0.7.0 y 0.7.1, y el flujo de entrega de cada APK.
+**Continuidad para otro chat:** [traspaso completo actualizado](docs/traspaso/Robot-Pulse-Traspaso.md) · [documento Word del traspaso original](docs/traspaso/Robot-Pulse-Traspaso.docx) · [inventario de archivos](docs/traspaso/INVENTARIO-REPOSITORIO.txt). El traspaso actualizado incluye concepto, decisiones visuales, jugabilidad, minería, mapa del código, historial, base 0.6.0 con las actualizaciones 0.7.0, 0.7.1 y 0.7.2, y el flujo de entrega de cada APK.
 
 - Apertura con el fondo de batalla, el logo original y el botón PLAY/JUGAR, sin textos adicionales.
 - HOME: arte de campaña integrado, robot ilustrado, nivel 1 y continuación de la partida guardada; sin scroll.

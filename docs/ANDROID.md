@@ -1,11 +1,11 @@
 # Instalar y probar Robot Pulse en Android
 
-1. Abre desde el teléfono el enlace [RobotPulse-0.7.1.apk](https://github.com/manureymar/Juego-nuevo/raw/refs/heads/main/downloads/RobotPulse-0.7.1.apk).
+1. Abre desde el teléfono el enlace [RobotPulse-0.7.2.apk](https://github.com/manureymar/Juego-nuevo/raw/refs/heads/main/downloads/RobotPulse-0.7.2.apk).
 2. Guarda el archivo y ábrelo desde Descargas.
 3. Si Android lo solicita, permite que el navegador o el gestor de archivos instale esa aplicación.
 4. Pulsa Instalar y abre **Robot Pulse**.
 
-**Actualización desde 0.5.0, 0.6.0 o 0.7.0:** instala 0.7.1 encima de la aplicación actual para conservar el progreso. Se mantiene el mismo identificador y la misma clave de vista previa. Si ya ganaste el nivel 1 y no recogiste la carta de minería, la recibirás al entrar en HOME. La versión 0.4.0 usaba otra firma y no admite esa actualización directa.
+**Actualización desde 0.5.0, 0.6.0, 0.7.0 o 0.7.1:** instala 0.7.2 encima de la aplicación actual para conservar el progreso. Se mantiene el mismo identificador y la misma clave de vista previa. Si ya ganaste el nivel 1 y no recogiste la carta de minería, la recibirás al entrar en HOME. La versión 0.4.0 usaba otra firma y no admite esa actualización directa.
 
 Requisitos de esta versión: Android 8.0 o posterior y Android System WebView actualizado. El APK incluye el juego, las ilustraciones, la tipografía y tu música; después de descargarlo funciona sin internet. La app no solicita acceso a cámara, micrófono, archivos, contactos ni internet.
 
@@ -35,4 +35,4 @@ En Android Studio abre la carpeta `android/`, instala SDK 35 / Build Tools 35.0.
 gradle -p android assembleDebug
 ```
 
-El APK se genera en `android/app/build/outputs/apk/debug/app-debug.apk`. El flujo [Android](../.github/workflows/android.yml) ejecuta las pruebas, compila, verifica la firma y copia el archivo a `downloads/RobotPulse-0.7.1.apk`. Si el código cambia durante una compilación, solo la versión más reciente publica el APK.
+El APK se genera en `android/app/build/outputs/apk/debug/app-debug.apk`. El flujo [Android](../.github/workflows/android.yml) ejecuta las pruebas, compila, verifica la firma y copia el archivo a `downloads/RobotPulse-0.7.2.apk`. Si el código cambia durante una compilación, solo la versión más reciente publica el APK.
