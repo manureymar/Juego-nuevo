@@ -1,0 +1,17 @@
+Verifies
+Verified using v1 scheme (JAR signing): false
+Verified using v2 scheme (APK Signature Scheme v2): true
+Verified using v3 scheme (APK Signature Scheme v3): false
+Verified using v3.1 scheme (APK Signature Scheme v3.1): false
+Verified using v4 scheme (APK Signature Scheme v4): false
+Verified for SourceStamp: false
+Number of signers: 1
+Signer #1 certificate DN: CN=Robot Pulse Preview, OU=Preview, O=Robot Pulse, C=US
+Signer #1 certificate SHA-256 digest: 7cd69261b62da3dfd299116a44f25466866f183ff802fa88630ac2dc0b8c5856
+Signer #1 certificate SHA-1 digest: f9ca7bbcf5d0a6d4a4d33c21fcb418ae3478b9ce
+Signer #1 certificate MD5 digest: ba02da4a4f80258e9a36542d8c56bda8
+Signer #1 key algorithm: RSA
+Signer #1 key size (bits): 2048
+Signer #1 public key SHA-256 digest: 06a30e87d9fa05ca2952634cf1f4dca0b6d1f9709fbed8f1e62e360c895288cd
+Signer #1 public key SHA-1 digest: f9f34a61689055b029f2dc2ff8cda9b34dcccd79
+Signer #1 public key MD5 digest: e01b9c2a8594f63c759fc75450f724a7
