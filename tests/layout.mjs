@@ -31,8 +31,9 @@ export async function assertControlsVisible(page,selector='#app button') {
       const body=document.querySelector('.modal-body').getBoundingClientRect(),actions=document.querySelector('.modal-actions').getBoundingClientRect();
       if(body.bottom>actions.top+1)out.push('Dialog content overlaps actions');
       const panel=document.querySelector('.modal').getBoundingClientRect();
+      const footer=document.querySelector('.modal-frame>.gp-sprite:nth-last-child(2)').getBoundingClientRect();
       for(const node of document.querySelectorAll('.modal-body p,.settings-row')){const r=node.getBoundingClientRect();if(r.left<panel.left+panel.width*.16||r.right>panel.right-panel.width*.16)out.push('Body content overlaps the decorative side rails');}
-      for(const action of document.querySelectorAll('.modal-actions>button')){const r=action.getBoundingClientRect();if(r.left<panel.left+panel.width*.135||r.right>panel.right-panel.width*.135||r.bottom>panel.bottom-panel.height*.035)out.push('Action overlaps frame rails or footer');}
+      for(const action of document.querySelectorAll('.modal-actions>button')){const r=action.getBoundingClientRect();if(r.left<panel.left+panel.width*.135||r.right>panel.right-panel.width*.135||r.bottom>footer.top-r.height*.35)out.push('Action must leave clear space above the decorative footer');}
       const heading=document.querySelector('#dialog-title');if(heading.scrollHeight>heading.clientHeight+1)out.push('Dialog title exceeds its header');
       for(const label of document.querySelectorAll('.modal .button-label'))if(label.scrollWidth>label.clientWidth+1)out.push('Action text exceeds its button');
       for(const button of document.querySelectorAll('.modal-actions>.art-button,.modal-body>.art-button')){

@@ -106,14 +106,14 @@ jobs:
           grep -q 'Signer #1 certificate SHA-256 digest: 7cd69261b62da3dfd299116a44f25466866f183ff802fa88630ac2dc0b8c5856' test-results/apk-signature.txt
           "$ANDROID_HOME/build-tools/35.0.0/aapt" dump badging android/app/build/outputs/apk/debug/app-debug.apk > test-results/apk-info.txt
           mkdir -p downloads
-          cp android/app/build/outputs/apk/debug/app-debug.apk downloads/RobotPulse-0.7.1.apk
+          cp android/app/build/outputs/apk/debug/app-debug.apk downloads/RobotPulse-0.7.2.apk
           cd downloads
-          sha256sum RobotPulse-0.7.1.apk > SHA256SUMS.txt
+          sha256sum RobotPulse-0.7.2.apk > SHA256SUMS.txt
       - uses: actions/upload-artifact@v4
         with:
-          name: RobotPulse-Android-0.7.1
+          name: RobotPulse-Android-0.7.2
           path: |
-            downloads/RobotPulse-0.7.1.apk
+            downloads/RobotPulse-0.7.2.apk
             downloads/SHA256SUMS.txt
             test-results/apk-info.txt
             test-results/apk-signature.txt
@@ -127,14 +127,14 @@ jobs:
           fi
           git config user.name 'Robot Pulse build'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          mkdir -p docs/dialogs-v0.7.1/android docs/dialogs-v0.7.1/review
-          cp test-results/android/results.json test-results/apk-info.txt test-results/apk-signature.txt docs/dialogs-v0.7.1/android/
-          cp test-results/android/13-pause.png docs/dialogs-v0.7.1/android/
-          cp test-results/dialogs/results.json docs/dialogs-v0.7.1/review/
+          mkdir -p docs/dialogs-v0.7.2/android docs/dialogs-v0.7.2/review
+          cp test-results/android/results.json test-results/apk-info.txt test-results/apk-signature.txt docs/dialogs-v0.7.2/android/
+          cp test-results/android/13-pause.png docs/dialogs-v0.7.2/android/
+          cp test-results/dialogs/results.json docs/dialogs-v0.7.2/review/
           for name in settings purchase-0 daily-reward energy pause locked-level; do
-            cp "test-results/dialogs/$name-en-390.png" "test-results/dialogs/$name-es-360.png" docs/dialogs-v0.7.1/review/
+            cp "test-results/dialogs/$name-en-390.png" "test-results/dialogs/$name-es-360.png" docs/dialogs-v0.7.2/review/
           done
-          git add downloads/RobotPulse-0.7.1.apk downloads/SHA256SUMS.txt android/preview-signing.keystore docs/dialogs-v0.7.1
+          git add downloads/RobotPulse-0.7.2.apk downloads/SHA256SUMS.txt android/preview-signing.keystore docs/dialogs-v0.7.2
           git diff --cached --quiet && exit 0
           git commit -m 'build: save tested Android preview APK [skip ci]'
           git push origin HEAD:main

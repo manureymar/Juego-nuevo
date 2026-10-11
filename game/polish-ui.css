@@ -27,8 +27,8 @@
 .home-screen .campaign-hero{z-index:2}
 .mine-portal:focus-visible{outline:4px solid #b3ffff;outline-offset:3px;border-radius:20px}
 
-/* Keep wide action shapes, reduce height and leave the decorative rails clear. */
-.modal.art-modal,.modal.art-modal.settings{width:440px;max-width:none;padding:0 63px 52px}
+/* Reserve the entire 64px footer plus breathing room above its inner rail. */
+.modal.art-modal,.modal.art-modal.settings{width:440px;max-width:none;padding:0 63px 92px}
 .modal-header{height:126px;margin-inline:-63px}
 .art-modal h2,.art-modal.settings h2{left:65px;right:78px;top:49px;height:64px;font-size:30px;line-height:1.02;margin:0;transform:none;text-wrap:balance}
 .art-modal.no-close h2{left:65px;right:65px}
@@ -37,7 +37,9 @@
 .modal-center-symmetric>.gp-sprite{position:relative;inset:auto}
 .modal-center-symmetric>.mirror{transform:scaleX(-1)}
 .art-modal .modal-body{padding-inline:12px}
-.art-modal .modal-actions{margin-top:16px;gap:11px}
+.art-modal .modal-actions{margin-top:16px;gap:7px}
+/* Daily rewards and energy place their primary action inside the body. */
+.art-modal .modal-body:has(>.art-button)+.modal-actions{margin-top:8px}
 .art-modal .art-button,.art-modal .modal-actions>.art-button{min-height:51px;padding:12px 23px;font-size:16px;line-height:1.15}
 .art-modal .art-button>.gp-sliced{--slice-x:28px;--slice-y:16px}
 .art-modal .button-label{min-height:23px;line-height:1.2}
